@@ -21,9 +21,7 @@ public partial class Building
 
     public bool? IsActive { get; set; }
 
-    public long CreatedBy { get; set; }
-
-    public virtual User CreatedByNavigation { get; set; } = null!;
+    public User CreatedByUser { get; set; }
 
     public virtual ICollection<Document> Documents { get; } = new List<Document>();
 }

@@ -1,8 +1,9 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 
 namespace arcelik_building_report_backend.Models;
-
+[Keyless]
 public partial class RoleAuthority
 {
     public long RoleId { get; set; }
