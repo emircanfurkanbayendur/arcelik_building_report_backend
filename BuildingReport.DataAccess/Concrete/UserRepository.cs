@@ -55,6 +55,7 @@ namespace arcelik_building_report_backend.Concrete
             using (var userDbContext = new ArcelikBuildingReportDbContext())
             {
                 userDbContext.Users.Update(user);
+                userDbContext.SaveChanges();
                 return user;
 
             }

@@ -26,7 +26,7 @@ namespace BuildingReport.API.Controllers
 
 
         [HttpGet("{id}")]
-        public User GetUsers(int id)
+        public User GetUsers(long id)
         {
             return _userService.GetUserById(id);
 

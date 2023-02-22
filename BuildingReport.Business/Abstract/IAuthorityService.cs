@@ -5,9 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BuildingReport.DataAccess.Abstract
+namespace BuildingReport.Business.Abstract
 {
-    public interface IAuthorityRepository
+    public interface IAuthorityService
     {
         List<Authority> GetAllAuthorities();
 
