@@ -11,19 +11,13 @@ namespace BuildingReport.DataAccess.Abstract
     {
         List<RoleAuthority> GetAllRoleAuthorities();
 
-        RoleAuthority GetRoleAuthorityByRoleId(long id);
-
-        RoleAuthority GetRoleAuthorityByAuthorityId(long id);
+        RoleAuthority GetRoleAuthorityById(long id);
 
         RoleAuthority CreateRoleAuthority(RoleAuthority roleAuthority);
 
         RoleAuthority UpdateRoleAuthority(RoleAuthority roleAuthority);
 
-        void DeleteRoleAuthorityByRoleId(long id);
-
-        void DeleteRoleAuthorityByAuthorityId(long id);
-
-
+        void DeleteRoleAuthority(long id);
 
 
     }

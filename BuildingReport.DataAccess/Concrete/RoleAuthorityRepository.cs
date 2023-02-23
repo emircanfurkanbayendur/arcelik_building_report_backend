@@ -21,25 +21,16 @@ namespace BuildingReport.DataAccess.Concrete
             }
         }
 
-        public void DeleteRoleAuthorityByRoleId(long id)
+        public void DeleteRoleAuthority(long id)
         {
             using (var roleAuthorityDbContext = new ArcelikBuildingReportDbContext())
             {
-                var deletedRoleAuthority = GetRoleAuthorityByRoleId(id);
+                var deletedRoleAuthority = GetRoleAuthorityById(id);
                 roleAuthorityDbContext.RoleAuthorities.Remove(deletedRoleAuthority);
                 roleAuthorityDbContext.SaveChanges();
             }
         }
 
-        public void DeleteRoleAuthorityByAuthorityId(long id)
-        {
-            using (var roleAuthorityDbContext = new ArcelikBuildingReportDbContext())
-            {
-                var deletedRoleAuthority = GetRoleAuthorityByAuthorityId(id);
-                roleAuthorityDbContext.RoleAuthorities.Remove(deletedRoleAuthority);
-                roleAuthorityDbContext.SaveChanges();
-            }
-        }
 
         public List<RoleAuthority> GetAllRoleAuthorities()
         {
@@ -49,21 +40,14 @@ namespace BuildingReport.DataAccess.Concrete
             }
         }
 
-        public RoleAuthority GetRoleAuthorityByAuthorityId(long id)
-        {
-            using (var roleAuthorityDbContext = new ArcelikBuildingReportDbContext())
-            {
-                RoleAuthority rAuthority = roleAuthorityDbContext.RoleAuthorities.SingleOrDefault(rAuthority => rAuthority.AuthorityId == id);
-                return rAuthority;
-            }
-        }
 
-        public RoleAuthority GetRoleAuthorityByRoleId(long id)
+
+        public RoleAuthority GetRoleAuthorityById(long id)
         {
             using (var roleAuthorityDbContext = new ArcelikBuildingReportDbContext())
             {
-                RoleAuthority rAuthority = roleAuthorityDbContext.RoleAuthorities.SingleOrDefault(rAuthority => rAuthority.RoleId == id);
-                return rAuthority;
+                return roleAuthorityDbContext.RoleAuthorities.Find(id);
+
             }
         }
 

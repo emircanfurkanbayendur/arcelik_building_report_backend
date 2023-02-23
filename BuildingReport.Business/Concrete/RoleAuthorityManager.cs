@@ -24,29 +24,20 @@ namespace BuildingReport.Business.Concrete
             return _roleAuthorityRepository.CreateRoleAuthority(roleAuthority);
         }
 
-        public void DeleteRoleAuthorityByAuthorityId(long id)
+        public void DeleteRoleAuthority(long id)
         {
-            _roleAuthorityRepository.DeleteRoleAuthorityByAuthorityId(id);
+            _roleAuthorityRepository.DeleteRoleAuthority(id);
         }
 
-        public void DeleteRoleAuthorityByRoleId(long id)
-        {
-            _roleAuthorityRepository.DeleteRoleAuthorityByRoleId(id);
-        }
 
         public List<RoleAuthority> GetAllRoleAuthorities()
         {
             return _roleAuthorityRepository.GetAllRoleAuthorities();
         }
 
-        public RoleAuthority GetRoleAuthorityByAuthorityId(long id)
+        public RoleAuthority GetRoleAuthorityById(long id)
         {
-            return _roleAuthorityRepository.GetRoleAuthorityByAuthorityId(id);
-        }
-
-        public RoleAuthority GetRoleAuthorityByRoleId(long id)
-        {
-            return _roleAuthorityRepository.GetRoleAuthorityByRoleId(id);
+            return _roleAuthorityRepository.GetRoleAuthorityById(id);
         }
 
         public RoleAuthority UpdateRoleAuthority(RoleAuthority roleAuthority)

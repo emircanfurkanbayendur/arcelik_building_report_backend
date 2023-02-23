@@ -23,16 +23,10 @@ namespace BuildingReport.API.Controllers
             return _authorityService.GetAllRoleAuthorities();
         }
 
-        [HttpGet("/byRoleId/{id}")]
-        public RoleAuthority GetRoleAuthoritiesByRoleId(long id)
+        [HttpGet("{id}")]
+        public RoleAuthority GetRoleAuthorities(long id)
         {
-            return _authorityService.GetRoleAuthorityByRoleId(id);
-        }
-
-        [HttpGet("/byAuthorityId/{id}")]
-        public RoleAuthority GetRoleAuthoritiesByAuthorityId(long id)
-        {
-            return _authorityService.GetRoleAuthorityByRoleId(id);
+            return _authorityService.GetRoleAuthorityById(id);
         }
 
         [HttpPost]
@@ -47,16 +41,11 @@ namespace BuildingReport.API.Controllers
             return _authorityService.UpdateRoleAuthority(authority);
         }
 
-        [HttpDelete("/byRoleId/{id}")]
-        public void DeleteByRoleId(long id)
+        [HttpDelete("{id}")]
+        public void Delete(long id)
         {
-            _authorityService.DeleteRoleAuthorityByRoleId(id);
+            _authorityService.DeleteRoleAuthority(id);
         }
 
-        [HttpDelete("/byAuthorityId/{id}")]
-        public void DeleteByAuthorityId(long id)
-        {
-            _authorityService.DeleteRoleAuthorityByAuthorityId(id);
-        }
     }
 }
