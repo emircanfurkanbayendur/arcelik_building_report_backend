@@ -41,11 +41,13 @@ namespace arcelik_building_report_backend.Migrations
                 name: "RoleAuthorities",
                 columns: table => new
                 {
+                    Id = table.Column<long>(type:"bigint", nullable: false).Annotation("SqlServer:Identity","1, 1"),
                     RoleId = table.Column<long>(type: "bigint", nullable: false),
                     AuthorityId = table.Column<long>(type: "bigint", nullable: false)
                 },
                 constraints: table =>
                 {
+                    table.PrimaryKey("PK_RoleAuthorities", x => x.Id);
                     table.ForeignKey(
                         name: "FK_RoleAuthorities_Authorities_AuthorityId",
                         column: x => x.AuthorityId,

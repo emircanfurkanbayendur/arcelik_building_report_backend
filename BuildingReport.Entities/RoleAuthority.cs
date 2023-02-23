@@ -1,11 +1,13 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace BuildingReport.Entities;
-[Keyless]
 public partial class RoleAuthority
 {
+    [Key]
+    public long Id { get; set; }
     public long RoleId { get; set; }
 
     public long AuthorityId { get; set; }
