@@ -1,5 +1,6 @@
 ﻿using BuildingReport.Business.Abstract;
 using BuildingReport.Business.Concrete;
+using BuildingReport.DTO;
 using BuildingReport.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -30,15 +31,32 @@ namespace BuildingReport.API.Controllers
         }
 
         [HttpPost]
-        public RoleAuthority Post([FromBody] RoleAuthority authority)
+        public RoleAuthority Post([FromBody] RoleAuthorityDTO roleauthoritydto)
         {
-            return _authorityService.CreateRoleAuthority(authority);
+            var roleauthority = new RoleAuthority()
+            {
+                Id = roleauthoritydto.Id,
+                RoleId = roleauthoritydto.RoleId,
+                AuthorityId = roleauthoritydto.AuthorityId
+
+            };
+
+
+            return _authorityService.CreateRoleAuthority(roleauthority);
         }
 
         [HttpPut]
-        public RoleAuthority Put([FromBody] RoleAuthority authority)
+        public RoleAuthority Put([FromBody] RoleAuthorityDTO roleauthoritydto)
         {
-            return _authorityService.UpdateRoleAuthority(authority);
+            var roleauthority = new RoleAuthority()
+            {
+                Id = roleauthoritydto.Id,
+                RoleId = roleauthoritydto.RoleId,
+                AuthorityId = roleauthoritydto.AuthorityId
+
+            };
+
+            return _authorityService.UpdateRoleAuthority(roleauthority);
         }
 
         [HttpDelete("{id}")]
