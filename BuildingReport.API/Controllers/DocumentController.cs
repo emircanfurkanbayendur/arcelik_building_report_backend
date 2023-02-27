@@ -1,5 +1,6 @@
 ﻿using BuildingReport.Business.Abstract;
 using BuildingReport.Business.Concrete;
+using BuildingReport.DTO;
 using BuildingReport.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -30,14 +31,36 @@ namespace BuildingReport.API.Controllers
         }
 
         [HttpPost]
-        public Document Post([FromBody] Document document)
+        public Document Post([FromBody] DocumentDTO documentdto)
         {
+            var document = new Document()
+            {
+                Id = documentdto.Id,
+                Report = documentdto.Report,
+                UploadedAt = documentdto.UploadedAt,
+                IsActive = documentdto.IsActive,
+                UploadedByUserId = documentdto.UploadedByUserId,
+                BuildingId = documentdto.BuildingId,
+
+            };
+
             return _documentService.CreateDocument(document);
         }
 
         [HttpPut]
-        public Document Put([FromBody] Document document)
+        public Document Put([FromBody] DocumentDTO documentdto)
         {
+            var document = new Document()
+            {
+                Id = documentdto.Id,
+                Report = documentdto.Report,
+                UploadedAt = documentdto.UploadedAt,
+                IsActive = documentdto.IsActive,
+                UploadedByUserId = documentdto.UploadedByUserId,
+                BuildingId = documentdto.BuildingId,
+
+            };
+
             return _documentService.UpdateDocument(document);
         }
 

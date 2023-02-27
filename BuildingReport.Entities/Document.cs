@@ -13,7 +13,9 @@ public partial class Document
 
     public bool? IsActive { get; set; }
 
-    public User UploadedByUser { get; set; }
+    public long UploadedByUserId { get; set; }
+    
+    public virtual User UploadedByUser { get; set; }
 
     public long BuildingId { get; set; }
 
