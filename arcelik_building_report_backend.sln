@@ -3,13 +3,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.3.32901.215
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BuildingReport.Entities", "BuildingReport.Entities\BuildingReport.Entities.csproj", "{D6895F2D-F61C-47D1-B791-4DEAAB5AA5D1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BuildingReport.Entities", "BuildingReport.Entities\BuildingReport.Entities.csproj", "{D6895F2D-F61C-47D1-B791-4DEAAB5AA5D1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BuildingReport.DataAccess", "BuildingReport.DataAccess\BuildingReport.DataAccess.csproj", "{2CCBACA9-13F6-43D4-AC28-77E9F9DB94B7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BuildingReport.DataAccess", "BuildingReport.DataAccess\BuildingReport.DataAccess.csproj", "{2CCBACA9-13F6-43D4-AC28-77E9F9DB94B7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BuildingReport.Business", "BuildingReport.Business\BuildingReport.Business.csproj", "{1696E66E-FE90-4855-BE0E-F405A351CC5A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BuildingReport.Business", "BuildingReport.Business\BuildingReport.Business.csproj", "{1696E66E-FE90-4855-BE0E-F405A351CC5A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BuildingReport.API", "BuildingReport.API\BuildingReport.API.csproj", "{D9642EE2-5563-497E-9D4F-29897C439F2D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BuildingReport.API", "BuildingReport.API\BuildingReport.API.csproj", "{D9642EE2-5563-497E-9D4F-29897C439F2D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BuildingReport.DTO", "BuildingReport.DTO\BuildingReport.DTO.csproj", "{9E48BF3D-3B07-423E-9458-CD1B894932F4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{D9642EE2-5563-497E-9D4F-29897C439F2D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D9642EE2-5563-497E-9D4F-29897C439F2D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D9642EE2-5563-497E-9D4F-29897C439F2D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9E48BF3D-3B07-423E-9458-CD1B894932F4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9E48BF3D-3B07-423E-9458-CD1B894932F4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9E48BF3D-3B07-423E-9458-CD1B894932F4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9E48BF3D-3B07-423E-9458-CD1B894932F4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

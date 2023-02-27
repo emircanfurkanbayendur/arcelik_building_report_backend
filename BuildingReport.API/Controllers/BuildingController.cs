@@ -1,5 +1,6 @@
 ﻿using BuildingReport.Business.Abstract;
 using BuildingReport.Business.Concrete;
+using BuildingReport.DTO;
 using BuildingReport.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -30,14 +31,40 @@ namespace BuildingReport.API.Controllers
         }
 
         [HttpPost]
-        public Building Post([FromBody] Building building) 
+        public Building Post([FromBody] BuildingDTO buildingdto) 
         {
+            var building = new Building()
+            {
+                Id = buildingdto.Id,
+                Name = buildingdto.Name,
+                Adress = buildingdto.Adress,
+                Code = buildingdto.Code,
+                Latitude = buildingdto.Latitude,
+                Longitude = buildingdto.Longitude,
+                RegisteredAt = buildingdto.RegisteredAt,
+                IsActive = buildingdto.IsActive,
+                CreatedByUserId = buildingdto.CreatedByUserId
+            };
+
             return _buildingService.CreateBuilding(building);
         }
 
         [HttpPut]
-        public Building Put([FromBody] Building building)
+        public Building Put([FromBody] BuildingDTO buildingdto)
         {
+            var building = new Building()
+            {
+                Id = buildingdto.Id,
+                Name = buildingdto.Name,
+                Adress = buildingdto.Adress,
+                Code = buildingdto.Code,
+                Latitude = buildingdto.Latitude,
+                Longitude = buildingdto.Longitude,
+                RegisteredAt = buildingdto.RegisteredAt,
+                IsActive = buildingdto.IsActive,
+                CreatedByUserId = buildingdto.CreatedByUserId
+            };
+
             return _buildingService.UpdateBuilding(building);
         }
 
