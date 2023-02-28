@@ -50,6 +50,14 @@ namespace arcelik_building_report_backend.Concrete
             }
         }
 
+        public List<User> GetUsersByRole(long roleId)
+        {
+            using (var userDbContext = new ArcelikBuildingReportDbContext())
+            {
+                return userDbContext.Users.Where(b => b.RoleId == roleId).ToList();
+            }
+        }
+
         public User UpdateUser(User user)
         {
             using (var userDbContext = new ArcelikBuildingReportDbContext())

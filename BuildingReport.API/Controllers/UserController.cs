@@ -50,6 +50,12 @@ namespace BuildingReport.API.Controllers
 
         }
 
+        [HttpGet("role/{roleid}")]
+        public List<User> GetUsersByRoleID(long roleid)
+        {
+            return _userService.GetUsersByRole(roleid);
+
+        }
 
 
         [HttpPost]

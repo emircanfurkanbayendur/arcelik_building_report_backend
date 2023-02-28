@@ -40,6 +40,11 @@ namespace BuildingReport.Business.Concrete
             return _userRepository.GetUserById(id);
         }
 
+        public List<User> GetUsersByRole(long roleId)
+        {
+            return _userRepository.GetUsersByRole(roleId);
+        }
+
         public User UpdateUser(User user)
         {
             return (_userRepository.UpdateUser(user));

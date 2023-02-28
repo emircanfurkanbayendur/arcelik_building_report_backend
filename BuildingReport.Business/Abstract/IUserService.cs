@@ -19,5 +19,7 @@ namespace BuildingReport.Business.Abstract
 
         void DeleteUser(long id);
         bool UserExists(string email);
+        List<User> GetUsersByRole(long roleId);
+
     }
 }
