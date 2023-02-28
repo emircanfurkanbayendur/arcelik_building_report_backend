@@ -44,5 +44,10 @@ namespace BuildingReport.Business.Concrete
         {
             return (_userRepository.UpdateUser(user));
         }
+
+        public bool UserExists(string email)
+        {
+            return _userRepository.UserExists(email);
+        }
     }
 }

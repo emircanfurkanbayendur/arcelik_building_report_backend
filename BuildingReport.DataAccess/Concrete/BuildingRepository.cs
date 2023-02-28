@@ -11,6 +11,14 @@ namespace BuildingReport.DataAccess.Concrete
 {
     public class BuildingRepository : IBuildingRepository
     {
+        public bool BuildingExists(string code, string adress)
+        {
+            using (var buildingDbContext = new ArcelikBuildingReportDbContext())
+            {
+                return buildingDbContext.Buildings.Any(b => b.Code == code && b.Adress == adress);
+            }
+        }
+
         public Building CreateBuilding(Building building)
         {
             using (var buildingDbContext = new ArcelikBuildingReportDbContext())
@@ -44,11 +52,35 @@ namespace BuildingReport.DataAccess.Concrete
             }
         }
 
+        public Building GetBuildingByAdress(string adress)
+        {
+            using (var buildingDbContext = new ArcelikBuildingReportDbContext())
+            {
+                return buildingDbContext.Buildings.Where(b => b.Adress == adress).FirstOrDefault();
+            }
+        }
+
+        public Building GetBuildingByCode(string code)
+        {
+            using (var buildingDbContext = new ArcelikBuildingReportDbContext())
+            {
+                return buildingDbContext.Buildings.Where(b => b.Code == code).FirstOrDefault();
+            }
+        }
+
         public Building GetBuildingById(long id)
         {
             using (var buildingDbContext = new ArcelikBuildingReportDbContext())
             {
                 return buildingDbContext.Buildings.Find(id);
+            }
+        }
+
+        public List<Building> GetBuildingsByUserId(long userId)
+        {
+            using (var buildingDbContext = new ArcelikBuildingReportDbContext())
+            {
+                return buildingDbContext.Buildings.Where(b => b.CreatedByUserId == userId).ToList();
             }
         }
 

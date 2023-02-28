@@ -30,9 +30,32 @@ namespace BuildingReport.API.Controllers
             return _buildingService.GetBuildingById(id);
         }
 
-        [HttpPost]
-        public Building Post([FromBody] BuildingDTO buildingdto) 
+        [HttpGet("user/{userId}")]
+        public List<Building> GetBuildingsByUserId(long userId)
         {
+            return _buildingService.GetBuildingsByUserId(userId);
+        }
+
+        [HttpGet("adress/{adress}")]
+        public Building GetBuildingsByAdress(string adress)
+        {
+            return _buildingService.GetBuildingByAdress(adress);
+        }
+
+        [HttpGet("code/{code}")]
+        public Building GetBuildingsByCode(string code)
+        {
+            return _buildingService.GetBuildingByCode(code);
+        }
+
+        [HttpPost]
+        public IActionResult CreateBuilding([FromBody] BuildingDTO buildingdto) 
+        {
+            if (buildingdto == null)
+            {
+                return BadRequest(ModelState);
+            }
+
             var building = new Building()
             {
                 Id = buildingdto.Id,
@@ -46,7 +69,15 @@ namespace BuildingReport.API.Controllers
                 CreatedByUserId = buildingdto.CreatedByUserId
             };
 
-            return _buildingService.CreateBuilding(building);
+            if(_buildingService.BuildingExists(building.Code, building.Adress))
+            {
+                ModelState.AddModelError("", "Building already exists");
+                return StatusCode(422, ModelState);
+            }
+
+            _buildingService.CreateBuilding(building);
+
+            return Ok("Successfuly ctreated");
         }
 
         [HttpPut]
@@ -64,7 +95,7 @@ namespace BuildingReport.API.Controllers
                 IsActive = buildingdto.IsActive,
                 CreatedByUserId = buildingdto.CreatedByUserId
             };
-
+         
             return _buildingService.UpdateBuilding(building);
         }
 

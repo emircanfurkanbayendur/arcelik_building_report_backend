@@ -38,6 +38,16 @@ namespace BuildingReport.Business.Concrete
             return _documentRepository.GetDocumentById(id);
         }
 
+        public List<Document> GetDocumentsByBuildingId(long buildingId)
+        {
+            return _documentRepository.GetDocumentsByBuildingId(buildingId);
+        }
+
+        public List<Document> GetDocumentsByUserId(long userId)
+        {
+            return _documentRepository.GetDocumentsByUserId(userId);
+        }
+
         public Document UpdateDocument(Document document)
         {
             return _documentRepository.UpdateDocument(document);

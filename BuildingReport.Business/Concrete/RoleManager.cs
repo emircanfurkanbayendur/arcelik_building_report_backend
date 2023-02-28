@@ -38,6 +38,11 @@ namespace BuildingReport.Business.Concrete
             return _roleRepository.GetRoleById(id);
         }
 
+        public bool RoleExists(string name)
+        {
+            return _roleRepository.RoleExists(name);
+        }
+
         public Role UpdateRole(Role role)
         {
             return _roleRepository.UpdateRole(role);

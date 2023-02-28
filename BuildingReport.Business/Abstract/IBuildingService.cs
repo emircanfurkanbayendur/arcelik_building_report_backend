@@ -10,7 +10,9 @@ namespace BuildingReport.Business.Abstract
     public interface IBuildingService
     {
         List<Building> GetAllBuildings();
-
+        List<Building> GetBuildingsByUserId(long userId);
+        Building GetBuildingByAdress(string adress);
+        Building GetBuildingByCode(string code);
         Building GetBuildingById(long id);
 
         Building CreateBuilding(Building building);
@@ -18,6 +20,6 @@ namespace BuildingReport.Business.Abstract
         Building UpdateBuilding(Building building);
 
         void DeleteBuilding(long id);
-
+        bool BuildingExists(string code, string adress);
     }
 }

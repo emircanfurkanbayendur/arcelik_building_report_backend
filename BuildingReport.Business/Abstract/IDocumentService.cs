@@ -10,7 +10,8 @@ namespace BuildingReport.Business.Abstract
     public interface IDocumentService
     {
         List<Document> GetAllDocuments();
-
+        List<Document> GetDocumentsByBuildingId(long buildingId);
+        List<Document> GetDocumentsByUserId(long userId);
         Document GetDocumentById(long id);
 
         Document CreateDocument(Document document);

@@ -60,5 +60,13 @@ namespace arcelik_building_report_backend.Concrete
 
             }
         }
+
+        public bool UserExists(string email)
+        {
+            using (var userDbContext = new ArcelikBuildingReportDbContext())
+            {
+                return userDbContext.Users.Any(b => b.Email == email);
+            }
+        }
     }
 }

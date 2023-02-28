@@ -18,5 +18,6 @@ namespace BuildingReport.Business.Abstract
         User UpdateUser(User user);
 
         void DeleteUser(long id);
+        bool UserExists(string email);
     }
 }

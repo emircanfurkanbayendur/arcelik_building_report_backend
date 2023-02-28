@@ -14,6 +14,6 @@ namespace arcelik_building_report_backend.Abstract
 
         void DeleteUser(long id);
 
-
+        bool UserExists(string email);
     }
 }

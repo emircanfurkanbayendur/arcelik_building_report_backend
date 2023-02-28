@@ -30,6 +30,18 @@ namespace BuildingReport.API.Controllers
             return _documentService.GetDocumentById(id);
         }
 
+        [HttpGet("building/{buildingId}")]
+        public List<Document> GetDocumentsByBuildingID(long buildingId)
+        {
+            return _documentService.GetDocumentsByBuildingId(buildingId);
+        }
+
+        [HttpGet("user/{userId}")]
+        public List<Document> GetDocumentsByUserID(long userId)
+        {
+            return _documentService.GetDocumentsByUserId(userId);
+        }
+
         [HttpPost]
         public Document Post([FromBody] DocumentDTO documentdto)
         {

@@ -53,8 +53,12 @@ namespace BuildingReport.API.Controllers
 
 
         [HttpPost]
-        public User Post([FromBody] UserDTO userdto)
+        public IActionResult CreateUser([FromBody] UserDTO userdto)
         {
+            if (userdto == null)
+            {
+                return BadRequest(ModelState);
+            }
             var user = new User()
             {
                 Id = userdto.Id,
@@ -67,7 +71,15 @@ namespace BuildingReport.API.Controllers
                 RoleId = userdto.RoleId
             };
 
-            return _userService.CreateUser(user);
+            if (_userService.UserExists(user.Email))
+            {
+                ModelState.AddModelError("", "User already exists");
+                return StatusCode(422, ModelState);
+            }
+
+            _userService.CreateUser(user);
+
+            return Ok("Successfuly ctreated");
         }
 
         [HttpPut]

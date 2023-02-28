@@ -52,6 +52,22 @@ namespace BuildingReport.DataAccess.Concrete
             }
         }
 
+        public List<Document> GetDocumentsByBuildingId(long buildingId)
+        {
+            using (var documentDbContext = new ArcelikBuildingReportDbContext())
+            {
+                return documentDbContext.Documents.Where(d => d.BuildingId == buildingId).ToList();
+            }
+        }
+
+        public List<Document> GetDocumentsByUserId(long userId)
+        {
+            using (var documentDbContext = new ArcelikBuildingReportDbContext())
+            {
+                return documentDbContext.Documents.Where(d => d.UploadedByUserId == userId).ToList();
+            }
+        }
+
         public Document UpdateDocument(Document document)
         {
             using (var documentDbContext = new ArcelikBuildingReportDbContext())

@@ -31,9 +31,22 @@ namespace BuildingReport.API.Controllers
         }
 
         [HttpPost]
-        public Role Post([FromBody] Role Role)
+        public IActionResult CreateRole([FromBody] Role Role)
         {
-            return _roleService.CreateRole(Role);
+            if (Role == null)
+            {
+                return BadRequest(ModelState);
+            }
+
+            if (_roleService.RoleExists(Role.Name))
+            {
+                ModelState.AddModelError("", "Role already exists");
+                return StatusCode(422, ModelState);
+            }
+
+            _roleService.CreateRole(Role);
+
+            return Ok("Successfuly ctreated");
         }
 
         [HttpPut]

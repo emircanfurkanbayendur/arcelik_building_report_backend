@@ -48,6 +48,14 @@ namespace BuildingReport.DataAccess.Concrete
             }
         }
 
+        public bool RoleExists(string name)
+        {
+            using (var roleDbContext = new ArcelikBuildingReportDbContext())
+            {
+                return roleDbContext.Roles.Any(b => b.Name == name);
+            }
+        }
+
         public Role UpdateRole(Role role)
         {
             using (var roleDbContext = new ArcelikBuildingReportDbContext())

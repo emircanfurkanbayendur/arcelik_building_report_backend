@@ -18,5 +18,6 @@ namespace BuildingReport.Business.Abstract
         Authority UpdateAuthority(Authority authority);
 
         void DeleteAuthority(long id);
+        bool AuthorityExists(string name);
     }
 }

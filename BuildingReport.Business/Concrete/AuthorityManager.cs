@@ -19,6 +19,11 @@ namespace BuildingReport.Business.Concrete
             _authorityRepository = new AuthorityRepository();
         }
 
+        public bool AuthorityExists(string name)
+        {
+            return _authorityRepository.AuthorityExists(name);
+        }
+
         public Authority CreateAuthority(Authority authority)
         {
             return _authorityRepository.CreateAuthority(authority);

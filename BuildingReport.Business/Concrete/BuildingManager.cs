@@ -18,6 +18,12 @@ namespace BuildingReport.Business.Concrete
         {
             _buildingRepository = new BuildingRepository();
         }
+
+        public bool BuildingExists(string code, string adress)
+        {
+            return _buildingRepository.BuildingExists(code, adress);
+        }
+
         public Building CreateBuilding(Building building)
         {
             return _buildingRepository.CreateBuilding(building);
@@ -33,9 +39,24 @@ namespace BuildingReport.Business.Concrete
             return _buildingRepository.GetAllBuildings();
         }
 
+        public Building GetBuildingByAdress(string adress)
+        {
+            return _buildingRepository.GetBuildingByAdress(adress);
+        }
+
+        public Building GetBuildingByCode(string code)
+        {
+            return _buildingRepository.GetBuildingByCode(code);
+        }
+
         public Building GetBuildingById(long id)
         {
             return _buildingRepository.GetBuildingById(id);
+        }
+
+        public List<Building> GetBuildingsByUserId(long userId)
+        {
+            return _buildingRepository.GetBuildingsByUserId(userId);
         }
 
         public Building UpdateBuilding(Building building)
