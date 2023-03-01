@@ -10,6 +10,8 @@ namespace arcelik_building_report_backend.Concrete
         {
             using (var userDbContext = new ArcelikBuildingReportDbContext())
             {
+                var aa = userDbContext.Roles.Where(a => a.Id == user.RoleId).FirstOrDefault();
+                user.Role = aa;
                 userDbContext.Users.Add(user);
                 userDbContext.SaveChanges();
                 return user;

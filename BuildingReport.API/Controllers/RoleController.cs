@@ -1,11 +1,13 @@
 ﻿using BuildingReport.Business.Abstract;
 using BuildingReport.Business.Concrete;
 using BuildingReport.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BuildingReport.API.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class RoleController : ControllerBase

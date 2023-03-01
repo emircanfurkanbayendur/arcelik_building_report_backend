@@ -3,6 +3,7 @@ using BuildingReport.Business.Abstract;
 using BuildingReport.Business.Concrete;
 using BuildingReport.DTO;
 using BuildingReport.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Cryptography;
@@ -20,26 +21,36 @@ namespace BuildingReport.API.Controllers
             return hashBytes;
 
         }
-
     }
-
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class UserController : ControllerBase
     {
         private IUserService _userService;
-
-        public UserController()
+        private readonly IJWTAuthenticationService _jwtAuthenticationService;
+        public UserController(IJWTAuthenticationService jwtAuthenticationService)
         {
             _userService = new UserManager();
+            _jwtAuthenticationService = jwtAuthenticationService;   
+        }
 
+        [AllowAnonymous]
+        [HttpPost("authenticate")]
+        public IActionResult Authenticate([FromQuery] string email, [FromQuery] string password)
+        {
+            var token = _jwtAuthenticationService.Authenticate(email, password);
+            if (token == null)
+            {
+                return Unauthorized();
+            }
+            return Ok(token);
         }
 
         [HttpGet]
         public List<User> GetUsers()
         {
             return _userService.GetAllUsers();
-
         }
 
 
@@ -76,6 +87,7 @@ namespace BuildingReport.API.Controllers
                 IsActive = userdto.IsActive,
                 RoleId = userdto.RoleId
             };
+
 
             if (_userService.UserExists(user.Email))
             {
