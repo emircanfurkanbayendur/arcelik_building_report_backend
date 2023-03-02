@@ -28,10 +28,12 @@ namespace BuildingReport.API.Controllers
     public class UserController : ControllerBase
     {
         private IUserService _userService;
+        private IRoleService _roleService;
         private readonly IJWTAuthenticationService _jwtAuthenticationService;
         public UserController(IJWTAuthenticationService jwtAuthenticationService)
         {
             _userService = new UserManager();
+            _roleService = new RoleManager();
             _jwtAuthenticationService = jwtAuthenticationService;   
         }
 
@@ -39,7 +41,8 @@ namespace BuildingReport.API.Controllers
         [HttpPost("authenticate")]
         public IActionResult Authenticate([FromQuery] string email, [FromQuery] string password)
         {
-            var token = _jwtAuthenticationService.Authenticate(email, password);
+            byte[] _password = Hash.HashPassword(password);
+            var token = _jwtAuthenticationService.Authenticate(email, _password);
             if (token == null)
             {
                 return Unauthorized();
@@ -76,6 +79,8 @@ namespace BuildingReport.API.Controllers
             {
                 return BadRequest(ModelState);
             }
+
+            var roleID = _roleService.GetAllRoles().Where(r => r.Name == "guest").FirstOrDefault().Id;
             var user = new User()
             {
                 Id = userdto.Id,
@@ -85,7 +90,7 @@ namespace BuildingReport.API.Controllers
                 Password = Hash.HashPassword(userdto.Password),
                 CreatedAt = userdto.CreatedAt,
                 IsActive = userdto.IsActive,
-                RoleId = userdto.RoleId
+                RoleId = roleID,
             };
 
 
@@ -101,21 +106,40 @@ namespace BuildingReport.API.Controllers
         }
 
         [HttpPut]
-        public User Put([FromBody] UserDTO userdto)
+        public User UpdateUser([FromBody] UserDTO userdto)
         {
-            var user = new User()
+            var user = _userService.GetUserById(userdto.Id);
+            var new_user = new User()
             {
                 Id = userdto.Id,
                 FirstName = userdto.FirstName,
                 LastName = userdto.LastName,
                 Email = userdto.Email,
                 Password = Hash.HashPassword(userdto.Password),
-                CreatedAt = userdto.CreatedAt,
+                CreatedAt = user.CreatedAt,
                 IsActive = userdto.IsActive,
-                RoleId = userdto.RoleId
-
+                RoleId = user.RoleId
             };
-            return _userService.UpdateUser(user);
+            return _userService.UpdateUser(new_user);
+        }
+
+        [HttpPut("changeRole/{userId}")]
+        public User UpdateUserRole(long userId)
+        {
+            var roleID = _roleService.GetAllRoles().Where(r => r.Name == "admin").FirstOrDefault().Id;
+            var user = _userService.GetUserById(userId);
+            var new_user = new User()
+            {
+                Id = user.Id,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                Email = user.Email,
+                Password = user.Password,
+                CreatedAt = user.CreatedAt,
+                IsActive = user.IsActive,
+                RoleId = roleID
+            };
+            return _userService.UpdateUser(new_user);
         }
 
         [HttpDelete("{id}")]

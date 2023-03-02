@@ -39,12 +39,14 @@ namespace BuildingReport.API.Controllers
             return _buildingService.GetBuildingsByUserId(userId);
         }
 
+        [AllowAnonymous]
         [HttpGet("adress/{adress}")]
         public Building GetBuildingsByAdress(string adress)
         {
             return _buildingService.GetBuildingByAdress(adress);
         }
 
+        [AllowAnonymous]
         [HttpGet("code/{code}")]
         public Building GetBuildingsByCode(string code)
         {

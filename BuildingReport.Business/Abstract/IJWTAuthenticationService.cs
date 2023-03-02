@@ -8,7 +8,7 @@ namespace BuildingReport.Business.Abstract
 {
     public interface IJWTAuthenticationService
     {
-        string Authenticate(string email, string password);
+        string Authenticate(string email, byte[] password);
     }
 
 

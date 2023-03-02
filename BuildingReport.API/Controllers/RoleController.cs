@@ -32,6 +32,7 @@ namespace BuildingReport.API.Controllers
             return _roleService.GetRoleById(id);
         }
 
+        [AllowAnonymous]
         [HttpPost]
         public IActionResult CreateRole([FromBody] Role Role)
         {
