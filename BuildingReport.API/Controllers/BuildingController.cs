@@ -51,6 +51,24 @@ namespace BuildingReport.API.Controllers
             return _buildingService.GetBuildingByCode(code);
         }
 
+        [HttpGet("city/{city}")]
+        public List<Building> GetBuildingsByCity(string city)
+        {
+            return _buildingService.GetBuildingByCity(city);
+        }
+
+        [HttpGet("district/{district}")]
+        public List<Building> GetBuildingsByDistrict(string district)
+        {
+            return _buildingService.GetBuildingByDistrict(district);
+        }
+
+        [HttpGet("neighbourhood/{neighbourhood}")]
+        public List<Building> GetBuildingsByNeighbourhood(string neighbourhood)
+        {
+            return _buildingService.GetBuildingByNeighbourhood(neighbourhood);
+        }
+
         [HttpPost]
         public IActionResult CreateBuilding([FromBody] BuildingDTO buildingdto) 
         {
@@ -64,6 +82,9 @@ namespace BuildingReport.API.Controllers
                 Id = buildingdto.Id,
                 Name = buildingdto.Name,
                 Adress = buildingdto.Adress,
+                City = buildingdto.City,
+                District = buildingdto.District,
+                Neighbourhood = buildingdto.Neighbourhood,
                 Code = buildingdto.Code,
                 Latitude = buildingdto.Latitude,
                 Longitude = buildingdto.Longitude,
@@ -80,7 +101,7 @@ namespace BuildingReport.API.Controllers
 
             _buildingService.CreateBuilding(building);
 
-            return Ok("Successfuly ctreated");
+            return Ok("Successfuly created");
         }
 
         [HttpPut]

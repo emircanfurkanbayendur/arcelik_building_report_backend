@@ -39,6 +39,18 @@ namespace BuildingReport.Business.Concrete
             return _buildingRepository.GetAllBuildings();
         }
 
+        public List<Building> GetBuildingByCity(string city)
+        {
+            return _buildingRepository.GetBuildingByCity(city);
+        }
+        public List<Building> GetBuildingByDistrict(string district)
+        {
+            return _buildingRepository.GetBuildingByDistrict(district);
+        }
+        public List<Building> GetBuildingByNeighbourhood(string neighbourhood)
+        {
+            return _buildingRepository.GetBuildingByNeighbourhood(neighbourhood);
+        }
         public Building GetBuildingByAdress(string adress)
         {
             return _buildingRepository.GetBuildingByAdress(adress);

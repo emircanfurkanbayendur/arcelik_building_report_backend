@@ -60,6 +60,31 @@ namespace BuildingReport.DataAccess.Concrete
             }
         }
 
+        public List<Building> GetBuildingByCity(string city)
+        {
+            using (var buildingDbContext = new ArcelikBuildingReportDbContext())
+            {
+                return buildingDbContext.Buildings.Where(b => b.City == city).ToList();
+            }
+        }
+
+        public List<Building> GetBuildingByDistrict(string district)
+        {
+            using (var buildingDbContext = new ArcelikBuildingReportDbContext())
+            {
+                return buildingDbContext.Buildings.Where(b => b.District == district).ToList();
+            }
+        }
+
+        public List<Building> GetBuildingByNeighbourhood(string neighbourhood)
+        {
+            using (var buildingDbContext = new ArcelikBuildingReportDbContext())
+            {
+                return buildingDbContext.Buildings.Where(b => b.Neighbourhood == neighbourhood).ToList();
+            }
+        }
+
+
         public Building GetBuildingByCode(string code)
         {
             using (var buildingDbContext = new ArcelikBuildingReportDbContext())

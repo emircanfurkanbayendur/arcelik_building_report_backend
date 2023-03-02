@@ -68,7 +68,7 @@ namespace BuildingReport.API.Controllers
 
         }
 
-
+        [AllowAnonymous]
         [HttpPost]
         public IActionResult CreateUser([FromBody] UserDTO userdto)
         {

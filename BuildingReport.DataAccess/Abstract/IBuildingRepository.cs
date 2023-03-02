@@ -11,6 +11,9 @@ namespace BuildingReport.DataAccess.Abstract
     {
         List<Building> GetAllBuildings();
         List<Building> GetBuildingsByUserId(long userId);
+        List<Building> GetBuildingByCity(string city);
+        List<Building> GetBuildingByDistrict(string district);
+        List<Building> GetBuildingByNeighbourhood(string neighbourhood);
         Building GetBuildingByAdress(string adress);
         Building GetBuildingByCode(string code);
         Building GetBuildingById(long id);

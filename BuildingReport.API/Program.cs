@@ -1,5 +1,7 @@
 using BuildingReport.Business.Abstract;
 using BuildingReport.Business.Concrete;
+using BuildingReport.DataAccess;
+using BuildingReport.DataAcess;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -64,6 +66,22 @@ builder.Services.AddSwaggerGen(c =>
 
 });
 
+//Registering DbContext
+builder.Services.AddDbContext<ArcelikBuildingReportDbContext>();
+var myAllowSpesificOrigins = "_myAllowSpesificOrigins";
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: myAllowSpesificOrigins,
+    policy =>
+    {
+        policy.WithOrigins("http://localhost:3000")
+    .AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin();
+    });
+});
+builder.Services.AddControllers(
+options => options.SuppressImplicitRequiredAttributeForNonNullableReferenceTypes = true);
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -78,5 +96,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.UseCors(myAllowSpesificOrigins);
 
 app.Run();
