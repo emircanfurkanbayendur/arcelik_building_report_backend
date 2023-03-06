@@ -16,7 +16,9 @@ namespace BuildingReport.DTO
         public string District { get; set; } = null!;
         public string Neighbourhood { get; set; } = null!;
 
-        public string Adress { get; set; } = null!;
+        public string Street { get; set; } = null!;
+
+        public int BuildingNumber { get; set; }
 
         public string Code { get; set; } = null!;
 

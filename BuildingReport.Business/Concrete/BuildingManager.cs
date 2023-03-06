@@ -19,9 +19,9 @@ namespace BuildingReport.Business.Concrete
             _buildingRepository = new BuildingRepository();
         }
 
-        public bool BuildingExists(string code, string adress)
+        public bool BuildingExists(string code)
         {
-            return _buildingRepository.BuildingExists(code, adress);
+            return _buildingRepository.BuildingExists(code);
         }
 
         public Building CreateBuilding(Building building)
@@ -51,9 +51,10 @@ namespace BuildingReport.Business.Concrete
         {
             return _buildingRepository.GetBuildingByNeighbourhood(neighbourhood);
         }
-        public Building GetBuildingByAdress(string adress)
+
+        public List<Building> GetBuildingByStreet(string street)
         {
-            return _buildingRepository.GetBuildingByAdress(adress);
+            return _buildingRepository.GetBuildingByStreet(street);
         }
 
         public Building GetBuildingByCode(string code)

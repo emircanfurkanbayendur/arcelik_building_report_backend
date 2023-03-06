@@ -47,9 +47,14 @@ namespace arcelik_building_report_backend.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
-                    b.Property<string>("Adress")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Street")
+                    .IsRequired()
+                    .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("BuildingNumber")
+                    .IsRequired()
+                    .HasColumnType("int");
 
                     b.Property<string>("City")
                         .IsRequired()

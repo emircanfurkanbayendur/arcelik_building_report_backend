@@ -39,12 +39,6 @@ namespace BuildingReport.API.Controllers
             return _buildingService.GetBuildingsByUserId(userId);
         }
 
-        [AllowAnonymous]
-        [HttpGet("adress/{adress}")]
-        public Building GetBuildingsByAdress(string adress)
-        {
-            return _buildingService.GetBuildingByAdress(adress);
-        }
 
         [AllowAnonymous]
         [HttpGet("code/{code}")]
@@ -71,6 +65,12 @@ namespace BuildingReport.API.Controllers
             return _buildingService.GetBuildingByNeighbourhood(neighbourhood);
         }
 
+        [HttpGet("street/{street}")]
+        public List<Building> GetBuildingsByStreet(string street)
+        {
+            return _buildingService.GetBuildingByStreet(street);
+        }
+
         [HttpPost]
         public IActionResult CreateBuilding([FromBody] BuildingDTO buildingdto) 
         {
@@ -83,10 +83,11 @@ namespace BuildingReport.API.Controllers
             {
                 Id = buildingdto.Id,
                 Name = buildingdto.Name,
-                Adress = buildingdto.Adress,
                 City = buildingdto.City,
                 District = buildingdto.District,
                 Neighbourhood = buildingdto.Neighbourhood,
+                Street = buildingdto.Street,
+                BuildingNumber = buildingdto.BuildingNumber,
                 Code = buildingdto.Code,
                 Latitude = buildingdto.Latitude,
                 Longitude = buildingdto.Longitude,
@@ -95,7 +96,7 @@ namespace BuildingReport.API.Controllers
                 CreatedByUserId = buildingdto.CreatedByUserId
             };
 
-            if(_buildingService.BuildingExists(building.Code, building.Adress))
+            if(_buildingService.BuildingExists(building.Code))
             {
                 ModelState.AddModelError("", "Building already exists");
                 return StatusCode(422, ModelState);
@@ -113,7 +114,11 @@ namespace BuildingReport.API.Controllers
             {
                 Id = buildingdto.Id,
                 Name = buildingdto.Name,
-                Adress = buildingdto.Adress,
+                City = buildingdto.City,
+                District = buildingdto.District,
+                Neighbourhood = buildingdto.Neighbourhood,
+                Street = buildingdto.Street,
+                BuildingNumber = buildingdto.BuildingNumber,
                 Code = buildingdto.Code,
                 Latitude = buildingdto.Latitude,
                 Longitude = buildingdto.Longitude,
