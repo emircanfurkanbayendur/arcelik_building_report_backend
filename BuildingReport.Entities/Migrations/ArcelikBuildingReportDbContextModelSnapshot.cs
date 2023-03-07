@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace arcelik_building_report_backend.Migrations
+namespace BuildingReport.Entities.Migrations
 {
     [DbContext(typeof(ArcelikBuildingReportDbContext))]
     partial class ArcelikBuildingReportDbContextModelSnapshot : ModelSnapshot
@@ -47,14 +47,8 @@ namespace arcelik_building_report_backend.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
-
-                    b.Property<string>("Street")
-                    .IsRequired()
-                    .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("BuildingNumber")
-                    .IsRequired()
-                    .HasColumnType("int");
+                    b.Property<int?>("BuildingNumber")
+                        .HasColumnType("int");
 
                     b.Property<string>("City")
                         .IsRequired()
@@ -91,6 +85,10 @@ namespace arcelik_building_report_backend.Migrations
 
                     b.Property<DateTime>("RegisteredAt")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("Street")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -204,6 +202,9 @@ namespace arcelik_building_report_backend.Migrations
 
                     b.Property<long>("RoleId")
                         .HasColumnType("bigint");
+
+                    b.Property<string>("Token")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 

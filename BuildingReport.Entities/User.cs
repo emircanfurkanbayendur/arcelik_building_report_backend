@@ -20,6 +20,7 @@ public partial class User
     public bool? IsActive { get; set; }
 
     public long RoleId { get; set; }
+    public string? Token { get; set; }
 
     public virtual ICollection<Building> Buildings { get; } = new List<Building>();
 

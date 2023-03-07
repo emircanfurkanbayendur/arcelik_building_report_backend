@@ -39,15 +39,18 @@ namespace BuildingReport.API.Controllers
 
         [AllowAnonymous]
         [HttpPost("authenticate")]
-        public IActionResult Authenticate([FromQuery] string email, [FromQuery] string password)
+        public IActionResult Authenticate([FromBody] LoginDto loginDto)
         {
-            byte[] _password = Hash.HashPassword(password);
-            var token = _jwtAuthenticationService.Authenticate(email, _password);
+            byte[] _password = Hash.HashPassword(loginDto.Password);
+            var token = _jwtAuthenticationService.Authenticate(loginDto.Email, _password);
             if (token == null)
             {
                 return Unauthorized();
             }
-            return Ok(token);
+            var user = _userService.GetAllUsers().Where(u => u.Email == loginDto.Email && u.Password.SequenceEqual(_password)).FirstOrDefault();
+            user.Token = token;
+            _userService.UpdateUser(user);
+            return Ok(user);
         }
 
         [HttpGet]

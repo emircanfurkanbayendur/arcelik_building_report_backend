@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace arcelik_building_report_backend.Migrations
+namespace BuildingReport.Entities.Migrations
 {
     /// <inheritdoc />
     public partial class migfirst : Migration
@@ -41,7 +41,8 @@ namespace arcelik_building_report_backend.Migrations
                 name: "RoleAuthorities",
                 columns: table => new
                 {
-                    Id = table.Column<long>(type:"bigint", nullable: false).Annotation("SqlServer:Identity","1, 1"),
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     RoleId = table.Column<long>(type: "bigint", nullable: false),
                     AuthorityId = table.Column<long>(type: "bigint", nullable: false)
                 },
@@ -74,7 +75,8 @@ namespace arcelik_building_report_backend.Migrations
                     Password = table.Column<byte[]>(type: "varbinary(max)", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     IsActive = table.Column<bool>(type: "bit", nullable: true),
-                    RoleId = table.Column<long>(type: "bigint", nullable: false)
+                    RoleId = table.Column<long>(type: "bigint", nullable: false),
+                    Token = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -98,7 +100,7 @@ namespace arcelik_building_report_backend.Migrations
                     District = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Neighbourhood = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Street = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    BuildingNumber = table.Column<int>(type: "int", nullable: false),
+                    BuildingNumber = table.Column<int>(type: "int", nullable: true),
                     Code = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Latitude = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Longitude = table.Column<string>(type: "nvarchar(max)", nullable: false),
