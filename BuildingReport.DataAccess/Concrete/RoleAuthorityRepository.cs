@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 
 namespace BuildingReport.DataAccess.Concrete
 {
@@ -15,9 +16,12 @@ namespace BuildingReport.DataAccess.Concrete
         {
             using (var roleAuthorityDbContext = new ArcelikBuildingReportDbContext())
             {
+                //roleAuthorityDbContext.Entry(roleAuthority.Role).State = EntityState.Unchanged;
+                //roleAuthorityDbContext.Entry(roleAuthority.Authority).State = EntityState.Unchanged;
+
                 roleAuthorityDbContext.RoleAuthorities.Add(roleAuthority);
                 roleAuthorityDbContext.SaveChanges();
-                return roleAuthority;
+                return GetRoleAuthorityById(roleAuthority.Id);
             }
         }
 
@@ -36,7 +40,12 @@ namespace BuildingReport.DataAccess.Concrete
         {
             using(var roleAuthorityDbContext = new ArcelikBuildingReportDbContext())
             {
-                return roleAuthorityDbContext.RoleAuthorities.ToList();
+                List<RoleAuthority> ra = roleAuthorityDbContext.RoleAuthorities.Include(x => x.Role).Include(x => x.Authority).ToList();
+
+                //return roleAuthorityDbContext.RoleAuthorities.ToList();
+
+                return ra;
+
             }
         }
 
@@ -46,7 +55,14 @@ namespace BuildingReport.DataAccess.Concrete
         {
             using (var roleAuthorityDbContext = new ArcelikBuildingReportDbContext())
             {
-                return roleAuthorityDbContext.RoleAuthorities.Find(id);
+                RoleAuthority ra = roleAuthorityDbContext
+                    .RoleAuthorities.Include(x => x.Role).Include(x => x.Authority).First(s => s.Id == id);
+
+                //return roleAuthorityDbContext.RoleAuthorities.Find(id);
+
+                return ra;
+
+                
 
             }
         }
@@ -57,7 +73,7 @@ namespace BuildingReport.DataAccess.Concrete
             {
                 roleAuthorityDbContext.RoleAuthorities.Update(roleAuthority);
                 roleAuthorityDbContext.SaveChanges();
-                return roleAuthority;
+                return GetRoleAuthorityById(roleAuthority.Id);
 
             }
         }

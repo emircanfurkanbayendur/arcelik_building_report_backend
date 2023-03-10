@@ -1,9 +1,11 @@
 ﻿using BuildingReport.DataAccess.Abstract;
 using BuildingReport.DataAcess;
 using BuildingReport.Entities;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -17,7 +19,7 @@ namespace BuildingReport.DataAccess.Concrete
             {
                 roleDbContext.Roles.Add(role);
                 roleDbContext.SaveChanges();
-                return role;
+                return GetRoleById(role.Id);
             }
         }
 
@@ -36,7 +38,9 @@ namespace BuildingReport.DataAccess.Concrete
         {
             using (var roleDbContext = new ArcelikBuildingReportDbContext())
             {
-                return roleDbContext.Roles.ToList();
+                List<Role> role = roleDbContext.Roles.Include(x => x.Users).ToList();
+                //return roleDbContext.Roles.ToList();
+                return role;
             }
         }
 
@@ -44,7 +48,9 @@ namespace BuildingReport.DataAccess.Concrete
         {
             using (var roleDbContext = new ArcelikBuildingReportDbContext())
             {
-                return roleDbContext.Roles.Find(id);
+                Role role = roleDbContext.Roles.Include(x => x.Users).First(s => s.Id == id);
+                //return roleDbContext.Roles.Find(id);
+                return role;
             }
         }
 
@@ -62,7 +68,7 @@ namespace BuildingReport.DataAccess.Concrete
             {
                 roleDbContext.Roles.Update(role);
                 roleDbContext.SaveChanges();
-                return role;
+                return GetRoleById(role.Id);
             }
         }
     }

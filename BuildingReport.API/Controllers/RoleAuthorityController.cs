@@ -13,38 +13,48 @@ namespace BuildingReport.API.Controllers
     [ApiController]
     public class RoleAuthorityController : ControllerBase
     {
-        private IRoleAuthorityService _authorityService;
+        private IRoleAuthorityService _RoleAuthorityService;
+        //private IRoleService _roleService;
+        //private IAuthorityService _authorityService;
 
         public RoleAuthorityController()
         {
-            _authorityService = new RoleAuthorityManager();
+            _RoleAuthorityService = new RoleAuthorityManager();
+            //_roleService = new RoleManager();
+            //_authorityService = new AuthorityManager();
+            
         }
 
         [HttpGet]
         public List<RoleAuthority> GetRoleAuthorities()
         {
-            return _authorityService.GetAllRoleAuthorities();
+            return _RoleAuthorityService.GetAllRoleAuthorities();
         }
 
         [HttpGet("{id}")]
         public RoleAuthority GetRoleAuthorities(long id)
         {
-            return _authorityService.GetRoleAuthorityById(id);
+            return _RoleAuthorityService.GetRoleAuthorityById(id);
         }
 
         [HttpPost]
         public RoleAuthority Post([FromBody] RoleAuthorityDTO roleauthoritydto)
         {
+            //Role role = _roleService.GetRoleById(roleauthoritydto.RoleId);
+            //Authority authority = _authorityService.GetAuthorityById(roleauthoritydto.AuthorityId);
             var roleauthority = new RoleAuthority()
             {
                 Id = roleauthoritydto.Id,
                 RoleId = roleauthoritydto.RoleId,
-                AuthorityId = roleauthoritydto.AuthorityId
+                AuthorityId = roleauthoritydto.AuthorityId,
+
+                //Role = role,
+                //Authority = authority
 
             };
 
 
-            return _authorityService.CreateRoleAuthority(roleauthority);
+            return _RoleAuthorityService.CreateRoleAuthority(roleauthority);
         }
 
         [HttpPut]
@@ -58,14 +68,15 @@ namespace BuildingReport.API.Controllers
 
             };
 
-            return _authorityService.UpdateRoleAuthority(roleauthority);
+            return _RoleAuthorityService.UpdateRoleAuthority(roleauthority);
         }
 
         [HttpDelete("{id}")]
         public void Delete(long id)
         {
-            _authorityService.DeleteRoleAuthority(id);
+            _RoleAuthorityService.DeleteRoleAuthority(id);
         }
+
 
     }
 }

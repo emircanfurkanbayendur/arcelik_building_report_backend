@@ -1,6 +1,7 @@
 ﻿using BuildingReport.DataAccess.Abstract;
 using BuildingReport.DataAcess;
 using BuildingReport.Entities;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,7 +18,7 @@ namespace BuildingReport.DataAccess.Concrete
             {
                 documentDbContext.Documents.Add(document);
                 documentDbContext.SaveChanges();
-                return document;
+                return GetDocumentById(document.Id);
             }
         }
 
@@ -40,7 +41,10 @@ namespace BuildingReport.DataAccess.Concrete
         {
             using(var documentDbContext = new ArcelikBuildingReportDbContext())
             {
-                return documentDbContext.Documents.ToList();
+                List<Document> documents = documentDbContext.Documents.Include(x => x.Building).Include(x => x.UploadedByUser).ToList();
+                return documents;
+
+                //return documentDbContext.Documents.ToList();
             }
         }
 
@@ -48,7 +52,10 @@ namespace BuildingReport.DataAccess.Concrete
         {
             using (var documentDbContext = new ArcelikBuildingReportDbContext())
             {
-                return documentDbContext.Documents.Find(id);
+                Document document = documentDbContext
+                    .Documents.Include(x => x.Building).Include(x => x.UploadedByUser).First(s => s.Id == id);
+                return document;
+                //return documentDbContext.Documents.Find(id);
             }
         }
 
@@ -56,7 +63,11 @@ namespace BuildingReport.DataAccess.Concrete
         {
             using (var documentDbContext = new ArcelikBuildingReportDbContext())
             {
-                return documentDbContext.Documents.Where(d => d.BuildingId == buildingId).ToList();
+                List<Document> documents = documentDbContext
+                    .Documents.Include(x => x.Building).Include(x => x.UploadedByUser).Where(s => s.BuildingId == buildingId).ToList();
+                return documents;
+
+                //return documentDbContext.Documents.Where(d => d.BuildingId == buildingId).ToList();
             }
         }
 
@@ -64,7 +75,9 @@ namespace BuildingReport.DataAccess.Concrete
         {
             using (var documentDbContext = new ArcelikBuildingReportDbContext())
             {
-                return documentDbContext.Documents.Where(d => d.UploadedByUserId == userId).ToList();
+                List<Document> documents = documentDbContext
+                    .Documents.Include(x => x.Building).Include(x => x.UploadedByUser).Where(s => s.UploadedByUserId == userId).ToList();
+                return documents;
             }
         }
 
@@ -74,7 +87,7 @@ namespace BuildingReport.DataAccess.Concrete
             {
                 documentDbContext.Documents.Update(document);
                 documentDbContext.SaveChanges();
-                return document;
+                return GetDocumentById(document.Id);
             }
         }
     }

@@ -1,6 +1,7 @@
 ﻿using arcelik_building_report_backend.Abstract;
 using BuildingReport.DataAcess;
 using BuildingReport.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace arcelik_building_report_backend.Concrete
 {
@@ -14,7 +15,7 @@ namespace arcelik_building_report_backend.Concrete
                 user.Role = aa;
                 userDbContext.Users.Add(user);
                 userDbContext.SaveChanges();
-                return user;
+                return GetUserById(user.Id);
 
             }
         }
@@ -38,7 +39,11 @@ namespace arcelik_building_report_backend.Concrete
         {
             using (var userDbContext = new ArcelikBuildingReportDbContext())
             {
-                return userDbContext.Users.ToList();
+                List<User> users = userDbContext.Users
+                    .Include(x => x.Role).Include(x => x.Buildings).Include(x => x.Documents).ToList();
+                //return userDbContext.Users.ToList();
+
+                return users;
 
             }
         }
@@ -47,7 +52,11 @@ namespace arcelik_building_report_backend.Concrete
         {
             using (var userDbContext = new ArcelikBuildingReportDbContext())
             {
-                return userDbContext.Users.Find(id);
+                User user = userDbContext.Users.Include(x => x.Role).Include(x => x.Buildings).Include(x => x.Documents).First(s => s.Id == id);
+
+
+                //return userDbContext.Users.Find(id);
+                return user;
 
             }
         }
@@ -56,7 +65,7 @@ namespace arcelik_building_report_backend.Concrete
         {
             using (var userDbContext = new ArcelikBuildingReportDbContext())
             {
-                return userDbContext.Users.Where(b => b.RoleId == roleId).ToList();
+                return userDbContext.Users.Include(x => x.Role).Include(x => x.Buildings).Include(x => x.Documents).Where(b => b.RoleId == roleId).ToList();
             }
         }
 
@@ -66,7 +75,7 @@ namespace arcelik_building_report_backend.Concrete
             {
                 userDbContext.Users.Update(user);
                 userDbContext.SaveChanges();
-                return user;
+                return GetUserById(user.Id);
 
             }
         }
