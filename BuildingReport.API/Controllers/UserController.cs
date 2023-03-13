@@ -50,7 +50,13 @@ namespace BuildingReport.API.Controllers
             var user = _userService.GetAllUsers().Where(u => u.Email == loginDto.Email && u.Password.SequenceEqual(_password)).FirstOrDefault();
             user.Token = token;
             _userService.UpdateUser(user);
-            return Ok(user);
+
+            User returnuser = user;
+            List<User> emptylist = new List<User>();
+            returnuser.Role.Users = emptylist;
+
+
+            return Ok(returnuser);
         }
 
         [HttpGet]
