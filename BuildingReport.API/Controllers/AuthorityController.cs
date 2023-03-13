@@ -48,7 +48,7 @@ namespace BuildingReport.API.Controllers
 
             _authorityService.CreateAuthority(authority);
 
-            return Ok("Successfuly ctreated");
+            return Ok(authority);
         }
 
         [HttpPut]

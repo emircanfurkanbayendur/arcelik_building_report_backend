@@ -104,7 +104,7 @@ namespace BuildingReport.API.Controllers
 
             _buildingService.CreateBuilding(building);
 
-            return Ok("Successfuly created");
+            return Ok(building);
         }
 
         [HttpPut]

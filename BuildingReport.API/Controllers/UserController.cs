@@ -111,7 +111,7 @@ namespace BuildingReport.API.Controllers
 
             _userService.CreateUser(user);
 
-            return Ok("Successfuly ctreated");
+            return Ok(user);
         }
 
         [HttpPut]
