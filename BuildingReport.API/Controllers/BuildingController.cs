@@ -104,7 +104,8 @@ namespace BuildingReport.API.Controllers
 
             _buildingService.CreateBuilding(building);
 
-            return Ok(building);
+            
+            return Ok(_buildingService.GetBuildingById(building.Id));
         }
 
         [HttpPut]
