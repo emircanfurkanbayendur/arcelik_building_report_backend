@@ -20,24 +20,28 @@ namespace BuildingReport.API.Controllers
             _documentService = new DocumentManager();
         }
 
+        [AllowAnonymous]
         [HttpGet]
         public List<Document> GetDocuments()
         {
             return _documentService.GetAllDocuments();
         }
 
+        [AllowAnonymous]
         [HttpGet("{id}")]
         public Document GetDocuments(long id)
         {
             return _documentService.GetDocumentById(id);
         }
 
+        [AllowAnonymous]
         [HttpGet("building/{buildingId}")]
         public List<Document> GetDocumentsByBuildingID(long buildingId)
         {
             return _documentService.GetDocumentsByBuildingId(buildingId);
         }
 
+        [AllowAnonymous]
         [HttpGet("user/{userId}")]
         public List<Document> GetDocumentsByUserID(long userId)
         {

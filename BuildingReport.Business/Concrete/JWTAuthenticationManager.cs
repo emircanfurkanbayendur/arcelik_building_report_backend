@@ -54,7 +54,7 @@ namespace BuildingReport.Business.Concrete
                 {
                     new Claim(ClaimTypes.Email, email)
                 }),
-                Expires = DateTime.Now.AddHours(1),
+                Expires = DateTime.Now.AddDays(1),
                 SigningCredentials = new SigningCredentials(
                     new SymmetricSecurityKey(tokenKey),SecurityAlgorithms.HmacSha256Signature)
             };

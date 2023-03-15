@@ -21,18 +21,21 @@ namespace BuildingReport.API.Controllers
             _buildingService = new BuildingManager();
         }
 
+
         [HttpGet]
         public List<Building> GetBuildings()
         {
             return _buildingService.GetAllBuildings();
         }
 
+        [AllowAnonymous]
         [HttpGet("{id}")]
         public Building GetBuildings(long id)
         {
             return _buildingService.GetBuildingById(id);
         }
 
+        [AllowAnonymous]
         [HttpGet("user/{userId}")]
         public List<Building> GetBuildingsByUserId(long userId)
         {
@@ -47,24 +50,27 @@ namespace BuildingReport.API.Controllers
             return _buildingService.GetBuildingByCode(code);
         }
 
+        [AllowAnonymous]
         [HttpGet("city/{city}")]
         public List<Building> GetBuildingsByCity(string city)
         {
             return _buildingService.GetBuildingByCity(city);
         }
 
+        [AllowAnonymous]
         [HttpGet("district/{district}")]
         public List<Building> GetBuildingsByDistrict(string district)
         {
             return _buildingService.GetBuildingByDistrict(district);
         }
-
+        [AllowAnonymous]
         [HttpGet("neighbourhood/{neighbourhood}")]
         public List<Building> GetBuildingsByNeighbourhood(string neighbourhood)
         {
             return _buildingService.GetBuildingByNeighbourhood(neighbourhood);
         }
 
+        [AllowAnonymous]
         [HttpGet("street/{street}")]
         public List<Building> GetBuildingsByStreet(string street)
         {

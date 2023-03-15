@@ -114,6 +114,7 @@ namespace BuildingReport.API.Controllers
             return Ok(_userService.GetUserById(user.Id));
         }
 
+        [AllowAnonymous]
         [HttpPut]
         public User UpdateUser([FromBody] UserDTO userdto)
         {
@@ -151,6 +152,7 @@ namespace BuildingReport.API.Controllers
             return _userService.UpdateUser(new_user);
         }
 
+        [AllowAnonymous]
         [HttpDelete("{id}")]
         public void Delete(long id)
         {
