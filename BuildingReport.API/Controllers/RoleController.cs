@@ -49,7 +49,7 @@ namespace BuildingReport.API.Controllers
 
             _roleService.CreateRole(Role);
 
-            return Ok(_roleService.GetRoleById(Role.Id));
+            return Ok(Role);
         }
 
         [HttpPut]

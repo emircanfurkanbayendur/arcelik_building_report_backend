@@ -111,7 +111,7 @@ namespace BuildingReport.API.Controllers
 
             _userService.CreateUser(user);
 
-            return Ok(_userService.GetUserById(user.Id));
+            return Ok(user);
         }
 
         [AllowAnonymous]

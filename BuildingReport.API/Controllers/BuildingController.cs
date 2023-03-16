@@ -110,8 +110,7 @@ namespace BuildingReport.API.Controllers
 
             _buildingService.CreateBuilding(building);
 
-            
-            return Ok(_buildingService.GetBuildingById(building.Id));
+            return Ok(building);
         }
 
         [HttpPut]
