@@ -1,5 +1,6 @@
 ﻿using BuildingReport.Business.Abstract;
 using BuildingReport.Business.Concrete;
+using BuildingReport.DTO;
 using BuildingReport.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -34,22 +35,27 @@ namespace BuildingReport.API.Controllers
 
         [AllowAnonymous]
         [HttpPost]
-        public IActionResult CreateRole([FromBody] Role Role)
+        public IActionResult CreateRole([FromBody] RoleDTO roleDTO)
         {
-            if (Role == null)
+            Role role = new Role()
+            {
+                Id = roleDTO.Id,
+                Name = roleDTO.Name,
+            };
+            if (role == null)
             {
                 return BadRequest(ModelState);
             }
 
-            if (_roleService.RoleExists(Role.Name))
+            if (_roleService.RoleExists(role.Name))
             {
                 ModelState.AddModelError("", "Role already exists");
                 return StatusCode(422, ModelState);
             }
 
-            _roleService.CreateRole(Role);
+            _roleService.CreateRole(role);
 
-            return Ok(Role);
+            return Ok(role);
         }
 
         [HttpPut]
