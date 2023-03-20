@@ -118,6 +118,12 @@ namespace BuildingReport.API.Controllers
                 return BadRequest(ModelState);
             }
 
+            if (_userService.UserExists(userdto.Email))
+            {
+                ModelState.AddModelError("", "User already exists");
+                return StatusCode(422, ModelState);
+            }
+
             var roleID = _roleService.GetAllRoles().Where(r => r.Name == "guest").FirstOrDefault().Id;
             var user = new User()
             {
@@ -132,11 +138,7 @@ namespace BuildingReport.API.Controllers
             };
 
 
-            if (_userService.UserExists(user.Email))
-            {
-                ModelState.AddModelError("", "User already exists");
-                return StatusCode(422, ModelState);
-            }
+
 
             _userService.CreateUser(user);
 
@@ -147,6 +149,9 @@ namespace BuildingReport.API.Controllers
         [HttpPut]
         public IActionResult UpdateUser([FromBody] UserDTO userdto)
         {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
             var user = _userService.GetUserById(userdto.Id);
             var new_user = new User()
             {
@@ -159,8 +164,7 @@ namespace BuildingReport.API.Controllers
                 IsActive = userdto.IsActive,
                 RoleId = user.RoleId
             };
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+
 
             return Ok(_userService.UpdateUser(new_user));
         }

@@ -168,5 +168,179 @@ namespace BuildingReport.UnitTests
 
         }
 
+
+        [Test]
+        public void GetRoles_WithInvalidModelState_ReturnsBadRequest()
+        {
+            //arrange
+            _userController.ModelState.AddModelError("Test", "InvalidModelError");
+
+
+            //action
+            IActionResult result = _userController.GetUsers();
+
+
+
+            //assert
+            Assert.IsInstanceOf<BadRequestObjectResult>(result);
+        }
+
+        [Test]
+        public void GetRoles_WithValidModelState_ReturnsOK()
+        {
+            //arrange
+
+
+            //action
+            IActionResult result = _userController.GetUsers();
+
+
+
+            //assert
+            Assert.IsInstanceOf<OkObjectResult>(result);
+        }
+
+        [Test]
+        public void GetRolesWithID_WithInvalidModelState_ReturnsBadRequest()
+        {
+            //arrange
+            _userController.ModelState.AddModelError("Test", "InvalidModelError");
+
+
+            //action
+            IActionResult result = _userController.GetUsers();
+
+
+
+            //assert
+            Assert.IsInstanceOf<BadRequestObjectResult>(result);
+        }
+
+        [Test]
+        public void GetRolesWithID_WithValidModelState_ReturnsOK()
+        {
+            //arrange
+            User user = new User()
+            {
+                Id = 1,
+                FirstName = "Test",
+
+            };
+
+            _userServiceMock.Setup(i => i.GetUserById(1)).Returns(user);
+
+            //action
+            IActionResult result = _userController.GetUsers();
+
+
+
+            //assert
+            Assert.IsInstanceOf<OkObjectResult>(result);
+        }
+
+        [Test]
+        public void UpdateRole_WithInvalidModelState_ReturnsBadRequest()
+        {
+            //arrange
+            UserDTO userDTO = new UserDTO()
+            {
+                FirstName = "Test",
+                LastName = "Test",
+                Email = "TestMail",
+                Password = "password"
+
+            };
+
+
+            _userController.ModelState.AddModelError("Test", "InvalidModelError");
+
+
+            //action
+            IActionResult result = _userController.UpdateUser(userDTO);
+
+
+
+            //assert
+            Assert.IsInstanceOf<BadRequestObjectResult>(result);
+        }
+
+        [Test]
+        public void UpdateRole_WithValidModelState_ReturnsOK()
+        {
+            //arrange
+            UserDTO userDTO = new UserDTO()
+            {
+                Id = 1,
+                FirstName = "Test",
+                Password = "password"
+
+            };
+
+            User user = new User()
+            {
+                Id = 1,
+                FirstName = "Test",
+                Password = Hash.HashPassword("password"),
+
+            };
+
+
+            _userServiceMock.Setup(i => i.GetUserById(1)).Returns(user);
+            _userServiceMock.Setup(i => i.UpdateUser(user)).Returns(user);
+
+            //action
+            IActionResult result = _userController.UpdateUser(userDTO);
+
+
+
+            //assert
+            Assert.IsInstanceOf<OkObjectResult>(result);
+        }
+
+
+        [Test]
+        public void Delete_WithInvalidModelState_ReturnsBadRequest()
+        {
+            //arrange
+            User user = new User()
+            {
+                Id = 1,
+                FirstName = "Test",
+
+            };
+            _userController.ModelState.AddModelError("Test", "InvalidModelError");
+
+
+            //action
+            IActionResult result = _userController.Delete(1);
+
+
+
+            //assert
+            Assert.IsInstanceOf<BadRequestObjectResult>(result);
+        }
+
+        [Test]
+        public void DeleteRole_WithValidModelState_ReturnsOK()
+        {
+            //arrange
+            User user = new User()
+            {
+                Id = 1,
+                FirstName = "Test",
+
+            };
+
+
+
+            //action
+            IActionResult result = _userController.Delete(user.Id);
+
+
+
+            //assert
+            Assert.IsInstanceOf<NoContentResult>(result);
+        }
+
     }
 }
