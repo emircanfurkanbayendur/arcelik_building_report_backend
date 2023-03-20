@@ -75,8 +75,7 @@ namespace BuildingReport.Entities.Migrations
                     Password = table.Column<byte[]>(type: "varbinary(max)", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     IsActive = table.Column<bool>(type: "bit", nullable: true),
-                    RoleId = table.Column<long>(type: "bigint", nullable: false),
-                    Token = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    RoleId = table.Column<long>(type: "bigint", nullable: false)
                 },
                 constraints: table =>
                 {

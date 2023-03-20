@@ -47,20 +47,33 @@ namespace BuildingReport.API.Controllers
             {
                 return Unauthorized();
             }
+
+            
             var user = _userService.GetAllUsers().Where(u => u.Email == loginDto.Email && u.Password.SequenceEqual(_password)).FirstOrDefault();
-            user.Token = token;
-            _userService.UpdateUser(user);
+            ReturnDto returnDto = new ReturnDto()
+            {
+                Email = user.Email,
+                CreatedAt = user.CreatedAt,
+                FirstName = user.FirstName,
+                Id = user.Id,
+                IsActive = user.IsActive ,
+                LastName = user.LastName ,
+                Password = user.Password,
+                Token = token,
+                RoleId = user.RoleId
+                
+            };
+           
 
-            User returnuser = user;
-            List<User> emptylist = new List<User>();
-            List<Document> emptydoc = new List<Document>();
-            List<Building>  emptybuilding = new List<Building>();
-            returnuser.Documents = emptydoc;
-            returnuser.Role.Users = emptylist;
-            returnuser.Buildings = emptybuilding;
+            //User returnuser = user;
+            //List<User> emptylist = new List<User>();
+            //List<Document> emptydoc = new List<Document>();
+            //List<Building>  emptybuilding = new List<Building>();
+            //returnuser.Documents = emptydoc;
+            //returnuser.Role.Users = emptylist;
+            //returnuser.Buildings = emptybuilding;
 
-
-            return Ok(returnuser);
+            return Ok(returnDto);
         }
 
         [HttpGet]
