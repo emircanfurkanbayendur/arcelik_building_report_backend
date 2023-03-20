@@ -81,5 +81,172 @@ namespace BuildingReport.UnitTests
             Assert.AreEqual(StatusCodes.Status200OK, statusCode);
         }
 
+
+        [Test]
+        public void GetBuildings_WithInvalidModelState_ReturnsBadRequest()
+        {
+            //arrange
+            _buildingController.ModelState.AddModelError("Test", "InvalidModelError");
+
+
+            //action
+            IActionResult result = _buildingController.GetBuildings();
+
+
+
+            //assert
+            Assert.IsInstanceOf<BadRequestObjectResult>(result);
+        }
+
+        [Test]
+        public void GetBuildings_WithValidModelState_ReturnsOK()
+        {
+            //arrange
+
+
+            //action
+            IActionResult result = _buildingController.GetBuildings();
+
+
+
+            //assert
+            Assert.IsInstanceOf<OkObjectResult>(result);
+        }
+
+        [Test]
+        public void GetBuildingsWithID_WithInvalidModelState_ReturnsBadRequest()
+        {
+            //arrange
+            _buildingController.ModelState.AddModelError("Test", "InvalidModelError");
+
+
+            //action
+            IActionResult result = _buildingController.GetBuildings();
+
+
+
+            //assert
+            Assert.IsInstanceOf<BadRequestObjectResult>(result);
+        }
+
+        [Test]
+        public void GetBuildingsWithID_WithValidModelState_ReturnsOK()
+        {
+            //arrange
+            Building building = new Building()
+            {
+                Id = 1,
+                Name = "Test",
+
+            };
+
+            _buildingServiceMock.Setup(i => i.GetBuildingById(1)).Returns(building);
+
+            //action
+            IActionResult result = _buildingController.GetBuildings();
+
+
+
+            //assert
+            Assert.IsInstanceOf<OkObjectResult>(result);
+        }
+
+        [Test]
+        public void UpdateBuilding_WithInvalidModelState_ReturnsBadRequest()
+        {
+            //arrange
+            BuildingDTO buildingDTO = new BuildingDTO()
+            {
+                Id = 1,
+                Name = "Test",
+
+            };
+            _buildingController.ModelState.AddModelError("Test", "InvalidModelError");
+
+
+            //action
+            IActionResult result = _buildingController.Put(buildingDTO);
+
+
+
+            //assert
+            Assert.IsInstanceOf<BadRequestObjectResult>(result);
+        }
+
+        [Test]
+        public void UpdateBuilding_WithValidModelState_ReturnsOK()
+        {
+            //arrange
+            BuildingDTO buildingDTO = new BuildingDTO()
+            {
+                Id = 1,
+                Name = "Test",
+
+            };
+
+            Building building = new Building()
+            {
+                Id = 1,
+                Name = "Test",
+
+            };
+
+
+            _buildingServiceMock.Setup(i => i.UpdateBuilding(building)).Returns(building);
+
+            //action
+            IActionResult result = _buildingController.Put(buildingDTO);
+
+
+
+            //assert
+            Assert.IsInstanceOf<OkObjectResult>(result);
+        }
+
+
+        [Test]
+        public void Delete_WithInvalidModelState_ReturnsBadRequest()
+        {
+            //arrange
+            Building building = new Building()
+            {
+                Id = 1,
+                Name = "Test",
+
+            };
+            _buildingController.ModelState.AddModelError("Test", "InvalidModelError");
+
+
+            //action
+            IActionResult result = _buildingController.Delete(1);
+
+
+
+            //assert
+            Assert.IsInstanceOf<BadRequestObjectResult>(result);
+        }
+
+        [Test]
+        public void DeleteBuilding_WithValidModelState_ReturnsOK()
+        {
+            //arrange
+            Building building = new Building()
+            {
+                Id = 1,
+                Name = "Test",
+
+            };
+
+
+
+            //action
+            IActionResult result = _buildingController.Delete(building.Id);
+
+
+
+            //assert
+            Assert.IsInstanceOf<NoContentResult>(result);
+        }
+
     }
 }
