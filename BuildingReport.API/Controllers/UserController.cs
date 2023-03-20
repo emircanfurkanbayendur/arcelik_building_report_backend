@@ -30,11 +30,15 @@ namespace BuildingReport.API.Controllers
         private IUserService _userService;
         private IRoleService _roleService;
         private readonly IJWTAuthenticationService _jwtAuthenticationService;
-        public UserController(IJWTAuthenticationService jwtAuthenticationService)
+
+
+        public UserController(IJWTAuthenticationService jwtAuthenticationService, IUserService userService, IRoleService roleService)
         {
-            _userService = new UserManager();
-            _roleService = new RoleManager();
-            _jwtAuthenticationService = jwtAuthenticationService;   
+            //_userService = new UserManager();
+            _userService = userService;
+            //_roleService = new RoleManager();
+            _roleService = roleService;
+            _jwtAuthenticationService = jwtAuthenticationService;
         }
 
         [AllowAnonymous]
@@ -76,23 +80,32 @@ namespace BuildingReport.API.Controllers
         }
 
         [HttpGet]
-        public List<User> GetUsers()
+        public IActionResult GetUsers()
         {
-            return _userService.GetAllUsers();
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            return Ok(_userService.GetAllUsers());
         }
 
 
         [HttpGet("{id}")]
-        public User GetUsers(long id)
+        public IActionResult GetUsers(long id)
         {
-            return _userService.GetUserById(id);
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            return Ok(_userService.GetUserById(id));
 
         }
 
         [HttpGet("role/{roleid}")]
-        public List<User> GetUsersByRoleID(long roleid)
+        public IActionResult GetUsersByRoleID(long roleid)
         {
-            return _userService.GetUsersByRole(roleid);
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            return Ok(_userService.GetUsersByRole(roleid));
 
         }
 
@@ -132,7 +145,7 @@ namespace BuildingReport.API.Controllers
 
         [AllowAnonymous]
         [HttpPut]
-        public User UpdateUser([FromBody] UserDTO userdto)
+        public IActionResult UpdateUser([FromBody] UserDTO userdto)
         {
             var user = _userService.GetUserById(userdto.Id);
             var new_user = new User()
@@ -146,12 +159,18 @@ namespace BuildingReport.API.Controllers
                 IsActive = userdto.IsActive,
                 RoleId = user.RoleId
             };
-            return _userService.UpdateUser(new_user);
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            return Ok(_userService.UpdateUser(new_user));
         }
 
         [HttpPut("changeRole/{userId}")]
-        public User UpdateUserRole(long userId)
+        public IActionResult UpdateUserRole(long userId)
         {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
             var roleID = _roleService.GetAllRoles().Where(r => r.Name == "admin").FirstOrDefault().Id;
             var user = _userService.GetUserById(userId);
             var new_user = new User()
@@ -165,14 +184,20 @@ namespace BuildingReport.API.Controllers
                 IsActive = user.IsActive,
                 RoleId = roleID
             };
-            return _userService.UpdateUser(new_user);
+
+            return Ok(_userService.UpdateUser(new_user));
         }
 
         [AllowAnonymous]
         [HttpDelete("{id}")]
-        public void Delete(long id)
+        public IActionResult Delete(long id)
         {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
             _userService.DeleteUser(id);
+
+            return NoContent();
         }
     }
 }
