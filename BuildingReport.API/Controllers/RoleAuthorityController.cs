@@ -25,20 +25,30 @@ namespace BuildingReport.API.Controllers
         }
 
         [HttpGet]
-        public List<RoleAuthority> GetRoleAuthorities()
+        public IActionResult GetRoleAuthorities()
         {
-            return _RoleAuthorityService.GetAllRoleAuthorities();
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            return Ok(_RoleAuthorityService.GetAllRoleAuthorities());
         }
 
         [HttpGet("{id}")]
-        public RoleAuthority GetRoleAuthorities(long id)
+        public IActionResult GetRoleAuthorities(long id)
         {
-            return _RoleAuthorityService.GetRoleAuthorityById(id);
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            return Ok(_RoleAuthorityService.GetRoleAuthorityById(id));
         }
 
         [HttpPost]
-        public RoleAuthority Post([FromBody] RoleAuthorityDTO roleauthoritydto)
+        public IActionResult Post([FromBody] RoleAuthorityDTO roleauthoritydto)
         {
+            if (roleauthoritydto == null)
+            {
+                return BadRequest(ModelState);
+            }
             //Role role = _roleService.GetRoleById(roleauthoritydto.RoleId);
             //Authority authority = _authorityService.GetAuthorityById(roleauthoritydto.AuthorityId);
             var roleauthority = new RoleAuthority()
@@ -52,12 +62,17 @@ namespace BuildingReport.API.Controllers
 
             };
 
+            //if (_RoleAuthorityService.RoleAuthorityExists(roleauthority.Role.Name, roleauthority.Authority.Name))
+            //{
+            //    ModelState.AddModelError("", "RoleAuthority already exists");
+            //    return StatusCode(422, ModelState);
+            //}
 
-            return _RoleAuthorityService.CreateRoleAuthority(roleauthority);
+            return Ok(_RoleAuthorityService.CreateRoleAuthority(roleauthority));
         }
 
         [HttpPut]
-        public RoleAuthority Put([FromBody] RoleAuthorityDTO roleauthoritydto)
+        public IActionResult Put([FromBody] RoleAuthorityDTO roleauthoritydto)
         {
             var roleauthority = new RoleAuthority()
             {
@@ -67,13 +82,21 @@ namespace BuildingReport.API.Controllers
 
             };
 
-            return _RoleAuthorityService.UpdateRoleAuthority(roleauthority);
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            return Ok(_RoleAuthorityService.UpdateRoleAuthority(roleauthority));
         }
 
         [HttpDelete("{id}")]
-        public void Delete(long id)
+        public IActionResult Delete(long id)
         {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
             _RoleAuthorityService.DeleteRoleAuthority(id);
+
+            return NoContent();
         }
 
 

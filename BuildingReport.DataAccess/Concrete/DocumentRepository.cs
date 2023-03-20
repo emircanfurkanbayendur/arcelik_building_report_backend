@@ -37,6 +37,7 @@ namespace BuildingReport.DataAccess.Concrete
             }
         }
 
+
         public List<Document> GetAllDocuments()
         {
             using(var documentDbContext = new ArcelikBuildingReportDbContext())
@@ -88,6 +89,14 @@ namespace BuildingReport.DataAccess.Concrete
                 documentDbContext.Documents.Update(document);
                 documentDbContext.SaveChanges();
                 return GetDocumentById(document.Id);
+            }
+        }
+
+        public bool DocumentExists(byte[] report)
+        {
+            using (var documentDbContext = new ArcelikBuildingReportDbContext())
+            {
+                return documentDbContext.Documents.Any(d => d.Report == report);
             }
         }
     }

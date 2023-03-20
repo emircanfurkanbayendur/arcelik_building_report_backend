@@ -22,15 +22,21 @@ namespace BuildingReport.API.Controllers
         }
 
         [HttpGet]
-        public List<Authority> GetAuthorities()
+        public IActionResult GetAuthorities()
         {
-            return _authorityService.GetAllAuthorities();
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            return Ok(_authorityService.GetAllAuthorities());
         }
 
         [HttpGet("{id}")]
-        public Authority GetAuthorities(long id) 
+        public IActionResult GetAuthorities(long id) 
         {
-            return _authorityService.GetAuthorityById(id);
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            return Ok(_authorityService.GetAuthorityById(id));
         }
 
         [HttpPost]
@@ -53,15 +59,23 @@ namespace BuildingReport.API.Controllers
         }
 
         [HttpPut]
-        public Authority Put([FromBody] Authority authority)
+        public IActionResult Put([FromBody] Authority authority)
         {
-            return _authorityService.UpdateAuthority(authority);
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            return Ok(_authorityService.UpdateAuthority(authority));
         }
 
         [HttpDelete("{id}")]
-        public void Delete(long id)
+        public IActionResult Delete(long id)
         {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
             _authorityService.DeleteAuthority(id);
+
+            return NoContent();
         }
 
     }

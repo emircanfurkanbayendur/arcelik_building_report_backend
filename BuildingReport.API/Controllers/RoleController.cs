@@ -23,15 +23,21 @@ namespace BuildingReport.API.Controllers
 
 
         [HttpGet]
-        public List<Role> GetRoles()
+        public IActionResult GetRoles()
         {
-            return _roleService.GetAllRoles();
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            return Ok(_roleService.GetAllRoles());
         }
 
         [HttpGet("{id}")]
-        public Role GetRoles(long id)
+        public IActionResult GetRoles(long id)
         {
-            return _roleService.GetRoleById(id);
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            return Ok(_roleService.GetRoleById(id));
         }
 
         [AllowAnonymous]
@@ -61,7 +67,7 @@ namespace BuildingReport.API.Controllers
         }
 
         [HttpPut]
-        public Role Put([FromBody] RoleDTO roleDTO)
+        public IActionResult Put([FromBody] RoleDTO roleDTO)
         {
             Role role = new Role()
             {
@@ -70,13 +76,21 @@ namespace BuildingReport.API.Controllers
             };
 
 
-            return _roleService.UpdateRole(role);
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            return Ok(_roleService.UpdateRole(role));
         }
 
         [HttpDelete("{id}")]
-        public void Delete(long id)
+        public IActionResult Delete(long id)
         {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
             _roleService.DeleteRole(id);
+
+            return NoContent();
         }
 
     }

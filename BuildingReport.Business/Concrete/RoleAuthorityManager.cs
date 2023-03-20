@@ -40,9 +40,14 @@ namespace BuildingReport.Business.Concrete
             return _roleAuthorityRepository.GetRoleAuthorityById(id);
         }
 
+
         public RoleAuthority UpdateRoleAuthority(RoleAuthority roleAuthority)
         {
             return _roleAuthorityRepository.UpdateRoleAuthority(roleAuthority);
+        }
+        public bool RoleAuthorityExists(string roleName, string authorityName)
+        {
+            return _roleAuthorityRepository.RoleAuthorityExists(roleName, authorityName);
         }
     }
 }

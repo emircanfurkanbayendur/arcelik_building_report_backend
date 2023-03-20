@@ -24,58 +24,82 @@ namespace BuildingReport.API.Controllers
 
 
         [HttpGet]
-        public List<Building> GetBuildings()
+        public IActionResult GetBuildings()
         {
-            return _buildingService.GetAllBuildings();
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            return Ok(_buildingService.GetAllBuildings());
         }
 
         [AllowAnonymous]
         [HttpGet("{id}")]
-        public Building GetBuildings(long id)
+        public IActionResult GetBuildings(long id)
         {
-            return _buildingService.GetBuildingById(id);
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            return Ok(_buildingService.GetBuildingById(id));
         }
 
         [AllowAnonymous]
         [HttpGet("user/{userId}")]
-        public List<Building> GetBuildingsByUserId(long userId)
+        public IActionResult GetBuildingsByUserId(long userId)
         {
-            return _buildingService.GetBuildingsByUserId(userId);
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            return Ok(_buildingService.GetBuildingsByUserId(userId));
         }
 
 
         [AllowAnonymous]
         [HttpGet("code/{code}")]
-        public Building GetBuildingsByCode(string code)
+        public IActionResult GetBuildingsByCode(string code)
         {
-            return _buildingService.GetBuildingByCode(code);
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            return Ok(_buildingService.GetBuildingByCode(code));
         }
 
         [AllowAnonymous]
         [HttpGet("city/{city}")]
-        public List<Building> GetBuildingsByCity(string city)
+        public IActionResult GetBuildingsByCity(string city)
         {
-            return _buildingService.GetBuildingByCity(city);
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            return Ok(_buildingService.GetBuildingByCity(city));
         }
 
         [AllowAnonymous]
         [HttpGet("district/{district}")]
-        public List<Building> GetBuildingsByDistrict(string district)
+        public IActionResult GetBuildingsByDistrict(string district)
         {
-            return _buildingService.GetBuildingByDistrict(district);
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            return Ok(_buildingService.GetBuildingByDistrict(district));
         }
         [AllowAnonymous]
         [HttpGet("neighbourhood/{neighbourhood}")]
-        public List<Building> GetBuildingsByNeighbourhood(string neighbourhood)
+        public IActionResult GetBuildingsByNeighbourhood(string neighbourhood)
         {
-            return _buildingService.GetBuildingByNeighbourhood(neighbourhood);
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            return Ok(_buildingService.GetBuildingByNeighbourhood(neighbourhood));
         }
 
         [AllowAnonymous]
         [HttpGet("street/{street}")]
-        public List<Building> GetBuildingsByStreet(string street)
+        public IActionResult GetBuildingsByStreet(string street)
         {
-            return _buildingService.GetBuildingByStreet(street);
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            return Ok(_buildingService.GetBuildingByStreet(street));
         }
 
         [HttpPost]
@@ -115,7 +139,7 @@ namespace BuildingReport.API.Controllers
         }
 
         [HttpPut]
-        public Building Put([FromBody] BuildingDTO buildingdto)
+        public IActionResult Put([FromBody] BuildingDTO buildingdto)
         {
             var building = new Building()
             {
@@ -133,14 +157,22 @@ namespace BuildingReport.API.Controllers
                 IsActive = buildingdto.IsActive,
                 CreatedByUserId = buildingdto.CreatedByUserId
             };
-         
-            return _buildingService.UpdateBuilding(building);
+
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            return Ok(_buildingService.UpdateBuilding(building));
         }
 
         [HttpDelete]
-        public void Delete(long id) 
+        public IActionResult Delete(long id) 
         {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
             _buildingService.DeleteBuilding(id);
+
+            return NoContent();
         }
 
     }

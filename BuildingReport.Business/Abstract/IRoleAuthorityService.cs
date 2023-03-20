@@ -18,6 +18,7 @@ namespace BuildingReport.Business.Abstract
         RoleAuthority UpdateRoleAuthority(RoleAuthority roleAuthority);
 
         void DeleteRoleAuthority(long id);
+        bool RoleAuthorityExists(string roleName, string authorityName);
 
     }
 }

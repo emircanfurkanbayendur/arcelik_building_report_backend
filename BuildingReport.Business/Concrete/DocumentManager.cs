@@ -28,6 +28,11 @@ namespace BuildingReport.Business.Concrete
             _documentRepository.DeleteDocument(id);
         }
 
+        public bool DocumentExists(byte[] report)
+        {
+            return _documentRepository.DocumentExists(report);
+        }
+
         public List<Document> GetAllDocuments()
         {
             return _documentRepository.GetAllDocuments();

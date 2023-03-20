@@ -19,6 +19,8 @@ namespace BuildingReport.DataAccess.Abstract
 
         void DeleteRoleAuthority(long id);
 
+        bool RoleAuthorityExists(string roleName, string authorityName);
+
 
     }
 }
