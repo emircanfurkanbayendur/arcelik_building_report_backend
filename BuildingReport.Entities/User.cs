@@ -23,7 +23,7 @@ public partial class User
     public long RoleId { get; set; }
     public string? Token { get; set; }
 
-    public virtual ICollection<Building> Buildings { get; } = new List<Building>();
+    public virtual ICollection<Building> Buildings { get; set; } = new List<Building>();
 
     public virtual ICollection<Document> Documents { get; set; } = new List<Document>();
 

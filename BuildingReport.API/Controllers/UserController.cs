@@ -54,8 +54,10 @@ namespace BuildingReport.API.Controllers
             User returnuser = user;
             List<User> emptylist = new List<User>();
             List<Document> emptydoc = new List<Document>();
+            List<Building>  emptybuilding = new List<Building>();
             returnuser.Documents = emptydoc;
             returnuser.Role.Users = emptylist;
+            returnuser.Buildings = emptybuilding;
 
 
             return Ok(returnuser);
