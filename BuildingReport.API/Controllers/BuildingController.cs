@@ -109,7 +109,16 @@ namespace BuildingReport.API.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            return Ok(_buildingService.GetBuildingCounts());
+            List<int> counts = _buildingService.GetBuildingCounts();
+            BuildingCountDto buildingCountDto = new BuildingCountDto()
+            {
+                CityCount = counts[0],
+                DistrictCount = counts[1],
+                NeighbourhoodCount = counts[2],
+                BuildingCount = counts[3],
+
+            };
+            return Ok(buildingCountDto);
         }
 
         [HttpPost]

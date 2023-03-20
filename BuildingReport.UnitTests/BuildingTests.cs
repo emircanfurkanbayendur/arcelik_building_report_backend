@@ -277,8 +277,12 @@ namespace BuildingReport.UnitTests
             };
 
 
+            List<int> counts = new List<int> { 1, 2, 3, 4 };
+
+            _buildingServiceMock.Setup(i => i.GetBuildingCounts()).Returns(counts);
 
             //action
+            
             IActionResult result = _buildingController.GetBuildingCounts();
 
 
