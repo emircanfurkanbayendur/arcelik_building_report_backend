@@ -76,5 +76,10 @@ namespace BuildingReport.Business.Concrete
         {
             return _buildingRepository.UpdateBuilding(building);
         }
+
+        public List<int> GetBuildingCounts()
+        {
+            return _buildingRepository.GetBuildingCounts();
+        }
     }
 }

@@ -159,5 +159,42 @@ namespace BuildingReport.DataAccess.Concrete
                 return GetBuildingById(building.Id);
             }
         }
+
+        public List<int> GetBuildingCounts()
+        {
+            using (var buildingDbContext = new ArcelikBuildingReportDbContext())
+            {
+                var cityCount = buildingDbContext.Buildings
+                    .Where(b => b.IsActive == true)
+                    .GroupBy(b => b.City)
+                    .Select(g => g.Key)
+                    .Distinct()
+                    .Count();
+
+                var districtCount = buildingDbContext.Buildings
+                    .Where(b => b.IsActive == true)
+                    .GroupBy(b => b.District)
+                    .Select(g => g.Key)
+                    .Distinct()
+                    .Count();
+
+                var neighbourhoodCount = buildingDbContext.Buildings
+                    .Where(b => b.IsActive == true)
+                    .GroupBy(b => b.Neighbourhood)
+                    .Select(g => g.Key)
+                    .Distinct()
+                    .Count();
+
+                var buildingCount = buildingDbContext.Buildings
+                    .Where(b => b.IsActive == true)
+                    .Select(b => b.Id)
+                    .Distinct()
+                    .Count();
+
+                return new List<int> { cityCount, districtCount, neighbourhoodCount, buildingCount };
+
+            }
+
+        }
     }
 }

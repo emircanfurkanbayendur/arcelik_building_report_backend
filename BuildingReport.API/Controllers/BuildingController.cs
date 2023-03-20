@@ -102,6 +102,16 @@ namespace BuildingReport.API.Controllers
             return Ok(_buildingService.GetBuildingByStreet(street));
         }
 
+        [AllowAnonymous]
+        [HttpGet("count")]
+        public IActionResult GetBuildingCounts()
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            return Ok(_buildingService.GetBuildingCounts());
+        }
+
         [HttpPost]
         public IActionResult CreateBuilding([FromBody] BuildingDTO buildingdto) 
         {

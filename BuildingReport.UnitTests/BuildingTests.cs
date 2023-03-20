@@ -205,7 +205,7 @@ namespace BuildingReport.UnitTests
 
 
         [Test]
-        public void Delete_WithInvalidModelState_ReturnsBadRequest()
+        public void DeleteBuilding_WithInvalidModelState_ReturnsBadRequest()
         {
             //arrange
             Building building = new Building()
@@ -248,5 +248,43 @@ namespace BuildingReport.UnitTests
             Assert.IsInstanceOf<NoContentResult>(result);
         }
 
+
+        [Test]
+        public void GetBuildingCounts_WithInvalidModelState_ReturnsBadRequest()
+        {
+            //arrange
+            _buildingController.ModelState.AddModelError("Test", "InvalidModelError");
+
+
+            //action
+            IActionResult result = _buildingController.GetBuildingCounts();
+
+
+
+            //assert
+            Assert.IsInstanceOf<BadRequestObjectResult>(result);
+        }
+
+        [Test]
+        public void GetBuildingCounts_WithValidModelState_ReturnsOK()
+        {
+            //arrange
+            Building building = new Building()
+            {
+                Id = 1,
+                Name = "Test",
+
+            };
+
+
+
+            //action
+            IActionResult result = _buildingController.GetBuildingCounts();
+
+
+
+            //assert
+            Assert.IsInstanceOf<OkObjectResult>(result);
+        }
     }
 }
