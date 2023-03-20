@@ -16,9 +16,10 @@ namespace BuildingReport.API.Controllers
         private IBuildingService _buildingService;
         
 
-        public BuildingController()
+        public BuildingController(IBuildingService buildingService)
         {
-            _buildingService = new BuildingManager();
+            _buildingService = buildingService;
+            //_buildingService = new BuildingManager();
         }
 
 

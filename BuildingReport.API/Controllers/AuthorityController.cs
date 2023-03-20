@@ -15,9 +15,10 @@ namespace BuildingReport.API.Controllers
     {
         private IAuthorityService _authorityService;
 
-        public AuthorityController()
+        public AuthorityController(IAuthorityService authorityService)
         {
-            _authorityService = new AuthorityManager();
+            _authorityService = authorityService;
+            //_authorityService = new AuthorityManager();
         }
 
         [HttpGet]

@@ -13,6 +13,14 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
 builder.Services.AddControllers();
+
+builder.Services.AddScoped<IRoleService, RoleManager>()
+                .AddScoped<IAuthorityService, AuthorityManager>()
+                .AddScoped<IRoleAuthorityService, RoleAuthorityManager>()
+                .AddScoped<IUserService, UserManager>()
+                .AddScoped<IBuildingService, BuildingManager>()
+                .AddScoped<IDocumentService, DocumentManager>();
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 
 var key = "ThisIsSigninKey12345";

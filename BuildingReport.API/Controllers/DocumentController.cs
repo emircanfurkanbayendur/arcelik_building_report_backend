@@ -15,9 +15,10 @@ namespace BuildingReport.API.Controllers
     {
         private IDocumentService _documentService;
 
-        public DocumentController()
+        public DocumentController(IDocumentService documentService)
         {
-            _documentService = new DocumentManager();
+            _documentService = documentService;
+            //_documentService = new DocumentManager();
         }
 
         [AllowAnonymous]

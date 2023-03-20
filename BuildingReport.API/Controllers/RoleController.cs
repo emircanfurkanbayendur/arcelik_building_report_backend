@@ -15,9 +15,10 @@ namespace BuildingReport.API.Controllers
     {
         private IRoleService _roleService;
 
-        public RoleController()
+        public RoleController(IRoleService roleService)
         {
-            _roleService = new RoleManager();
+            _roleService = roleService;
+            //_roleService = new RoleManager();
         }
 
 
@@ -37,15 +38,16 @@ namespace BuildingReport.API.Controllers
         [HttpPost]
         public IActionResult CreateRole([FromBody] RoleDTO roleDTO)
         {
+
+            if (roleDTO == null)
+            {
+                return BadRequest(ModelState);
+            }
             Role role = new Role()
             {
                 Id = roleDTO.Id,
                 Name = roleDTO.Name,
             };
-            if (role == null)
-            {
-                return BadRequest(ModelState);
-            }
 
             if (_roleService.RoleExists(role.Name))
             {
@@ -59,9 +61,16 @@ namespace BuildingReport.API.Controllers
         }
 
         [HttpPut]
-        public Role Put([FromBody] Role Role)
+        public Role Put([FromBody] RoleDTO roleDTO)
         {
-            return _roleService.UpdateRole(Role);
+            Role role = new Role()
+            {
+                Id = roleDTO.Id,
+                Name = roleDTO.Name,
+            };
+
+
+            return _roleService.UpdateRole(role);
         }
 
         [HttpDelete("{id}")]

@@ -14,14 +14,13 @@ namespace BuildingReport.API.Controllers
     public class RoleAuthorityController : ControllerBase
     {
         private IRoleAuthorityService _RoleAuthorityService;
-        //private IRoleService _roleService;
-        //private IAuthorityService _authorityService;
 
-        public RoleAuthorityController()
+
+        public RoleAuthorityController(IRoleAuthorityService roleAuthorityService)
         {
-            _RoleAuthorityService = new RoleAuthorityManager();
-            //_roleService = new RoleManager();
-            //_authorityService = new AuthorityManager();
+            _RoleAuthorityService = roleAuthorityService;
+            //_RoleAuthorityService = new RoleAuthorityManager();
+
             
         }
 
