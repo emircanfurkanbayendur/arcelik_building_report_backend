@@ -69,11 +69,11 @@ namespace BuildingReport.API.Controllers
                 return BadRequest(ModelState);
             }
 
-            if (_documentService.DocumentExists(documentdto.Report))
+           /* if (_documentService.DocumentExists(documentdto.Report))
             {
                 ModelState.AddModelError("", "Document already exists");
                 return StatusCode(422, ModelState);
-            }
+            }*/
 
             var document = new Document()
             {

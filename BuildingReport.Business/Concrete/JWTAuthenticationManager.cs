@@ -40,11 +40,11 @@ namespace BuildingReport.Business.Concrete
             }
 
 
-            var roleID = _roleRepository.GetAllRoles().Where(r => r.Name == "admin").FirstOrDefault().Id;
+            /*var roleID = _roleRepository.GetAllRoles().Where(r => r.Name == "admin").FirstOrDefault().Id;
             if(_userRepository.GetAllUsers().Where(u => u.Email == email && u.Password.SequenceEqual(password)).FirstOrDefault().RoleId != roleID)
             {
                 return null;
-            }
+            }*/
 
             var tokenHandler = new JwtSecurityTokenHandler();
             var tokenKey = Encoding.ASCII.GetBytes(_key);
