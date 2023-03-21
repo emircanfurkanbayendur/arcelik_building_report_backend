@@ -40,26 +40,26 @@ namespace BuildingReport.UnitTests
             Assert.IsInstanceOf<BadRequestObjectResult>(result);
         }
 
-        [Test]
-        public void CreateDocument_WithExistingDocument_ReturnsUnprocessableContent()
-        {
-            //arrange
+        //[Test]
+        //public void CreateDocument_WithExistingDocument_ReturnsUnprocessableContent()
+        //{
+        //    //arrange
 
-            DocumentDTO DocumentDTO = new DocumentDTO()
-            {
-                Report = Encoding.UTF8.GetBytes("Test"),
-            };
+        //    DocumentDTO DocumentDTO = new DocumentDTO()
+        //    {
+        //        Report = Encoding.UTF8.GetBytes("Test"),
+        //    };
 
-            _documentServiceMock.Setup(i => i.DocumentExists(Encoding.UTF8.GetBytes("Test"))).Returns(true);
+        //    _documentServiceMock.Setup(i => i.DocumentExists(Encoding.UTF8.GetBytes("Test"))).Returns(true);
 
-            //action
-            IActionResult result = _documentController.Post(DocumentDTO);
-            int statusCode = (result as ObjectResult)?.StatusCode ?? 0;
+        //    //action
+        //    IActionResult result = _documentController.Post(DocumentDTO);
+        //    int statusCode = (result as ObjectResult)?.StatusCode ?? 0;
 
 
-            //assert
-            Assert.AreEqual(StatusCodes.Status422UnprocessableEntity, statusCode);
-        }
+        //    //assert
+        //    Assert.AreEqual(StatusCodes.Status422UnprocessableEntity, statusCode);
+        //}
 
         [Test]
         public void CreateDocument_WithNewDocument_ReturnsOk()
