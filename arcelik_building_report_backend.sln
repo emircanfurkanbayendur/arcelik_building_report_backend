@@ -8,12 +8,15 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BuildingReport.DataAccess", "BuildingReport.DataAccess\BuildingReport.DataAccess.csproj", "{2CCBACA9-13F6-43D4-AC28-77E9F9DB94B7}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BuildingReport.Business", "BuildingReport.Business\BuildingReport.Business.csproj", "{1696E66E-FE90-4855-BE0E-F405A351CC5A}"
+	ProjectSection(ProjectDependencies) = postProject
+		{9E48BF3D-3B07-423E-9458-CD1B894932F4} = {9E48BF3D-3B07-423E-9458-CD1B894932F4}
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BuildingReport.API", "BuildingReport.API\BuildingReport.API.csproj", "{D9642EE2-5563-497E-9D4F-29897C439F2D}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BuildingReport.DTO", "BuildingReport.DTO\BuildingReport.DTO.csproj", "{9E48BF3D-3B07-423E-9458-CD1B894932F4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BuildingReport.UnitTests", "BuildingReport.UnitTests\BuildingReport.UnitTests.csproj", "{CD62C2CE-14AF-47CF-9457-3E41B028D4BD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BuildingReport.UnitTests", "BuildingReport.UnitTests\BuildingReport.UnitTests.csproj", "{CD62C2CE-14AF-47CF-9457-3E41B028D4BD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

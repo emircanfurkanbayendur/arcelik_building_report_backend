@@ -36,6 +36,7 @@ namespace BuildingReport.Business.Concrete
 
         public List<Authority> GetAllAuthorities()
         {
+
             return _authorityRepository.GetAllAuthorities();
         }
 

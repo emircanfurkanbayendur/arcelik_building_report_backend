@@ -4,29 +4,17 @@ using BuildingReport.Business.Concrete;
 using BuildingReport.DTO;
 using BuildingReport.Entities;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Cryptography;
-using System.Text;
 
 namespace BuildingReport.API.Controllers
 {
-    public class Hash
-    {
-        public static byte[]  HashPassword(string password)
-        {
-            byte[] passwordBytes = Encoding.UTF8.GetBytes(password);
-            SHA256 sha256 = SHA256.Create();
-            byte[] hashBytes = sha256.ComputeHash(passwordBytes);
-            return hashBytes;
 
-        }
-    }
     [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class UserController : ControllerBase
     {
+        private Hash hash = new Hash();
         private IUserService _userService;
         private IRoleService _roleService;
         private readonly IJWTAuthenticationService _jwtAuthenticationService;
@@ -45,7 +33,7 @@ namespace BuildingReport.API.Controllers
         [HttpPost("authenticate")]
         public IActionResult Authenticate([FromBody] LoginDto loginDto)
         {
-            byte[] _password = Hash.HashPassword(loginDto.Password);
+            byte[] _password = hash.HashPassword(loginDto.Password);
             var token = _jwtAuthenticationService.Authenticate(loginDto.Email, _password);
             if (token == null)
             {
@@ -131,7 +119,7 @@ namespace BuildingReport.API.Controllers
                 FirstName = userdto.FirstName,
                 LastName = userdto.LastName,
                 Email = userdto.Email,
-                Password = Hash.HashPassword(userdto.Password),
+                Password = hash.HashPassword(userdto.Password),
                 CreatedAt = userdto.CreatedAt,
                 IsActive = userdto.IsActive,
                 RoleId = roleID,
@@ -159,7 +147,7 @@ namespace BuildingReport.API.Controllers
                 FirstName = userdto.FirstName,
                 LastName = userdto.LastName,
                 Email = userdto.Email,
-                Password = Hash.HashPassword(userdto.Password),
+                Password = hash.HashPassword(userdto.Password),
                 CreatedAt = user.CreatedAt,
                 IsActive = userdto.IsActive,
                 RoleId = user.RoleId

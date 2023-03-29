@@ -6,12 +6,14 @@ using BuildingReport.Business.Abstract;
 using Microsoft.AspNetCore.Mvc;
 using BuildingReport.Entities;
 using Microsoft.AspNetCore.Http;
+using BuildingReport.Business.Concrete;
 
 namespace BuildingReport.UnitTests
 
 {
     public class UserTests
     {
+        Hash hash = new Hash();
         private Mock<IUserService> _userServiceMock;
         private Mock<IRoleService> _roleServiceMock;
         private Mock<IJWTAuthenticationService> _jwtAuthenticationServiceMock;
@@ -20,6 +22,7 @@ namespace BuildingReport.UnitTests
         [SetUp]
         public void Setup()
         {
+            
             _userServiceMock = new Mock<IUserService>();
             _roleServiceMock = new Mock<IRoleService>();
             _jwtAuthenticationServiceMock = new Mock<IJWTAuthenticationService>();
@@ -117,7 +120,7 @@ namespace BuildingReport.UnitTests
                 Password = "wrongpassword"
             };
 
-            var _password = Hash.HashPassword(loginDto.Password);
+            var _password = hash.HashPassword(loginDto.Password);
 
              string token = null;
             _jwtAuthenticationServiceMock.Setup(i => i.Authenticate(loginDto.Email, _password)).Returns(token);
@@ -141,7 +144,7 @@ namespace BuildingReport.UnitTests
                 Password = "password"
             };
 
-            var _password = Hash.HashPassword(loginDto.Password);
+            var _password = hash.HashPassword(loginDto.Password);
 
             User user = new User()
             {
@@ -280,7 +283,7 @@ namespace BuildingReport.UnitTests
             {
                 Id = 1,
                 FirstName = "Test",
-                Password = Hash.HashPassword("password"),
+                Password = hash.HashPassword("password"),
 
             };
 
