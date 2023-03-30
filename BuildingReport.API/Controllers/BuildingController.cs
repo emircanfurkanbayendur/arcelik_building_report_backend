@@ -1,4 +1,5 @@
-﻿using BuildingReport.Business.Abstract;
+﻿using AutoMapper;
+using BuildingReport.Business.Abstract;
 using BuildingReport.Business.Concrete;
 using BuildingReport.DTO;
 using BuildingReport.Entities;
@@ -14,11 +15,13 @@ namespace BuildingReport.API.Controllers
     public class BuildingController : ControllerBase
     {
         private IBuildingService _buildingService;
+        private readonly IMapper _mapper;
         
 
-        public BuildingController(IBuildingService buildingService)
+        public BuildingController(IBuildingService buildingService, IMapper mapper)
         {
             _buildingService = buildingService;
+            _mapper = mapper;
             //_buildingService = new BuildingManager();
         }
 
@@ -110,14 +113,15 @@ namespace BuildingReport.API.Controllers
                 return BadRequest(ModelState);
 
             List<int> counts = _buildingService.GetBuildingCounts();
-            BuildingCountDto buildingCountDto = new BuildingCountDto()
-            {
-                CityCount = counts[0],
-                DistrictCount = counts[1],
-                NeighbourhoodCount = counts[2],
-                BuildingCount = counts[3],
+            BuildingCountDTO buildingCountDto = _mapper.Map<BuildingCountDTO>(counts);
+            //BuildingCountDto buildingCountDto = new BuildingCountDto()
+            //{
+            //    CityCount = counts[0],
+            //    DistrictCount = counts[1],
+            //    NeighbourhoodCount = counts[2],
+            //    BuildingCount = counts[3],
 
-            };
+            //};
             return Ok(buildingCountDto);
         }
 
@@ -129,22 +133,9 @@ namespace BuildingReport.API.Controllers
                 return BadRequest(ModelState);
             }
 
-            var building = new Building()
-            {
-                Id = buildingdto.Id,
-                Name = buildingdto.Name,
-                City = buildingdto.City,
-                District = buildingdto.District,
-                Neighbourhood = buildingdto.Neighbourhood,
-                Street = buildingdto.Street,
-                BuildingNumber = buildingdto.BuildingNumber,
-                Code = buildingdto.Code,
-                Latitude = buildingdto.Latitude,
-                Longitude = buildingdto.Longitude,
-                RegisteredAt = buildingdto.RegisteredAt,
-                IsActive = buildingdto.IsActive,
-                CreatedByUserId = buildingdto.CreatedByUserId
-            };
+            Building building = _mapper.Map<Building>(buildingdto);
+
+
 
             if(_buildingService.BuildingExists(building.Code))
             {
@@ -160,22 +151,8 @@ namespace BuildingReport.API.Controllers
         [HttpPut]
         public IActionResult Put([FromBody] BuildingDTO buildingdto)
         {
-            var building = new Building()
-            {
-                Id = buildingdto.Id,
-                Name = buildingdto.Name,
-                City = buildingdto.City,
-                District = buildingdto.District,
-                Neighbourhood = buildingdto.Neighbourhood,
-                Street = buildingdto.Street,
-                BuildingNumber = buildingdto.BuildingNumber,
-                Code = buildingdto.Code,
-                Latitude = buildingdto.Latitude,
-                Longitude = buildingdto.Longitude,
-                RegisteredAt = buildingdto.RegisteredAt,
-                IsActive = buildingdto.IsActive,
-                CreatedByUserId = buildingdto.CreatedByUserId
-            };
+            Building building = _mapper.Map<Building>(buildingdto);
+
 
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);

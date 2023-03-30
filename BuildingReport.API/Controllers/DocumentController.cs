@@ -1,4 +1,5 @@
-﻿using BuildingReport.Business.Abstract;
+﻿using AutoMapper;
+using BuildingReport.Business.Abstract;
 using BuildingReport.Business.Concrete;
 using BuildingReport.DTO;
 using BuildingReport.Entities;
@@ -14,11 +15,13 @@ namespace BuildingReport.API.Controllers
     public class DocumentController : ControllerBase
     {
         private IDocumentService _documentService;
+        private readonly IMapper _mapper;
 
-        public DocumentController(IDocumentService documentService)
+        public DocumentController(IDocumentService documentService, IMapper mapper)
         {
             _documentService = documentService;
-            //_documentService = new DocumentManager();
+            _mapper = mapper;
+
         }
 
         [AllowAnonymous]
@@ -75,16 +78,8 @@ namespace BuildingReport.API.Controllers
                 return StatusCode(422, ModelState);
             }*/
 
-            var document = new Document()
-            {
-                Id = documentdto.Id,
-                Report = documentdto.Report,
-                UploadedAt = documentdto.UploadedAt,
-                IsActive = documentdto.IsActive,
-                UploadedByUserId = documentdto.UploadedByUserId,
-                BuildingId = documentdto.BuildingId,
+            Document document = _mapper.Map<Document>(documentdto);
 
-            };
 
             return Ok(_documentService.CreateDocument(document));
         }
@@ -92,16 +87,7 @@ namespace BuildingReport.API.Controllers
         [HttpPut]
         public IActionResult Put([FromBody] DocumentDTO documentdto)
         {
-            var document = new Document()
-            {
-                Id = documentdto.Id,
-                Report = documentdto.Report,
-                UploadedAt = documentdto.UploadedAt,
-                IsActive = documentdto.IsActive,
-                UploadedByUserId = documentdto.UploadedByUserId,
-                BuildingId = documentdto.BuildingId,
-
-            };
+            Document document = _mapper.Map<Document>(documentdto);
 
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);

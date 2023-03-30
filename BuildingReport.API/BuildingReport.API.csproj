@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="12.0.1" />
+    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.14" />
     <PackageReference Include="Microsoft.AspNetCore.Authorization" Version="7.0.3" />
@@ -23,6 +24,7 @@
     <ProjectReference Include="..\BuildingReport.Business\BuildingReport.Business.csproj" />
     <ProjectReference Include="..\BuildingReport.DTO\BuildingReport.DTO.csproj" />
     <ProjectReference Include="..\BuildingReport.Entities\BuildingReport.Entities.csproj" />
+    <ProjectReference Include="..\BuildingReport.Mapping\BuildingReport.MappingProfiles.csproj" />
   </ItemGroup>
 
 </Project>

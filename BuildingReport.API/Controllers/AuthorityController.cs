@@ -5,6 +5,7 @@ using BuildingReport.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using AutoMapper;
 
 namespace BuildingReport.API.Controllers
 {
@@ -14,10 +15,11 @@ namespace BuildingReport.API.Controllers
     public class AuthorityController : ControllerBase
     {
         private IAuthorityService _authorityService;
-
-        public AuthorityController(IAuthorityService authorityService)
+        private readonly IMapper _mapper;
+        public AuthorityController(IAuthorityService authorityService, IMapper mapper)
         {
             _authorityService = authorityService;
+            _mapper = mapper;
             //_authorityService = new AuthorityManager();
         }
 
@@ -47,13 +49,8 @@ namespace BuildingReport.API.Controllers
             {
                 return BadRequest(ModelState);
             }
-
-            Authority authority = new Authority()
-            {
-                Id = authorityDTO.Id,
-                Name = authorityDTO.Name,
-
-            };
+            
+            Authority authority = _mapper.Map<Authority>(authorityDTO);
 
             if (_authorityService.AuthorityExists(authority.Name))
             {
@@ -72,12 +69,8 @@ namespace BuildingReport.API.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            Authority authority = new Authority()
-            {
-                Id = authorityDTO.Id,
-                Name = authorityDTO.Name,
+            Authority authority = _mapper.Map<Authority>(authorityDTO);
 
-            };
 
             return Ok(_authorityService.UpdateAuthority(authority));
         }

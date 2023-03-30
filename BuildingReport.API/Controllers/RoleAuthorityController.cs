@@ -1,4 +1,5 @@
-﻿using BuildingReport.Business.Abstract;
+﻿using AutoMapper;
+using BuildingReport.Business.Abstract;
 using BuildingReport.Business.Concrete;
 using BuildingReport.DTO;
 using BuildingReport.Entities;
@@ -14,11 +15,13 @@ namespace BuildingReport.API.Controllers
     public class RoleAuthorityController : ControllerBase
     {
         private IRoleAuthorityService _RoleAuthorityService;
+        private readonly IMapper _mapper;
 
 
-        public RoleAuthorityController(IRoleAuthorityService roleAuthorityService)
+        public RoleAuthorityController(IRoleAuthorityService roleAuthorityService, IMapper mapper)
         {
             _RoleAuthorityService = roleAuthorityService;
+            _mapper = mapper;
             //_RoleAuthorityService = new RoleAuthorityManager();
 
             
@@ -49,18 +52,19 @@ namespace BuildingReport.API.Controllers
             {
                 return BadRequest(ModelState);
             }
-            //Role role = _roleService.GetRoleById(roleauthoritydto.RoleId);
-            //Authority authority = _authorityService.GetAuthorityById(roleauthoritydto.AuthorityId);
-            var roleauthority = new RoleAuthority()
-            {
-                Id = roleauthoritydto.Id,
-                RoleId = roleauthoritydto.RoleId,
-                AuthorityId = roleauthoritydto.AuthorityId,
+ 
+           RoleAuthority roleAuthority = _mapper.Map<RoleAuthority>(roleauthoritydto);
 
-                //Role = role,
-                //Authority = authority
+            //var roleauthority = new RoleAuthority()
+            //{
+            //    Id = roleauthoritydto.Id,
+            //    RoleId = roleauthoritydto.RoleId,
+            //    AuthorityId = roleauthoritydto.AuthorityId,
 
-            };
+
+
+            //};
+
 
             //if (_RoleAuthorityService.RoleAuthorityExists(roleauthority.Role.Name, roleauthority.Authority.Name))
             //{
@@ -68,24 +72,19 @@ namespace BuildingReport.API.Controllers
             //    return StatusCode(422, ModelState);
             //}
 
-            return Ok(_RoleAuthorityService.CreateRoleAuthority(roleauthority));
+            return Ok(_RoleAuthorityService.CreateRoleAuthority(roleAuthority));
         }
 
         [HttpPut]
         public IActionResult Put([FromBody] RoleAuthorityDTO roleauthoritydto)
         {
-            var roleauthority = new RoleAuthority()
-            {
-                Id = roleauthoritydto.Id,
-                RoleId = roleauthoritydto.RoleId,
-                AuthorityId = roleauthoritydto.AuthorityId
+            var roleAuthority = _mapper.Map<RoleAuthority>(roleauthoritydto);
 
-            };
 
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            return Ok(_RoleAuthorityService.UpdateRoleAuthority(roleauthority));
+            return Ok(_RoleAuthorityService.UpdateRoleAuthority(roleAuthority));
         }
 
         [HttpDelete("{id}")]

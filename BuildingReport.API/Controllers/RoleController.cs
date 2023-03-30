@@ -5,6 +5,8 @@ using BuildingReport.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using AutoMapper;
+
 
 namespace BuildingReport.API.Controllers
 {
@@ -14,11 +16,12 @@ namespace BuildingReport.API.Controllers
     public class RoleController : ControllerBase
     {
         private IRoleService _roleService;
+        private readonly IMapper _mapper;
 
-        public RoleController(IRoleService roleService)
+        public RoleController(IRoleService roleService, IMapper mapper)
         {
             _roleService = roleService;
-            //_roleService = new RoleManager();
+            _mapper = mapper;
         }
 
 
@@ -49,11 +52,9 @@ namespace BuildingReport.API.Controllers
             {
                 return BadRequest(ModelState);
             }
-            Role role = new Role()
-            {
-                Id = roleDTO.Id,
-                Name = roleDTO.Name,
-            };
+
+            Role role = _mapper.Map<Role>(roleDTO);
+
 
             if (_roleService.RoleExists(role.Name))
             {
@@ -69,11 +70,8 @@ namespace BuildingReport.API.Controllers
         [HttpPut]
         public IActionResult Put([FromBody] RoleDTO roleDTO)
         {
-            Role role = new Role()
-            {
-                Id = roleDTO.Id,
-                Name = roleDTO.Name,
-            };
+
+            Role role = _mapper.Map<Role>(roleDTO);
 
 
             if (!ModelState.IsValid)
