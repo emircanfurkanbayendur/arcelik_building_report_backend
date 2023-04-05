@@ -187,5 +187,30 @@ namespace BuildingReport.DataAccess.Concrete
             }
 
         }
+
+        public List<string> GetStreetsByCityDistrictNeighbourhood(string city, string district, string neighbourhood)
+        {
+            using (var buildingDbContext = new ArcelikBuildingReportDbContext())
+            {
+                List<string> streets = buildingDbContext.Buildings.Where(b => b.City == city && b.District == district && b.Neighbourhood == neighbourhood)
+                    .Select(b => b.Street)
+                    .Distinct()
+                    .ToList();
+                return streets;
+            }
+
+        }
+
+        public List<Building> GetBuildingsByCityDistrictNeighbourhoodStreet(string city, string district, string neighbourhood,string street) 
+        {
+            using (var buildingDbContext = new ArcelikBuildingReportDbContext())
+            {
+                List<Building> buildings = buildingDbContext.Buildings.Where(b => b.City == city && b.District == district && b.Neighbourhood == neighbourhood && b.Street == street)
+                    .Include(x => x.Documents).ToList();
+                //burada include'lar eklenip çıkarılabilir isteğe göre
+                return buildings;
+            }
+
+        }
     }
 }

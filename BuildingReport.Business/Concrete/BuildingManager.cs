@@ -91,6 +91,21 @@ namespace BuildingReport.Business.Concrete
 
         }
 
+        public BuildingStreetsDTO GetStreetsByCityDistrictNeighbourhood(string city, string district, string neighbourhood)
+        {
+            List<string> streets = _buildingRepository.GetStreetsByCityDistrictNeighbourhood(city,district, neighbourhood);
+            BuildingStreetsDTO streetsDto = _mapper.Map<BuildingStreetsDTO>(streets);
+            return streetsDto;
+
+        }
+
+        public BuildingListDTO GetBuildingsByCityDistrictNeighbourhoodStreet(string city,string district, string neighbourhood,string street) 
+        {
+            List<Building> buildings = _buildingRepository.GetBuildingsByCityDistrictNeighbourhoodStreet(city,district, neighbourhood, street);
+            BuildingListDTO buildingsDto = _mapper.Map<BuildingListDTO>(buildings);
+            return buildingsDto;
+        }
+
 
         //BusinessRules
         public void CheckIfBuildingExistsByCode(string code)
@@ -105,7 +120,7 @@ namespace BuildingReport.Business.Concrete
         {
             if (!_buildingRepository.BuildingExistsById(id))
             {
-                throw new NotImplementedException("Building cannot find.");
+                throw new NotImplementedException("Building cannot be found.");
             }
         }
     }

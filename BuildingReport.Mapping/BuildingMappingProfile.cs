@@ -43,5 +43,11 @@ public class BuildingMappingProfile : Profile
             .ForMember(dest => dest.DistrictCount, opt => opt.MapFrom(src => src[1]))
             .ForMember(dest => dest.NeighbourhoodCount, opt => opt.MapFrom(src => src[2]))
             .ForMember(dest => dest.BuildingCount, opt => opt.MapFrom(src => src[3]));
+
+        CreateMap<List<string>, BuildingStreetsDTO>()
+            .ForMember(dest => dest.Streets, opt => opt.MapFrom(src => src));
+
+        CreateMap<List<Building>, BuildingListDTO>()
+    .ForMember(dest => dest.Buildings, opt => opt.MapFrom(src => src));
     }
 }

@@ -16,6 +16,8 @@ namespace BuildingReport.Business.Abstract
         List<Building> GetBuildingByDistrict(string district);
         List<Building> GetBuildingByNeighbourhood(string neighbourhood);
         List<Building> GetBuildingByStreet(string street);
+        BuildingListDTO GetBuildingsByCityDistrictNeighbourhoodStreet(string city, string district, string neighbourhood, string street);
+        BuildingStreetsDTO GetStreetsByCityDistrictNeighbourhood(string city,string district,string neighbourhood);
         BuildingCountDTO GetBuildingCounts();
         Building GetBuildingByCode(string code);
         Building GetBuildingById(long id);

@@ -111,6 +111,26 @@ namespace BuildingReport.API.Controllers
             return Ok(_buildingService.GetBuildingCounts());
         }
 
+        [AllowAnonymous]
+        [HttpGet("streetByAdress")]
+        public IActionResult GetStreetsByCityDistrictNeighbourhood(string city,string district,string neighbourhood)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            return Ok(_buildingService.GetStreetsByCityDistrictNeighbourhood(city,district,neighbourhood));
+        }
+
+        [AllowAnonymous]
+        [HttpGet("buildingsByAdress")]
+        public IActionResult GetBuildingsByCityDistrictNeighbourhoodStreet(string city, string district, string neighbourhood,string street)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            return Ok(_buildingService.GetBuildingsByCityDistrictNeighbourhoodStreet(city, district, neighbourhood,street));
+        }
+
         [HttpPost]
         public IActionResult Create([FromBody] BuildingDTO buildingdto) 
         {
