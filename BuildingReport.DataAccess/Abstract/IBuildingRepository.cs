@@ -21,7 +21,8 @@ namespace BuildingReport.DataAccess.Abstract
         Building CreateBuilding(Building building);
         Building UpdateBuilding(Building building);
         void DeleteBuilding(long id);
-        bool BuildingExists(string code);
+        bool BuildingExistsByCode(string code);
+        bool BuildingExistsById(long id);
 
 
     }

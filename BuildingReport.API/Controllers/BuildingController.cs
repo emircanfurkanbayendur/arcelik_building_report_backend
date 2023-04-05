@@ -14,15 +14,11 @@ namespace BuildingReport.API.Controllers
     [ApiController]
     public class BuildingController : ControllerBase
     {
-        private IBuildingService _buildingService;
-        private readonly IMapper _mapper;
-        
+        private IBuildingService _buildingService;  
 
-        public BuildingController(IBuildingService buildingService, IMapper mapper)
+        public BuildingController(IBuildingService buildingService)
         {
             _buildingService = buildingService;
-            _mapper = mapper;
-            //_buildingService = new BuildingManager();
         }
 
 
@@ -37,7 +33,7 @@ namespace BuildingReport.API.Controllers
 
         [AllowAnonymous]
         [HttpGet("{id}")]
-        public IActionResult GetBuildings(long id)
+        public IActionResult GetBuildingById(long id)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
@@ -112,52 +108,25 @@ namespace BuildingReport.API.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            List<int> counts = _buildingService.GetBuildingCounts();
-            BuildingCountDTO buildingCountDto = _mapper.Map<BuildingCountDTO>(counts);
-            //BuildingCountDto buildingCountDto = new BuildingCountDto()
-            //{
-            //    CityCount = counts[0],
-            //    DistrictCount = counts[1],
-            //    NeighbourhoodCount = counts[2],
-            //    BuildingCount = counts[3],
-
-            //};
-            return Ok(buildingCountDto);
+            return Ok(_buildingService.GetBuildingCounts());
         }
 
         [HttpPost]
-        public IActionResult CreateBuilding([FromBody] BuildingDTO buildingdto) 
+        public IActionResult Create([FromBody] BuildingDTO buildingdto) 
         {
-            if (buildingdto == null)
-            {
-                return BadRequest(ModelState);
-            }
-
-            Building building = _mapper.Map<Building>(buildingdto);
-
-
-
-            if(_buildingService.BuildingExists(building.Code))
-            {
-                ModelState.AddModelError("", "Building already exists");
-                return StatusCode(422, ModelState);
-            }
-
-            _buildingService.CreateBuilding(building);
-
-            return Ok(building);
-        }
-
-        [HttpPut]
-        public IActionResult Put([FromBody] BuildingDTO buildingdto)
-        {
-            Building building = _mapper.Map<Building>(buildingdto);
-
-
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            return Ok(_buildingService.UpdateBuilding(building));
+            return Ok(_buildingService.CreateBuilding(buildingdto));
+        }
+
+        [HttpPut]
+        public IActionResult Update([FromBody] BuildingDTO buildingdto)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            return Ok(_buildingService.UpdateBuilding(buildingdto));
         }
 
         [HttpDelete]

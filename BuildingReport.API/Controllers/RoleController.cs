@@ -16,12 +16,11 @@ namespace BuildingReport.API.Controllers
     public class RoleController : ControllerBase
     {
         private IRoleService _roleService;
-        private readonly IMapper _mapper;
+        
 
-        public RoleController(IRoleService roleService, IMapper mapper)
+        public RoleController(IRoleService roleService)
         {
             _roleService = roleService;
-            _mapper = mapper;
         }
 
 
@@ -47,37 +46,19 @@ namespace BuildingReport.API.Controllers
         [HttpPost]
         public IActionResult CreateRole([FromBody] RoleDTO roleDTO)
         {
-
-            if (roleDTO == null)
-            {
+            if (!ModelState.IsValid)
                 return BadRequest(ModelState);
-            }
 
-            Role role = _mapper.Map<Role>(roleDTO);
-
-
-            if (_roleService.RoleExists(role.Name))
-            {
-                ModelState.AddModelError("", "Role already exists");
-                return StatusCode(422, ModelState);
-            }
-
-            _roleService.CreateRole(role);
-
-            return Ok(role);
+            return Ok(_roleService.CreateRole(roleDTO));
         }
 
         [HttpPut]
         public IActionResult Put([FromBody] RoleDTO roleDTO)
         {
-
-            Role role = _mapper.Map<Role>(roleDTO);
-
-
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            return Ok(_roleService.UpdateRole(role));
+            return Ok(_roleService.UpdateRole(roleDTO));
         }
 
         [HttpDelete("{id}")]

@@ -1,9 +1,12 @@
-﻿using BuildingReport.Business.Abstract;
+﻿using AutoMapper;
+using BuildingReport.Business.Abstract;
 using BuildingReport.DataAccess.Abstract;
 using BuildingReport.DataAccess.Concrete;
+using BuildingReport.DTO;
 using BuildingReport.Entities;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.Metrics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,19 +16,19 @@ namespace BuildingReport.Business.Concrete
     public class BuildingManager : IBuildingService
     {
         private IBuildingRepository _buildingRepository;
+        private readonly IMapper _mapper;
 
-        public BuildingManager()
+        public BuildingManager(IMapper mapper)
         {
             _buildingRepository = new BuildingRepository();
+            _mapper = mapper;
         }
 
-        public bool BuildingExists(string code)
+        
+        public Building CreateBuilding(BuildingDTO buildingDTO)
         {
-            return _buildingRepository.BuildingExists(code);
-        }
-
-        public Building CreateBuilding(Building building)
-        {
+            Building building = _mapper.Map<Building>(buildingDTO);
+            CheckIfBuildingExistsByCode(building.Code);
             return _buildingRepository.CreateBuilding(building);
         }
 
@@ -59,11 +62,13 @@ namespace BuildingReport.Business.Concrete
 
         public Building GetBuildingByCode(string code)
         {
+            CheckIfBuildingExistsByCode(code);
             return _buildingRepository.GetBuildingByCode(code);
         }
 
         public Building GetBuildingById(long id)
         {
+            CheckIfBuildingExistsById(id);
             return _buildingRepository.GetBuildingById(id);
         }
 
@@ -72,14 +77,36 @@ namespace BuildingReport.Business.Concrete
             return _buildingRepository.GetBuildingsByUserId(userId);
         }
 
-        public Building UpdateBuilding(Building building)
+        public Building UpdateBuilding(BuildingDTO buildingDTO)
         {
+            Building building = _mapper.Map<Building>(buildingDTO);            
             return _buildingRepository.UpdateBuilding(building);
         }
 
-        public List<int> GetBuildingCounts()
+        public BuildingCountDTO GetBuildingCounts()
         {
-            return _buildingRepository.GetBuildingCounts();
+            List<int> counts = _buildingRepository.GetBuildingCounts();
+            BuildingCountDTO buildingCountDto = _mapper.Map<BuildingCountDTO>(counts);
+            return buildingCountDto;
+
+        }
+
+
+        //BusinessRules
+        public void CheckIfBuildingExistsByCode(string code)
+        {
+            if (_buildingRepository.BuildingExistsByCode(code))
+            {
+                throw new NotImplementedException("Building already exists.");
+            }
+        }
+
+        public void CheckIfBuildingExistsById(long id)
+        {
+            if (!_buildingRepository.BuildingExistsById(id))
+            {
+                throw new NotImplementedException("Building cannot find.");
+            }
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using BuildingReport.Entities;
+﻿using BuildingReport.DTO;
+using BuildingReport.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,12 +16,13 @@ namespace BuildingReport.Business.Abstract
         List<Building> GetBuildingByDistrict(string district);
         List<Building> GetBuildingByNeighbourhood(string neighbourhood);
         List<Building> GetBuildingByStreet(string street);
-        List<int> GetBuildingCounts();
+        BuildingCountDTO GetBuildingCounts();
         Building GetBuildingByCode(string code);
         Building GetBuildingById(long id);
-        Building CreateBuilding(Building building);
-        Building UpdateBuilding(Building building);
+        Building CreateBuilding(BuildingDTO buildingDTO);
+        Building UpdateBuilding(BuildingDTO buildingDTO);
         void DeleteBuilding(long id);
-        bool BuildingExists(string code);
+        void CheckIfBuildingExistsByCode(string code);
+        void CheckIfBuildingExistsById(long id);
     }
 }

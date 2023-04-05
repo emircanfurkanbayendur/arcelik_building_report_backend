@@ -92,11 +92,11 @@ namespace BuildingReport.DataAccess.Concrete
             }
         }
 
-        public bool DocumentExists(byte[] report)
+        public bool DocumentExistsById(long id)
         {
             using (var documentDbContext = new ArcelikBuildingReportDbContext())
             {
-                return documentDbContext.Documents.Any(d => d.Report == report);
+                return documentDbContext.Documents.Any(d => d.Id == id);
             }
         }
     }

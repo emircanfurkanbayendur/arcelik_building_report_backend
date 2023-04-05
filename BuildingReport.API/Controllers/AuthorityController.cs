@@ -15,12 +15,9 @@ namespace BuildingReport.API.Controllers
     public class AuthorityController : ControllerBase
     {
         private IAuthorityService _authorityService;
-        private readonly IMapper _mapper;
-        public AuthorityController(IAuthorityService authorityService, IMapper mapper)
+        public AuthorityController(IAuthorityService authorityService)
         {
             _authorityService = authorityService;
-            _mapper = mapper;
-            //_authorityService = new AuthorityManager();
         }
 
         [HttpGet]
@@ -33,7 +30,7 @@ namespace BuildingReport.API.Controllers
         }
 
         [HttpGet("{id}")]
-        public IActionResult GetAuthorities(long id) 
+        public IActionResult GetAuthority(long id) 
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
@@ -42,37 +39,21 @@ namespace BuildingReport.API.Controllers
         }
 
         [HttpPost]
-        public IActionResult CreateAuthority([FromBody] AuthorityDTO authorityDTO)
-        {
-            
-            if (authorityDTO == null)
-            {
+        public IActionResult Create([FromBody] AuthorityDTO authorityDTO)
+        {          
+            if (!ModelState.IsValid)
                 return BadRequest(ModelState);
-            }
-            
-            Authority authority = _mapper.Map<Authority>(authorityDTO);
 
-            if (_authorityService.AuthorityExists(authority.Name))
-            {
-                ModelState.AddModelError("", "Authority already exists");
-                return StatusCode(422, ModelState);
-            }
-
-            _authorityService.CreateAuthority(authority);
-
-            return Ok(authority);
+            return Ok(_authorityService.CreateAuthority(authorityDTO));
         }
 
         [HttpPut]
-        public IActionResult Put([FromBody] AuthorityDTO authorityDTO)
+        public IActionResult Update([FromBody] AuthorityDTO authorityDTO)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            Authority authority = _mapper.Map<Authority>(authorityDTO);
-
-
-            return Ok(_authorityService.UpdateAuthority(authority));
+            return Ok(_authorityService.UpdateAuthority(authorityDTO));
         }
 
         [HttpDelete("{id}")]
@@ -82,7 +63,6 @@ namespace BuildingReport.API.Controllers
                 return BadRequest(ModelState);
 
             _authorityService.DeleteAuthority(id);
-
             return NoContent();
         }
 

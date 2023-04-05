@@ -18,6 +18,8 @@ namespace BuildingReport.DataAccess.Abstract
         Authority UpdateAuthority(Authority authority);
 
         void DeleteAuthority(long id);
-        bool AuthorityExists(string name);
+        bool AuthorityExistsByName(string name);
+        bool AuthorityExistsById(long id);
+
     }
 }

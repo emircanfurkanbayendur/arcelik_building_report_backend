@@ -21,7 +21,7 @@ builder.Services.AddScoped<IRoleService, RoleManager>()
                 .AddScoped<IUserService, UserManager>()
                 .AddScoped<IBuildingService, BuildingManager>()
                 .AddScoped<IDocumentService, DocumentManager>()
-                .AddScoped<IHashService, Hash>();
+                .AddScoped<IHashService, HashManager>();
 
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

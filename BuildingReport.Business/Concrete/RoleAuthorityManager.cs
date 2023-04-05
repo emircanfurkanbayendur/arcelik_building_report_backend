@@ -1,6 +1,8 @@
-﻿using BuildingReport.Business.Abstract;
+﻿using AutoMapper;
+using BuildingReport.Business.Abstract;
 using BuildingReport.DataAccess.Abstract;
 using BuildingReport.DataAccess.Concrete;
+using BuildingReport.DTO;
 using BuildingReport.Entities;
 using System;
 using System.Collections.Generic;
@@ -13,14 +15,17 @@ namespace BuildingReport.Business.Concrete
     public class RoleAuthorityManager : IRoleAuthorityService
     {
         private IRoleAuthorityRepository _roleAuthorityRepository;
+        private readonly IMapper _mapper;
 
-        public RoleAuthorityManager()
+        public RoleAuthorityManager(IMapper mapper)
         {
             _roleAuthorityRepository = new RoleAuthorityRepository();
+            _mapper = mapper;
         }
 
-        public RoleAuthority CreateRoleAuthority(RoleAuthority roleAuthority)
+        public RoleAuthority CreateRoleAuthority(RoleAuthorityDTO roleAuthorityDTO)
         {
+            RoleAuthority roleAuthority = _mapper.Map<RoleAuthority>(roleAuthorityDTO);
             return _roleAuthorityRepository.CreateRoleAuthority(roleAuthority);
         }
 
@@ -40,14 +45,17 @@ namespace BuildingReport.Business.Concrete
             return _roleAuthorityRepository.GetRoleAuthorityById(id);
         }
 
-
-        public RoleAuthority UpdateRoleAuthority(RoleAuthority roleAuthority)
+        public RoleAuthority UpdateRoleAuthority(RoleAuthorityDTO roleAuthorityDTO)
         {
+            var roleAuthority = _mapper.Map<RoleAuthority>(roleAuthorityDTO);
             return _roleAuthorityRepository.UpdateRoleAuthority(roleAuthority);
         }
-        public bool RoleAuthorityExists(string roleName, string authorityName)
+        public void RoleAuthorityExists(string roleName, string authorityName)
         {
-            return _roleAuthorityRepository.RoleAuthorityExists(roleName, authorityName);
+            if (_roleAuthorityRepository.RoleAuthorityExists(roleName, authorityName))
+            {
+                throw new NotImplementedException("RoleAuthority already exists.");
+            }
         }
     }
 }

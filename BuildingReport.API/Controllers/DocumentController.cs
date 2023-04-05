@@ -15,13 +15,10 @@ namespace BuildingReport.API.Controllers
     public class DocumentController : ControllerBase
     {
         private IDocumentService _documentService;
-        private readonly IMapper _mapper;
 
-        public DocumentController(IDocumentService documentService, IMapper mapper)
+        public DocumentController(IDocumentService documentService)
         {
             _documentService = documentService;
-            _mapper = mapper;
-
         }
 
         [AllowAnonymous]
@@ -36,7 +33,7 @@ namespace BuildingReport.API.Controllers
 
         [AllowAnonymous]
         [HttpGet("{id}")]
-        public IActionResult GetDocuments(long id)
+        public IActionResult GetDocumentById(long id)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
@@ -65,34 +62,21 @@ namespace BuildingReport.API.Controllers
         }
 
         [HttpPost]
-        public IActionResult Post([FromBody] DocumentDTO documentdto)
+        public IActionResult Create([FromBody] DocumentDTO documentdto)
         {
-            if (documentdto == null)
-            {
-                return BadRequest(ModelState);
-            }
-
-           /* if (_documentService.DocumentExists(documentdto.Report))
-            {
-                ModelState.AddModelError("", "Document already exists");
-                return StatusCode(422, ModelState);
-            }*/
-
-            Document document = _mapper.Map<Document>(documentdto);
-
-
-            return Ok(_documentService.CreateDocument(document));
-        }
-
-        [HttpPut]
-        public IActionResult Put([FromBody] DocumentDTO documentdto)
-        {
-            Document document = _mapper.Map<Document>(documentdto);
-
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            return Ok(_documentService.UpdateDocument(document));
+            return Ok(_documentService.CreateDocument(documentdto));
+        }
+
+        [HttpPut]
+        public IActionResult Update([FromBody] DocumentDTO documentdto)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            return Ok(_documentService.UpdateDocument(documentdto));
         }
 
         [HttpDelete("{id}")]

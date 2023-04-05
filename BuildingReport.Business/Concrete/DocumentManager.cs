@@ -1,6 +1,8 @@
-﻿using BuildingReport.Business.Abstract;
+﻿using AutoMapper;
+using BuildingReport.Business.Abstract;
 using BuildingReport.DataAccess.Abstract;
 using BuildingReport.DataAccess.Concrete;
+using BuildingReport.DTO;
 using BuildingReport.Entities;
 using System;
 using System.Collections.Generic;
@@ -13,24 +15,22 @@ namespace BuildingReport.Business.Concrete
     public class DocumentManager : IDocumentService
     {
         private IDocumentRepository _documentRepository;
-
-        public DocumentManager()
+        private readonly IMapper _mapper;
+        public DocumentManager(IMapper mapper)
         {
             _documentRepository = new DocumentRepository();
+            _mapper = mapper;
         }
-        public Document CreateDocument(Document document)
+        public Document CreateDocument(DocumentDTO documentDTO)
         {
+            Document document = _mapper.Map<Document>(documentDTO);
             return _documentRepository.CreateDocument(document);
         }
 
         public void DeleteDocument(long id)
         {
+            CheckIfDocumentExistsById(id);
             _documentRepository.DeleteDocument(id);
-        }
-
-        public bool DocumentExists(byte[] report)
-        {
-            return _documentRepository.DocumentExists(report);
         }
 
         public List<Document> GetAllDocuments()
@@ -40,6 +40,7 @@ namespace BuildingReport.Business.Concrete
 
         public Document GetDocumentById(long id)
         {
+            CheckIfDocumentExistsById(id);
             return _documentRepository.GetDocumentById(id);
         }
 
@@ -53,9 +54,19 @@ namespace BuildingReport.Business.Concrete
             return _documentRepository.GetDocumentsByUserId(userId);
         }
 
-        public Document UpdateDocument(Document document)
+        public Document UpdateDocument(DocumentDTO documentDTO)
         {
+            Document document = _mapper.Map<Document>(documentDTO);
             return _documentRepository.UpdateDocument(document);
+        }
+
+        //BusinessRules
+        public void CheckIfDocumentExistsById(long id)
+        {
+            if (!_documentRepository.DocumentExistsById(id))
+            {
+                throw new NotImplementedException("document cannot find.");
+            }
         }
     }
 }

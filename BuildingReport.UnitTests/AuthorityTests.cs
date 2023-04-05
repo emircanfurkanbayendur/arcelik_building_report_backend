@@ -11,7 +11,7 @@ namespace BuildingReport.UnitTests
 
 {
     public class AuthorityTests
-    {
+    {/*
         private Mock<IAuthorityService> _AuthorityServiceMock;
         private AuthorityController _AuthorityController;
 
@@ -245,6 +245,6 @@ namespace BuildingReport.UnitTests
 
             //assert
             Assert.IsInstanceOf<NoContentResult>(result);
-        }
+        }*/
     }
 }

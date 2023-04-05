@@ -5,9 +5,12 @@ using System.Text;
 namespace BuildingReport.Business.Concrete
 {
 
-    public class Hash : IHashService
+    public class HashManager : IHashService
     {
+        public HashManager()
+        {
 
+        }
         public  byte[] HashPassword(string password)
         {
             byte[] passwordBytes = Encoding.UTF8.GetBytes(password);
