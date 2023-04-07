@@ -6,12 +6,18 @@ using BuildingReport.DataAccess.Abstract;
 using BuildingReport.DataAccess.Concrete;
 using BuildingReport.DTO;
 using BuildingReport.Entities;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Security.Policy;
 using System.Text;
 using System.Threading.Tasks;
+
+using System.Net;
+using MimeKit;
+using MimeKit.Text;
 
 namespace BuildingReport.Business.Concrete
 {
@@ -45,6 +51,8 @@ namespace BuildingReport.Business.Concrete
             User user = _mapper.Map<User>(userdto);
             user.RoleId = roleID;
             user.Password = _hashService.HashPassword(userdto.Password);
+            user.VerificationToken = GenerateVerificationToken();
+            SendVerificationEmail(user);
             return _userRepository.CreateUser(user);
         }
 
@@ -80,6 +88,59 @@ namespace BuildingReport.Business.Concrete
             return _userRepository.UpdateUser(user);
         }
 
+        public string GenerateVerificationToken()
+        {
+            var token = Convert.ToHexString(RandomNumberGenerator.GetBytes(3));
+            
+            //var tokenIsUnique = _userRepository.GetAllUsers().Any(x => x.VerificationToken == token);
+            //if (!tokenIsUnique)
+                //return GenerateVerificationToken();
+
+            return token;
+        }
+
+        public void SendVerificationEmail(User user)
+        {
+            string message = $@"<p>Please use the below token to verify your email address with the <code>/user/verifyToken</code> api route:</p>
+                            <p><code>{user.VerificationToken}</code></p>";
+            SendMail(
+            to: user.Email,
+            subject: "Sign-up Verification Verify Email",
+            html: $@"<h4>Verify Email</h4>
+                        <p>Thanks for registering!</p>
+                        {message}"
+        );
+
+        }
+
+        public void SendMail(string to, string subject, string html, string from = null)
+        {
+            MimeMessage mimeMessage = new MimeMessage();
+            MailboxAddress mailboxAddressFrom=new MailboxAddress("Admin","mailgiriniz");
+            mimeMessage.From.Add(mailboxAddressFrom);
+            MailboxAddress mailboxAddressTo = new MailboxAddress("User", to);
+            mimeMessage.To.Add(mailboxAddressTo);
+            mimeMessage.Subject = subject;
+            mimeMessage.Body = new TextPart(TextFormat.Html) { Text = html };
+
+            using var smtp = new MailKit.Net.Smtp.SmtpClient();
+            smtp.Connect("smtp.gmail.com", 587, false);
+            smtp.Authenticate("mailgiriniz", "şifre");
+            smtp.Send(mimeMessage);
+            smtp.Disconnect(true);
+        }
+
+        public bool VerifyToken(string token)
+        {
+            var user = _userRepository.GetAllUsers().SingleOrDefault( x => x.VerificationToken == token);
+
+            if (user == null)
+                return false;
+            user.VerificationToken = null;
+
+            _userRepository.UpdateUser(user);
+            return true;
+        }
         public User UpdateUserRole(long id)
         {
             CheckIfUserExistsById(id);
@@ -105,5 +166,7 @@ namespace BuildingReport.Business.Concrete
                 throw new NotImplementedException("User cannot found.");
             }
         }
+
+        
     }
 }

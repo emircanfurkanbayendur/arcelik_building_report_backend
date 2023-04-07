@@ -62,6 +62,20 @@ namespace BuildingReport.API.Controllers
         }
 
         [AllowAnonymous]
+        [HttpPost("verifyToken")]
+        public IActionResult VerifyToken(string token)
+        {
+
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            if (_userService.VerifyToken(token))
+                return Ok();
+
+            else return BadRequest();
+        }
+
+        [AllowAnonymous]
         [HttpPut]
         public IActionResult UpdateUser([FromBody] UserDTO userdto)
         {

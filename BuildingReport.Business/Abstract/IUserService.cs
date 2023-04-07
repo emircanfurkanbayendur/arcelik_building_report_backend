@@ -1,8 +1,10 @@
 ﻿using BuildingReport.DTO;
 using BuildingReport.Entities;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -17,7 +19,11 @@ namespace BuildingReport.Business.Abstract
         User CreateUser(UserDTO userdto);
 
         User UpdateUser(UserDTO userdto);
-
+        string GenerateVerificationToken();
+        void SendMail(string to, string subject, string html, string from = null);
+        void SendVerificationEmail(User user);
+        bool VerifyToken(string token);
+        
         void DeleteUser(long id);
         void CheckIfUserExistsByEmail(string email);
         void CheckIfUserExistsById(long id);
