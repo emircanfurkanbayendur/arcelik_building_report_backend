@@ -8,6 +8,7 @@ using System.Text;
 using System.Text.Json.Serialization;
 using AutoMapper;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc.Formatters;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -96,12 +97,23 @@ options => options.SuppressImplicitRequiredAttributeForNonNullableReferenceTypes
 
 
 
+
+
+
 builder.Services.AddControllers().AddJsonOptions(x =>
                 x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
 
 builder.Services.AddAutoMapper(typeof(AuthorityMappingProfile), typeof(UserMappingProfile), typeof(RoleMappingProfile), typeof(RoleAuthorityMappingProfile),
     typeof(BuildingMappingProfile), typeof(DocumentMappingProfile));
 
+builder.Services.AddControllers()
+    .AddNewtonsoftJson(options =>
+    {
+        options.SerializerSettings.ContractResolver = new Newtonsoft.Json.Serialization.DefaultContractResolver();
+        options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+        options.SerializerSettings.NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore;
+        options.SerializerSettings.Converters.Add(new JsonPatchConverter());
+    });
 
 
 

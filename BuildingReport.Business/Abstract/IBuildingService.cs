@@ -1,5 +1,6 @@
 ﻿using BuildingReport.DTO;
 using BuildingReport.Entities;
+using Microsoft.AspNetCore.JsonPatch;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,7 +23,9 @@ namespace BuildingReport.Business.Abstract
         Building GetBuildingByCode(string code);
         Building GetBuildingById(long id);
         Building CreateBuilding(BuildingDTO buildingDTO);
+
         Building UpdateBuilding(BuildingDTO buildingDTO);
+        Building UpdateBuildingPatch(int id, JsonPatchDocument<BuildingDTO> pathdoc);
         void DeleteBuilding(long id);
         void CheckIfBuildingExistsByCode(string code);
         void CheckIfBuildingExistsById(long id);
