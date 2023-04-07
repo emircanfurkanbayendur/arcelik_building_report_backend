@@ -40,7 +40,10 @@ namespace arcelik_building_report_backend.Concrete
             using (var userDbContext = new ArcelikBuildingReportDbContext())
             {
                 List<User> users = userDbContext.Users
-                    .Include(x => x.Role).Include(x => x.Buildings).Include(x => x.Documents).ToList();
+                    //.Include(x => x.Role)
+                    //.Include(x => x.Buildings)
+                    //.Include(x => x.Documents)
+                    .ToList();
                 //return userDbContext.Users.ToList();
 
                 return users;
@@ -52,7 +55,11 @@ namespace arcelik_building_report_backend.Concrete
         {
             using (var userDbContext = new ArcelikBuildingReportDbContext())
             {
-                User user = userDbContext.Users.Include(x => x.Role).Include(x => x.Buildings).Include(x => x.Documents).First(s => s.Id == id);
+                User user = userDbContext.Users
+                    //.Include(x => x.Role)
+                    //.Include(x => x.Buildings)
+                    //.Include(x => x.Documents)
+                    .First(s => s.Id == id);
 
 
                 //return userDbContext.Users.Find(id);
@@ -65,7 +72,11 @@ namespace arcelik_building_report_backend.Concrete
         {
             using (var userDbContext = new ArcelikBuildingReportDbContext())
             {
-                return userDbContext.Users.Include(x => x.Role).Include(x => x.Buildings).Include(x => x.Documents).Where(b => b.RoleId == roleId).ToList();
+                return userDbContext.Users
+                    //.Include(x => x.Role)
+                    //.Include(x => x.Buildings)
+                    //.Include(x => x.Documents)
+                    .Where(b => b.RoleId == roleId).ToList();
             }
         }
 

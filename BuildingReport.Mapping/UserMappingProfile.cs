@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
 using BuildingReport.DTO;
+using BuildingReport.DTO.Request;
+using BuildingReport.DTO.Response;
 using BuildingReport.Entities;
 
 
@@ -21,5 +23,10 @@ public class UserMappingProfile : Profile
         CreateMap<User, UserDTO>()
             .ForMember(dest => dest.Password, opt => opt.Ignore());
 
+
+        CreateMap<UserRequest, User>()
+                .ForMember(dest => dest.Password, opt => opt.Ignore());
+        CreateMap<User, UserResponse>()
+        .ForMember(dest => dest.Password, opt => opt.MapFrom(src => src.Password));
     }
 }

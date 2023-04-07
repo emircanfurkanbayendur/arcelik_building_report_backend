@@ -68,7 +68,7 @@ namespace BuildingReport.Business.Concrete
 
         public Building GetBuildingById(long id)
         {
-            CheckIfBuildingExistsById(id);
+            //CheckIfBuildingExistsById(id);
             return _buildingRepository.GetBuildingById(id);
         }
 

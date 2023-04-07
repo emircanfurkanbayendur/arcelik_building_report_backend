@@ -1,4 +1,6 @@
 ﻿using BuildingReport.DTO;
+using BuildingReport.DTO.Request;
+using BuildingReport.DTO.Response;
 using BuildingReport.Entities;
 using System;
 using System.Collections.Generic;
@@ -14,7 +16,7 @@ namespace BuildingReport.Business.Abstract
 
         User GetUserById(long id);
 
-        User CreateUser(UserDTO userdto);
+        UserResponse CreateUser(UserRequest request);
 
         User UpdateUser(UserDTO userdto);
 

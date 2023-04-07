@@ -5,6 +5,8 @@ using BuildingReport.Business.Abstract;
 using BuildingReport.DataAccess.Abstract;
 using BuildingReport.DataAccess.Concrete;
 using BuildingReport.DTO;
+using BuildingReport.DTO.Request;
+using BuildingReport.DTO.Response;
 using BuildingReport.Entities;
 using System;
 using System.Collections.Generic;
@@ -38,14 +40,19 @@ namespace BuildingReport.Business.Concrete
             _roleRepository = new RoleRepository();
         }
 
-        public User CreateUser(UserDTO userdto)
+        public UserResponse CreateUser(UserRequest request)
         {
-            CheckIfUserExistsByEmail(userdto.Email);
+            CheckIfUserExistsByEmail(request.Email);
             var roleID = _roleRepository.GetAllRoles().Where(r => r.Name == "guest").FirstOrDefault().Id;
-            User user = _mapper.Map<User>(userdto);
+
+            User user = _mapper.Map<User>(request);
+            user.CreatedAt = DateTime.Now;
+            user.IsActive = true;
             user.RoleId = roleID;
-            user.Password = _hashService.HashPassword(userdto.Password);
-            return _userRepository.CreateUser(user);
+            user.Password = _hashService.HashPassword(request.Password);
+            User new_user = _userRepository.CreateUser(user);
+            UserResponse response = _mapper.Map<UserResponse>(new_user);
+            return response;
         }
 
         public void DeleteUser(long id)
@@ -86,7 +93,8 @@ namespace BuildingReport.Business.Concrete
             var roleID = _roleRepository.GetAllRoles().Where(r => r.Name == "admin").FirstOrDefault().Id;
             var user = GetUserById(id);
             user.RoleId = roleID;
-            return _userRepository.UpdateUser(user);
+            User new_user = _userRepository.UpdateUser(user);
+            return new_user;
         }
 
         //BusinessRules

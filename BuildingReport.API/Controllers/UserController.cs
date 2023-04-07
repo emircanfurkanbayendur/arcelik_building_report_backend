@@ -2,6 +2,8 @@
 using BuildingReport.Business.Abstract;
 using BuildingReport.Business.Concrete;
 using BuildingReport.DTO;
+using BuildingReport.DTO.Request;
+using BuildingReport.DTO.Response;
 using BuildingReport.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -53,12 +55,12 @@ namespace BuildingReport.API.Controllers
 
         [AllowAnonymous]
         [HttpPost]
-        public IActionResult CreateUser([FromBody] UserDTO userdto)
+        public IActionResult CreateUser([FromBody] UserRequest request)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
            
-            return Ok(_userService.CreateUser(userdto));
+            return Ok(_userService.CreateUser(request));
         }
 
         [AllowAnonymous]

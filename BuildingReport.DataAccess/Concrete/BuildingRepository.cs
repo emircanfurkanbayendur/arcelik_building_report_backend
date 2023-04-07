@@ -67,7 +67,8 @@ namespace BuildingReport.DataAccess.Concrete
             using (var buildingDbContext = new ArcelikBuildingReportDbContext())
             {
                 List<Building> buildings = buildingDbContext.Buildings.Where(b => b.City == city)
-                    .Include(x => x.CreatedByUser).Include(x => x.Documents).ToList();
+                    //.Include(x => x.CreatedByUserId)
+                    .Include(x => x.Documents).ToList();
 
                 return buildings;
             }
@@ -78,7 +79,8 @@ namespace BuildingReport.DataAccess.Concrete
             using (var buildingDbContext = new ArcelikBuildingReportDbContext())
             {
                 List<Building> buildings = buildingDbContext.Buildings.Where(b => b.District == district)
-                   .Include(x => x.CreatedByUser).Include(x => x.Documents).ToList();
+                   //.Include(x => x.CreatedByUser)
+                   .Include(x => x.Documents).ToList();
 
                 return buildings;
             }
@@ -89,7 +91,8 @@ namespace BuildingReport.DataAccess.Concrete
             using (var buildingDbContext = new ArcelikBuildingReportDbContext())
             {
                 List<Building> buildings = buildingDbContext.Buildings.Where(b => b.Neighbourhood == neighbourhood)
-                   .Include(x => x.CreatedByUser).Include(x => x.Documents).ToList();
+                   //.Include(x => x.CreatedByUser)
+                   .Include(x => x.Documents).ToList();
 
                 return buildings;
             }
@@ -100,7 +103,8 @@ namespace BuildingReport.DataAccess.Concrete
             using (var buildingDbContext = new ArcelikBuildingReportDbContext())
             {
                 List<Building> buildings = buildingDbContext.Buildings.Where(b => b.Street == street)
-                   .Include(x => x.CreatedByUser).Include(x => x.Documents).ToList();
+                   //.Include(x => x.CreatedByUser)
+                   .Include(x => x.Documents).ToList();
 
                 return buildings;
             }
@@ -112,7 +116,8 @@ namespace BuildingReport.DataAccess.Concrete
             using (var buildingDbContext = new ArcelikBuildingReportDbContext())
             {
                 Building building = buildingDbContext.Buildings
-                   .Include(x => x.CreatedByUser).Include(x => x.Documents).First(s => s.Code == code);
+                   //.Include(x => x.CreatedByUser)
+                   .Include(x => x.Documents).First(s => s.Code == code);
 
                 return building;
             }
@@ -124,7 +129,8 @@ namespace BuildingReport.DataAccess.Concrete
             {
 
                 Building building = buildingDbContext.Buildings
-                  .Include(x => x.CreatedByUser).Include(x => x.Documents).First(s => s.Id == id);
+                  //.Include(x => x.CreatedByUser)
+                  .Include(x => x.Documents).First(s => s.Id == id);
 
                 return building;
             }
@@ -135,7 +141,8 @@ namespace BuildingReport.DataAccess.Concrete
             using (var buildingDbContext = new ArcelikBuildingReportDbContext())
             {
                 List<Building> buildings = buildingDbContext.Buildings.Where(b => b.CreatedByUserId == userId)
-                   .Include(x => x.CreatedByUser).Include(x => x.Documents).ToList();
+                   //.Include(x => x.CreatedByUser)
+                   .Include(x => x.Documents).ToList();
 
                 return buildings;
             }
