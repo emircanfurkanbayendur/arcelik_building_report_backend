@@ -17,6 +17,7 @@ public partial class User
     public byte[] Password { get; set; } = null!;
 
     public DateTime CreatedAt { get; set; }
+    public string? VerificationToken { get; set; }
 
     public bool? IsActive { get; set; }
 

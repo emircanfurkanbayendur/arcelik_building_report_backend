@@ -5,6 +5,7 @@ using BuildingReport.DTO;
 using BuildingReport.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BuildingReport.API.Controllers
@@ -14,7 +15,7 @@ namespace BuildingReport.API.Controllers
     [ApiController]
     public class BuildingController : ControllerBase
     {
-        private IBuildingService _buildingService;  
+        private IBuildingService _buildingService;
 
         public BuildingController(IBuildingService buildingService)
         {
@@ -113,26 +114,27 @@ namespace BuildingReport.API.Controllers
 
         [AllowAnonymous]
         [HttpGet("streetByAdress")]
-        public IActionResult GetStreetsByCityDistrictNeighbourhood(string city,string district,string neighbourhood)
+        public IActionResult GetStreetsByCityDistrictNeighbourhood(string city, string district, string neighbourhood)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            return Ok(_buildingService.GetStreetsByCityDistrictNeighbourhood(city,district,neighbourhood));
+            return Ok(_buildingService.GetStreetsByCityDistrictNeighbourhood(city, district, neighbourhood));
         }
 
         [AllowAnonymous]
         [HttpGet("buildingsByAdress")]
-        public IActionResult GetBuildingsByCityDistrictNeighbourhoodStreet(string city, string district, string neighbourhood,string street)
+        public IActionResult GetBuildingsByCityDistrictNeighbourhoodStreet(string city, string district, string neighbourhood, string street)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            return Ok(_buildingService.GetBuildingsByCityDistrictNeighbourhoodStreet(city, district, neighbourhood,street));
+            return Ok(_buildingService.GetBuildingsByCityDistrictNeighbourhoodStreet(city, district, neighbourhood, street));
         }
+        
 
         [HttpPost]
-        public IActionResult Create([FromBody] BuildingDTO buildingdto) 
+        public IActionResult Create([FromBody] BuildingDTO buildingdto)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
@@ -147,6 +149,15 @@ namespace BuildingReport.API.Controllers
                 return BadRequest(ModelState);
 
             return Ok(_buildingService.UpdateBuilding(buildingdto));
+        }
+
+        [HttpPatch("{id}")]
+        public IActionResult UpdatePatch(int id,[FromBody] JsonPatchDocument<BuildingDTO> patchdoc)
+        {
+            if (patchdoc == null)
+                return BadRequest(ModelState);
+
+            return Ok(_buildingService.UpdateBuildingPatch(id,patchdoc));
         }
 
         [HttpDelete]
