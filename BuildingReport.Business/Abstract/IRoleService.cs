@@ -1,4 +1,5 @@
-﻿using BuildingReport.Entities;
+﻿using BuildingReport.DTO;
+using BuildingReport.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,12 +14,13 @@ namespace BuildingReport.Business.Abstract
 
         Role GetRoleById(long id);
 
-        Role CreateRole(Role role);
+        Role CreateRole(RoleDTO roleDTO);
 
-        Role UpdateRole(Role role);
+        Role UpdateRole(RoleDTO roleDTO);
 
         void DeleteRole(long id);
-        bool RoleExists(string name);
+        void CheckIfRoleExistsByName(string name);
+        void CheckIfRoleExistsById(long id);
 
     }
 }

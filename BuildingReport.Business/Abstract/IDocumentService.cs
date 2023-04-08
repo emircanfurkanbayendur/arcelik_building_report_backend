@@ -1,4 +1,5 @@
-﻿using BuildingReport.Entities;
+﻿using BuildingReport.DTO;
+using BuildingReport.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,12 +14,9 @@ namespace BuildingReport.Business.Abstract
         List<Document> GetDocumentsByBuildingId(long buildingId);
         List<Document> GetDocumentsByUserId(long userId);
         Document GetDocumentById(long id);
-
-        Document CreateDocument(Document document);
-
-        Document UpdateDocument(Document document);
-
+        Document CreateDocument(DocumentDTO documentDTO);
+        Document UpdateDocument(DocumentDTO documentDTO);
         void DeleteDocument(long id);
-        bool DocumentExists(byte[] report);
+        void CheckIfDocumentExistsById(long id);
     }
 }

@@ -1,4 +1,5 @@
-﻿using BuildingReport.Entities;
+﻿using BuildingReport.DTO;
+using BuildingReport.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,11 +14,12 @@ namespace BuildingReport.Business.Abstract
 
         Authority GetAuthorityById(long id);
 
-        Authority CreateAuthority(Authority authority);
+        Authority CreateAuthority(AuthorityDTO authorityDTO);
 
-        Authority UpdateAuthority(Authority authority);
+        Authority UpdateAuthority(AuthorityDTO authority);
 
         void DeleteAuthority(long id);
-        bool AuthorityExists(string name);
+        void checkIfAuthorityExistsByName(string name);
+        void checkIfAuthorityExistsById(long id);
     }
 }

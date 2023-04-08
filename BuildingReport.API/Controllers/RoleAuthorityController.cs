@@ -1,4 +1,5 @@
-﻿using BuildingReport.Business.Abstract;
+﻿using AutoMapper;
+using BuildingReport.Business.Abstract;
 using BuildingReport.Business.Concrete;
 using BuildingReport.DTO;
 using BuildingReport.Entities;
@@ -14,6 +15,7 @@ namespace BuildingReport.API.Controllers
     public class RoleAuthorityController : ControllerBase
     {
         private IRoleAuthorityService _RoleAuthorityService;
+        
 
 
         public RoleAuthorityController(IRoleAuthorityService roleAuthorityService)
@@ -45,47 +47,19 @@ namespace BuildingReport.API.Controllers
         [HttpPost]
         public IActionResult Post([FromBody] RoleAuthorityDTO roleauthoritydto)
         {
-            if (roleauthoritydto == null)
-            {
+            if (!ModelState.IsValid)
                 return BadRequest(ModelState);
-            }
-            //Role role = _roleService.GetRoleById(roleauthoritydto.RoleId);
-            //Authority authority = _authorityService.GetAuthorityById(roleauthoritydto.AuthorityId);
-            var roleauthority = new RoleAuthority()
-            {
-                Id = roleauthoritydto.Id,
-                RoleId = roleauthoritydto.RoleId,
-                AuthorityId = roleauthoritydto.AuthorityId,
 
-                //Role = role,
-                //Authority = authority
-
-            };
-
-            //if (_RoleAuthorityService.RoleAuthorityExists(roleauthority.Role.Name, roleauthority.Authority.Name))
-            //{
-            //    ModelState.AddModelError("", "RoleAuthority already exists");
-            //    return StatusCode(422, ModelState);
-            //}
-
-            return Ok(_RoleAuthorityService.CreateRoleAuthority(roleauthority));
+            return Ok(_RoleAuthorityService.CreateRoleAuthority(roleauthoritydto));
         }
 
         [HttpPut]
         public IActionResult Put([FromBody] RoleAuthorityDTO roleauthoritydto)
         {
-            var roleauthority = new RoleAuthority()
-            {
-                Id = roleauthoritydto.Id,
-                RoleId = roleauthoritydto.RoleId,
-                AuthorityId = roleauthoritydto.AuthorityId
-
-            };
-
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            return Ok(_RoleAuthorityService.UpdateRoleAuthority(roleauthority));
+            return Ok(_RoleAuthorityService.UpdateRoleAuthority(roleauthoritydto));
         }
 
         [HttpDelete("{id}")]

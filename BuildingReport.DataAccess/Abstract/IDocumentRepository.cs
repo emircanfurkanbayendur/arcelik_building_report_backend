@@ -20,6 +20,6 @@ namespace BuildingReport.DataAccess.Abstract
         Document UpdateDocument(Document document);
 
         void DeleteDocument(long id);
-        bool DocumentExists(byte[] report);
+        bool DocumentExistsById(long id);
     }
 }

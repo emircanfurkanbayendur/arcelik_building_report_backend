@@ -4,79 +4,21 @@ using BuildingReport.Business.Concrete;
 using BuildingReport.DTO;
 using BuildingReport.Entities;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Cryptography;
-using System.Text;
 
 namespace BuildingReport.API.Controllers
 {
-    public class Hash
-    {
-        public static byte[]  HashPassword(string password)
-        {
-            byte[] passwordBytes = Encoding.UTF8.GetBytes(password);
-            SHA256 sha256 = SHA256.Create();
-            byte[] hashBytes = sha256.ComputeHash(passwordBytes);
-            return hashBytes;
 
-        }
-    }
     [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class UserController : ControllerBase
     {
         private IUserService _userService;
-        private IRoleService _roleService;
-        private readonly IJWTAuthenticationService _jwtAuthenticationService;
 
-
-        public UserController(IJWTAuthenticationService jwtAuthenticationService, IUserService userService, IRoleService roleService)
+        public UserController(IUserService userService)
         {
-            //_userService = new UserManager();
-            _userService = userService;
-            //_roleService = new RoleManager();
-            _roleService = roleService;
-            _jwtAuthenticationService = jwtAuthenticationService;
-        }
-
-        [AllowAnonymous]
-        [HttpPost("authenticate")]
-        public IActionResult Authenticate([FromBody] LoginDto loginDto)
-        {
-            byte[] _password = Hash.HashPassword(loginDto.Password);
-            var token = _jwtAuthenticationService.Authenticate(loginDto.Email, _password);
-            if (token == null)
-            {
-                return Unauthorized();
-            }
-
-            
-            var user = _userService.GetAllUsers().Where(u => u.Email == loginDto.Email && u.Password.SequenceEqual(_password)).FirstOrDefault();
-            ReturnDto returnDto = new ReturnDto()
-            {
-                Email = user.Email,
-                CreatedAt = user.CreatedAt,
-                FirstName = user.FirstName,
-                Id = user.Id,
-                IsActive = user.IsActive ,
-                LastName = user.LastName ,
-                Password = user.Password,
-                Token = token,
-                RoleId = user.RoleId
-                
-            };
-           
-            //User returnuser = user;
-            //List<User> emptylist = new List<User>();
-            //List<Document> emptydoc = new List<Document>();
-            //List<Building>  emptybuilding = new List<Building>();
-            //returnuser.Documents = emptydoc;
-            //returnuser.Role.Users = emptylist;
-            //returnuser.Buildings = emptybuilding;
-
-            return Ok(returnDto);
+            _userService = userService; 
         }
 
         [HttpGet]
@@ -113,36 +55,10 @@ namespace BuildingReport.API.Controllers
         [HttpPost]
         public IActionResult CreateUser([FromBody] UserDTO userdto)
         {
-            if (userdto == null)
-            {
+            if (!ModelState.IsValid)
                 return BadRequest(ModelState);
-            }
-
-            if (_userService.UserExists(userdto.Email))
-            {
-                ModelState.AddModelError("", "User already exists");
-                return StatusCode(422, ModelState);
-            }
-
-            var roleID = _roleService.GetAllRoles().Where(r => r.Name == "guest").FirstOrDefault().Id;
-            var user = new User()
-            {
-                Id = userdto.Id,
-                FirstName = userdto.FirstName,
-                LastName = userdto.LastName,
-                Email = userdto.Email,
-                Password = Hash.HashPassword(userdto.Password),
-                CreatedAt = userdto.CreatedAt,
-                IsActive = userdto.IsActive,
-                RoleId = roleID,
-            };
-
-
-
-
-            _userService.CreateUser(user);
-
-            return Ok(user);
+           
+            return Ok(_userService.CreateUser(userdto));
         }
 
         [AllowAnonymous]
@@ -152,21 +68,7 @@ namespace BuildingReport.API.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var user = _userService.GetUserById(userdto.Id);
-            var new_user = new User()
-            {
-                Id = userdto.Id,
-                FirstName = userdto.FirstName,
-                LastName = userdto.LastName,
-                Email = userdto.Email,
-                Password = Hash.HashPassword(userdto.Password),
-                CreatedAt = user.CreatedAt,
-                IsActive = userdto.IsActive,
-                RoleId = user.RoleId
-            };
-
-
-            return Ok(_userService.UpdateUser(new_user));
+            return Ok(_userService.UpdateUser(userdto));
         }
 
         [HttpPut("changeRole/{userId}")]
@@ -175,21 +77,7 @@ namespace BuildingReport.API.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var roleID = _roleService.GetAllRoles().Where(r => r.Name == "admin").FirstOrDefault().Id;
-            var user = _userService.GetUserById(userId);
-            var new_user = new User()
-            {
-                Id = user.Id,
-                FirstName = user.FirstName,
-                LastName = user.LastName,
-                Email = user.Email,
-                Password = user.Password,
-                CreatedAt = user.CreatedAt,
-                IsActive = user.IsActive,
-                RoleId = roleID
-            };
-
-            return Ok(_userService.UpdateUser(new_user));
+            return Ok(_userService.UpdateUserRole(userId));
         }
 
         [AllowAnonymous]

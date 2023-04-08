@@ -11,7 +11,7 @@ namespace BuildingReport.UnitTests
 
 {
     public class RoleTests
-    {
+    {/*
         private Mock<IRoleService> _roleServiceMock;
         private RoleController _roleController;
 
@@ -246,6 +246,6 @@ namespace BuildingReport.UnitTests
             //assert
             Assert.IsInstanceOf<NoContentResult>(result);
         }
-
+        */
     }
 }

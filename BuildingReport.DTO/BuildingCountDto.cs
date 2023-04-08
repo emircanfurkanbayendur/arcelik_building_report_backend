@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace BuildingReport.DTO
 {
-    public class BuildingCountDto
+    public class BuildingCountDTO
     {
         public int CityCount { get; set; }
 

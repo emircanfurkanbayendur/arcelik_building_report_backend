@@ -13,11 +13,19 @@ namespace BuildingReport.DataAccess.Concrete
 {
     public class BuildingRepository : IBuildingRepository
     {
-        public bool BuildingExists(string code)
+        public bool BuildingExistsByCode(string code)
         {
             using (var buildingDbContext = new ArcelikBuildingReportDbContext())
             {
                 return buildingDbContext.Buildings.Any(b => b.Code == code);
+            }
+        }
+
+        public bool BuildingExistsById(long id)
+        {
+            using (var buildingDbContext = new ArcelikBuildingReportDbContext())
+            {
+                return buildingDbContext.Buildings.Any(b => b.Id == id);
             }
         }
 
@@ -40,9 +48,6 @@ namespace BuildingReport.DataAccess.Concrete
                 buildingDbContext.Attach(building);
                 buildingDbContext.Entry(building).Property(x => x.IsActive).IsModified = true;
                 buildingDbContext.SaveChanges();
-
-
-
             }
         }
 
@@ -50,10 +55,7 @@ namespace BuildingReport.DataAccess.Concrete
         {
             using(var buildingDbContext = new ArcelikBuildingReportDbContext())
             {
-                List<Building> buildings = buildingDbContext.Buildings.Include(x => x.CreatedByUser).Include(x => x.Documents).ToList();
-
-                //return buildingDbContext.Buildings.ToList();
-
+                List<Building> buildings = buildingDbContext.Buildings.Include(x => x.Documents).ToList();
                 return buildings;
             }
         }
@@ -79,8 +81,6 @@ namespace BuildingReport.DataAccess.Concrete
                    .Include(x => x.CreatedByUser).Include(x => x.Documents).ToList();
 
                 return buildings;
-
-                //return buildingDbContext.Buildings.Where(b => b.District == district).ToList();
             }
         }
 
@@ -92,8 +92,6 @@ namespace BuildingReport.DataAccess.Concrete
                    .Include(x => x.CreatedByUser).Include(x => x.Documents).ToList();
 
                 return buildings;
-
-                //return buildingDbContext.Buildings.Where(b => b.Neighbourhood == neighbourhood).ToList();
             }
         }
 
@@ -105,8 +103,6 @@ namespace BuildingReport.DataAccess.Concrete
                    .Include(x => x.CreatedByUser).Include(x => x.Documents).ToList();
 
                 return buildings;
-
-                //return buildingDbContext.Buildings.Where(b => b.Street == street).ToList();
             }
         }
 
@@ -119,7 +115,6 @@ namespace BuildingReport.DataAccess.Concrete
                    .Include(x => x.CreatedByUser).Include(x => x.Documents).First(s => s.Code == code);
 
                 return building;
-                //return buildingDbContext.Buildings.Where(b => b.Code == code).FirstOrDefault();
             }
         }
 
@@ -132,8 +127,6 @@ namespace BuildingReport.DataAccess.Concrete
                   .Include(x => x.CreatedByUser).Include(x => x.Documents).First(s => s.Id == id);
 
                 return building;
-
-                //return buildingDbContext.Buildings.Find(id);
             }
         }
 
@@ -145,8 +138,6 @@ namespace BuildingReport.DataAccess.Concrete
                    .Include(x => x.CreatedByUser).Include(x => x.Documents).ToList();
 
                 return buildings;
-
-                //return buildingDbContext.Buildings.Where(b => b.CreatedByUserId == userId).ToList();
             }
         }
 
@@ -193,6 +184,31 @@ namespace BuildingReport.DataAccess.Concrete
 
                 return new List<int> { cityCount, districtCount, neighbourhoodCount, buildingCount };
 
+            }
+
+        }
+
+        public List<string> GetStreetsByCityDistrictNeighbourhood(string city, string district, string neighbourhood)
+        {
+            using (var buildingDbContext = new ArcelikBuildingReportDbContext())
+            {
+                List<string> streets = buildingDbContext.Buildings.Where(b => b.City == city && b.District == district && b.Neighbourhood == neighbourhood)
+                    .Select(b => b.Street)
+                    .Distinct()
+                    .ToList();
+                return streets;
+            }
+
+        }
+
+        public List<Building> GetBuildingsByCityDistrictNeighbourhoodStreet(string city, string district, string neighbourhood,string street) 
+        {
+            using (var buildingDbContext = new ArcelikBuildingReportDbContext())
+            {
+                List<Building> buildings = buildingDbContext.Buildings.Where(b => b.City == city && b.District == district && b.Neighbourhood == neighbourhood && b.Street == street)
+                    .Include(x => x.Documents).ToList();
+                //burada include'lar eklenip çıkarılabilir isteğe göre
+                return buildings;
             }
 
         }

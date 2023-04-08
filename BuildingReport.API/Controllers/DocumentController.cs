@@ -1,4 +1,5 @@
-﻿using BuildingReport.Business.Abstract;
+﻿using AutoMapper;
+using BuildingReport.Business.Abstract;
 using BuildingReport.Business.Concrete;
 using BuildingReport.DTO;
 using BuildingReport.Entities;
@@ -18,7 +19,6 @@ namespace BuildingReport.API.Controllers
         public DocumentController(IDocumentService documentService)
         {
             _documentService = documentService;
-            //_documentService = new DocumentManager();
         }
 
         [AllowAnonymous]
@@ -33,7 +33,7 @@ namespace BuildingReport.API.Controllers
 
         [AllowAnonymous]
         [HttpGet("{id}")]
-        public IActionResult GetDocuments(long id)
+        public IActionResult GetDocumentById(long id)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
@@ -62,51 +62,21 @@ namespace BuildingReport.API.Controllers
         }
 
         [HttpPost]
-        public IActionResult Post([FromBody] DocumentDTO documentdto)
+        public IActionResult Create([FromBody] DocumentDTO documentdto)
         {
-            if (documentdto == null)
-            {
-                return BadRequest(ModelState);
-            }
-
-           /* if (_documentService.DocumentExists(documentdto.Report))
-            {
-                ModelState.AddModelError("", "Document already exists");
-                return StatusCode(422, ModelState);
-            }*/
-
-            var document = new Document()
-            {
-                Id = documentdto.Id,
-                Report = documentdto.Report,
-                UploadedAt = documentdto.UploadedAt,
-                IsActive = documentdto.IsActive,
-                UploadedByUserId = documentdto.UploadedByUserId,
-                BuildingId = documentdto.BuildingId,
-
-            };
-
-            return Ok(_documentService.CreateDocument(document));
-        }
-
-        [HttpPut]
-        public IActionResult Put([FromBody] DocumentDTO documentdto)
-        {
-            var document = new Document()
-            {
-                Id = documentdto.Id,
-                Report = documentdto.Report,
-                UploadedAt = documentdto.UploadedAt,
-                IsActive = documentdto.IsActive,
-                UploadedByUserId = documentdto.UploadedByUserId,
-                BuildingId = documentdto.BuildingId,
-
-            };
-
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            return Ok(_documentService.UpdateDocument(document));
+            return Ok(_documentService.CreateDocument(documentdto));
+        }
+
+        [HttpPut]
+        public IActionResult Update([FromBody] DocumentDTO documentdto)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            return Ok(_documentService.UpdateDocument(documentdto));
         }
 
         [HttpDelete("{id}")]

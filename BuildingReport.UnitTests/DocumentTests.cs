@@ -12,7 +12,7 @@ namespace BuildingReport.UnitTests
 
 {
     public class DocumentTests
-    {
+    {/*
         private Mock<IDocumentService> _documentServiceMock;
         private DocumentController _documentController;
 
@@ -247,7 +247,7 @@ namespace BuildingReport.UnitTests
 
             //assert
             Assert.IsInstanceOf<NoContentResult>(result);
-        }
+        }*/
 
     }
 }

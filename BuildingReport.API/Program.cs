@@ -1,12 +1,13 @@
 using BuildingReport.Business.Abstract;
 using BuildingReport.Business.Concrete;
-using BuildingReport.DataAccess;
 using BuildingReport.DataAcess;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
 using System.Text.Json.Serialization;
+using AutoMapper;
+using Microsoft.AspNetCore.Hosting;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,7 +20,9 @@ builder.Services.AddScoped<IRoleService, RoleManager>()
                 .AddScoped<IRoleAuthorityService, RoleAuthorityManager>()
                 .AddScoped<IUserService, UserManager>()
                 .AddScoped<IBuildingService, BuildingManager>()
-                .AddScoped<IDocumentService, DocumentManager>();
+                .AddScoped<IDocumentService, DocumentManager>()
+                .AddScoped<IHashService, HashManager>();
+
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 
@@ -95,6 +98,10 @@ options => options.SuppressImplicitRequiredAttributeForNonNullableReferenceTypes
 
 builder.Services.AddControllers().AddJsonOptions(x =>
                 x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
+
+builder.Services.AddAutoMapper(typeof(AuthorityMappingProfile), typeof(UserMappingProfile), typeof(RoleMappingProfile), typeof(RoleAuthorityMappingProfile),
+    typeof(BuildingMappingProfile), typeof(DocumentMappingProfile));
+
 
 
 

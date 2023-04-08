@@ -1,4 +1,5 @@
-﻿using BuildingReport.Business.Abstract;
+﻿using AutoMapper;
+using BuildingReport.Business.Abstract;
 using BuildingReport.Business.Concrete;
 using BuildingReport.DTO;
 using BuildingReport.Entities;
@@ -13,13 +14,11 @@ namespace BuildingReport.API.Controllers
     [ApiController]
     public class BuildingController : ControllerBase
     {
-        private IBuildingService _buildingService;
-        
+        private IBuildingService _buildingService;  
 
         public BuildingController(IBuildingService buildingService)
         {
             _buildingService = buildingService;
-            //_buildingService = new BuildingManager();
         }
 
 
@@ -34,7 +33,7 @@ namespace BuildingReport.API.Controllers
 
         [AllowAnonymous]
         [HttpGet("{id}")]
-        public IActionResult GetBuildings(long id)
+        public IActionResult GetBuildingById(long id)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
@@ -109,78 +108,45 @@ namespace BuildingReport.API.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            List<int> counts = _buildingService.GetBuildingCounts();
-            BuildingCountDto buildingCountDto = new BuildingCountDto()
-            {
-                CityCount = counts[0],
-                DistrictCount = counts[1],
-                NeighbourhoodCount = counts[2],
-                BuildingCount = counts[3],
-
-            };
-            return Ok(buildingCountDto);
+            return Ok(_buildingService.GetBuildingCounts());
         }
 
-        [HttpPost]
-        public IActionResult CreateBuilding([FromBody] BuildingDTO buildingdto) 
+        [AllowAnonymous]
+        [HttpGet("streetByAdress")]
+        public IActionResult GetStreetsByCityDistrictNeighbourhood(string city,string district,string neighbourhood)
         {
-            if (buildingdto == null)
-            {
-                return BadRequest(ModelState);
-            }
-
-            var building = new Building()
-            {
-                Id = buildingdto.Id,
-                Name = buildingdto.Name,
-                City = buildingdto.City,
-                District = buildingdto.District,
-                Neighbourhood = buildingdto.Neighbourhood,
-                Street = buildingdto.Street,
-                BuildingNumber = buildingdto.BuildingNumber,
-                Code = buildingdto.Code,
-                Latitude = buildingdto.Latitude,
-                Longitude = buildingdto.Longitude,
-                RegisteredAt = buildingdto.RegisteredAt,
-                IsActive = buildingdto.IsActive,
-                CreatedByUserId = buildingdto.CreatedByUserId
-            };
-
-            if(_buildingService.BuildingExists(building.Code))
-            {
-                ModelState.AddModelError("", "Building already exists");
-                return StatusCode(422, ModelState);
-            }
-
-            _buildingService.CreateBuilding(building);
-
-            return Ok(building);
-        }
-
-        [HttpPut]
-        public IActionResult Put([FromBody] BuildingDTO buildingdto)
-        {
-            var building = new Building()
-            {
-                Id = buildingdto.Id,
-                Name = buildingdto.Name,
-                City = buildingdto.City,
-                District = buildingdto.District,
-                Neighbourhood = buildingdto.Neighbourhood,
-                Street = buildingdto.Street,
-                BuildingNumber = buildingdto.BuildingNumber,
-                Code = buildingdto.Code,
-                Latitude = buildingdto.Latitude,
-                Longitude = buildingdto.Longitude,
-                RegisteredAt = buildingdto.RegisteredAt,
-                IsActive = buildingdto.IsActive,
-                CreatedByUserId = buildingdto.CreatedByUserId
-            };
-
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            return Ok(_buildingService.UpdateBuilding(building));
+            return Ok(_buildingService.GetStreetsByCityDistrictNeighbourhood(city,district,neighbourhood));
+        }
+
+        [AllowAnonymous]
+        [HttpGet("buildingsByAdress")]
+        public IActionResult GetBuildingsByCityDistrictNeighbourhoodStreet(string city, string district, string neighbourhood,string street)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            return Ok(_buildingService.GetBuildingsByCityDistrictNeighbourhoodStreet(city, district, neighbourhood,street));
+        }
+
+        [HttpPost]
+        public IActionResult Create([FromBody] BuildingDTO buildingdto) 
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            return Ok(_buildingService.CreateBuilding(buildingdto));
+        }
+
+        [HttpPut]
+        public IActionResult Update([FromBody] BuildingDTO buildingdto)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            return Ok(_buildingService.UpdateBuilding(buildingdto));
         }
 
         [HttpDelete]

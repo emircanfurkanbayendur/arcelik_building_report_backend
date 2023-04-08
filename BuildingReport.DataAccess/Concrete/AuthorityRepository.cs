@@ -11,11 +11,19 @@ namespace BuildingReport.DataAccess.Concrete
 {
     public class AuthorityRepository : IAuthorityRepository
     {
-        public bool AuthorityExists(string name)
+        public bool AuthorityExistsByName(string name)
         {
             using (var authorityDbContext = new ArcelikBuildingReportDbContext())
             {
                 return authorityDbContext.Authorities.Any(b => b.Name == name);
+            }
+        }
+
+        public bool AuthorityExistsById(long id)
+        {
+            using (var authorityDbContext = new ArcelikBuildingReportDbContext())
+            {
+                return authorityDbContext.Authorities.Any(b => b.Id == id);
             }
         }
 

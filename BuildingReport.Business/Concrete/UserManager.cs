@@ -1,10 +1,15 @@
 ﻿using arcelik_building_report_backend.Abstract;
 using arcelik_building_report_backend.Concrete;
+using AutoMapper;
 using BuildingReport.Business.Abstract;
+using BuildingReport.DataAccess.Abstract;
+using BuildingReport.DataAccess.Concrete;
+using BuildingReport.DTO;
 using BuildingReport.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Policy;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -14,19 +19,38 @@ namespace BuildingReport.Business.Concrete
     public class UserManager : IUserService
     {
         private IUserRepository _userRepository;
+        private IRoleRepository _roleRepository;
+        private readonly IMapper _mapper;
+        private readonly IHashService _hashService;
+
+
+        public UserManager(IMapper mapper, IHashService hash)
+        {
+            _mapper = mapper;
+            _hashService = hash;
+            _userRepository = new UserRepository();
+            _roleRepository = new RoleRepository();
+        }
 
         public UserManager()
         {
             _userRepository = new UserRepository();
+            _roleRepository = new RoleRepository();
         }
 
-        public User CreateUser(User user)
+        public User CreateUser(UserDTO userdto)
         {
+            CheckIfUserExistsByEmail(userdto.Email);
+            var roleID = _roleRepository.GetAllRoles().Where(r => r.Name == "guest").FirstOrDefault().Id;
+            User user = _mapper.Map<User>(userdto);
+            user.RoleId = roleID;
+            user.Password = _hashService.HashPassword(userdto.Password);
             return _userRepository.CreateUser(user);
         }
 
         public void DeleteUser(long id)
         {
+            CheckIfUserExistsById(id);
             _userRepository.DeleteUser(id);
         }
 
@@ -37,6 +61,7 @@ namespace BuildingReport.Business.Concrete
 
         public User GetUserById(long id)
         {
+            CheckIfUserExistsById(id);
             return _userRepository.GetUserById(id);
         }
 
@@ -45,14 +70,40 @@ namespace BuildingReport.Business.Concrete
             return _userRepository.GetUsersByRole(roleId);
         }
 
-        public User UpdateUser(User user)
+        public User UpdateUser(UserDTO userdto)
         {
-            return (_userRepository.UpdateUser(user));
+            User o_user = GetUserById(userdto.Id);
+            User user = _mapper.Map<User>(userdto);
+            user.Password = _hashService.HashPassword(userdto.Password);
+            user.CreatedAt = o_user.CreatedAt;
+            user.RoleId = o_user.RoleId;
+            return _userRepository.UpdateUser(user);
         }
 
-        public bool UserExists(string email)
+        public User UpdateUserRole(long id)
         {
-            return _userRepository.UserExists(email);
+            CheckIfUserExistsById(id);
+            var roleID = _roleRepository.GetAllRoles().Where(r => r.Name == "admin").FirstOrDefault().Id;
+            var user = GetUserById(id);
+            user.RoleId = roleID;
+            return _userRepository.UpdateUser(user);
+        }
+
+        //BusinessRules
+        public void CheckIfUserExistsByEmail(string email)
+        {
+            if (_userRepository.UserExistsByEmail(email))
+            {
+                throw new NotImplementedException("User already exists.");
+            }
+        }
+
+        public void CheckIfUserExistsById(long id)
+        {
+            if (!_userRepository.UserExistsById(id))
+            {
+                throw new NotImplementedException("User cannot found.");
+            }
         }
     }
 }

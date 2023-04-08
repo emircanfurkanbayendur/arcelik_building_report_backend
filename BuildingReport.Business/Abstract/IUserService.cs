@@ -1,4 +1,5 @@
-﻿using BuildingReport.Entities;
+﻿using BuildingReport.DTO;
+using BuildingReport.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,13 +14,16 @@ namespace BuildingReport.Business.Abstract
 
         User GetUserById(long id);
 
-        User CreateUser(User user);
+        User CreateUser(UserDTO userdto);
 
-        User UpdateUser(User user);
+        User UpdateUser(UserDTO userdto);
 
         void DeleteUser(long id);
-        bool UserExists(string email);
+        void CheckIfUserExistsByEmail(string email);
+        void CheckIfUserExistsById(long id);
         List<User> GetUsersByRole(long roleId);
+
+        User UpdateUserRole(long id);
 
     }
 }
