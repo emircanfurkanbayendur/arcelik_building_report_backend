@@ -1,17 +1,14 @@
-﻿using BuildingReport.Entities;
-using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BuildingReport.DTO
+namespace BuildingReport.DTO.Response
 {
-    public class BuildingDTO
+    public class BuildingResponse
     {
         public long Id { get; set; }
-
         public string? Name { get; set; }
         public string City { get; set; } = null!;
         public string District { get; set; } = null!;

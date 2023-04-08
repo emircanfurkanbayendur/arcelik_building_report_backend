@@ -5,6 +5,7 @@ using BuildingReport.DTO;
 using BuildingReport.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BuildingReport.API.Controllers
@@ -77,6 +78,14 @@ namespace BuildingReport.API.Controllers
                 return BadRequest(ModelState);
 
             return Ok(_documentService.UpdateDocument(documentdto));
+        }
+
+        [HttpPatch("{id}")]
+        public IActionResult UpdatePatch(int id, [FromBody] JsonPatchDocument<DocumentDTO> pathdoc)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+            return Ok(_documentService.UpdateDocumentPatch(id, pathdoc));
         }
 
         [HttpDelete("{id}")]

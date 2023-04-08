@@ -1,17 +1,13 @@
-﻿using BuildingReport.Entities;
-using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BuildingReport.DTO
+namespace BuildingReport.DTO.Request
 {
-    public class BuildingDTO
+    public class BuildingRequest
     {
-        public long Id { get; set; }
-
         public string? Name { get; set; }
         public string City { get; set; } = null!;
         public string District { get; set; } = null!;
@@ -26,10 +22,6 @@ namespace BuildingReport.DTO
         public string Latitude { get; set; } = null!;
 
         public string Longitude { get; set; } = null!;
-
-        public DateTime RegisteredAt { get; set; }
-
-        public bool? IsActive { get; set; }
 
         public long CreatedByUserId { get; set; }
     }

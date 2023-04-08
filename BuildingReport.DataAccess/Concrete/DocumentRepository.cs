@@ -42,7 +42,9 @@ namespace BuildingReport.DataAccess.Concrete
         {
             using(var documentDbContext = new ArcelikBuildingReportDbContext())
             {
-                List<Document> documents = documentDbContext.Documents.Include(x => x.Building).Include(x => x.UploadedByUser).ToList();
+                List<Document> documents = documentDbContext.Documents
+                    .Include(x => x.Building)
+                    .Include(x => x.UploadedByUser).ToList();
                 return documents;
 
                 //return documentDbContext.Documents.ToList();
@@ -54,7 +56,8 @@ namespace BuildingReport.DataAccess.Concrete
             using (var documentDbContext = new ArcelikBuildingReportDbContext())
             {
                 Document document = documentDbContext
-                    .Documents.Include(x => x.Building).Include(x => x.UploadedByUser).First(s => s.Id == id);
+                    .Documents.Include(x => x.Building)
+                    .Include(x => x.UploadedByUser).First(s => s.Id == id);
                 return document;
                 //return documentDbContext.Documents.Find(id);
             }
@@ -65,7 +68,9 @@ namespace BuildingReport.DataAccess.Concrete
             using (var documentDbContext = new ArcelikBuildingReportDbContext())
             {
                 List<Document> documents = documentDbContext
-                    .Documents.Include(x => x.Building).Include(x => x.UploadedByUser).Where(s => s.BuildingId == buildingId).ToList();
+                    .Documents.Include(x => x.Building)
+                    .Include(x => x.UploadedByUser)
+                    .Where(s => s.BuildingId == buildingId).ToList();
                 return documents;
 
                 //return documentDbContext.Documents.Where(d => d.BuildingId == buildingId).ToList();
@@ -77,7 +82,9 @@ namespace BuildingReport.DataAccess.Concrete
             using (var documentDbContext = new ArcelikBuildingReportDbContext())
             {
                 List<Document> documents = documentDbContext
-                    .Documents.Include(x => x.Building).Include(x => x.UploadedByUser).Where(s => s.UploadedByUserId == userId).ToList();
+                    .Documents.Include(x => x.Building)
+                    .Include(x => x.UploadedByUser)
+                    .Where(s => s.UploadedByUserId == userId).ToList();
                 return documents;
             }
         }

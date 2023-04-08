@@ -4,6 +4,7 @@ using BuildingReport.DataAccess.Abstract;
 using BuildingReport.DataAccess.Concrete;
 using BuildingReport.DTO;
 using BuildingReport.Entities;
+using Microsoft.AspNetCore.JsonPatch;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -58,6 +59,26 @@ namespace BuildingReport.Business.Concrete
         {
             Document document = _mapper.Map<Document>(documentDTO);
             return _documentRepository.UpdateDocument(document);
+        }
+
+        public Document UpdateDocumentPatch(int id,JsonPatchDocument<DocumentDTO> patchdoc)
+        {
+            Document document = _documentRepository.GetDocumentById(id);
+            if(document == null)
+            {
+                throw new Exception($"Document with ID {id} not found");
+            }
+
+            DocumentDTO documentDTO = _mapper.Map<DocumentDTO>(document);
+
+            patchdoc.ApplyTo(documentDTO);
+
+            document = _mapper.Map(documentDTO, document);
+
+            Document document2 = _documentRepository.UpdateDocument(document);
+
+            return document2;
+
         }
 
         //BusinessRules

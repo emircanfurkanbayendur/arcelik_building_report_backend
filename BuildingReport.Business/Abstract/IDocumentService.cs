@@ -1,5 +1,6 @@
 ﻿using BuildingReport.DTO;
 using BuildingReport.Entities;
+using Microsoft.AspNetCore.JsonPatch;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,6 +17,7 @@ namespace BuildingReport.Business.Abstract
         Document GetDocumentById(long id);
         Document CreateDocument(DocumentDTO documentDTO);
         Document UpdateDocument(DocumentDTO documentDTO);
+        Document UpdateDocumentPatch(int id, JsonPatchDocument<DocumentDTO> pathdoc);
         void DeleteDocument(long id);
         void CheckIfDocumentExistsById(long id);
     }

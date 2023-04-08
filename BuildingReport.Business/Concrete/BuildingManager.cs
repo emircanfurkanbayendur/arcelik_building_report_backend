@@ -4,6 +4,7 @@ using BuildingReport.DataAccess.Abstract;
 using BuildingReport.DataAccess.Concrete;
 using BuildingReport.DTO;
 using BuildingReport.Entities;
+using Microsoft.AspNetCore.JsonPatch;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.Metrics;
@@ -68,7 +69,7 @@ namespace BuildingReport.Business.Concrete
 
         public Building GetBuildingById(long id)
         {
-            CheckIfBuildingExistsById(id);
+            //CheckIfBuildingExistsById(id);
             return _buildingRepository.GetBuildingById(id);
         }
 
@@ -79,7 +80,23 @@ namespace BuildingReport.Business.Concrete
 
         public Building UpdateBuilding(BuildingDTO buildingDTO)
         {
-            Building building = _mapper.Map<Building>(buildingDTO);            
+            Building building = _mapper.Map<Building>(buildingDTO);
+            return _buildingRepository.UpdateBuilding(building);
+        }
+
+        public Building UpdateBuildingPatch(int id, JsonPatchDocument<BuildingDTO> pathdoc)
+        {
+            Building building = _buildingRepository.GetBuildingById(id);
+            if(building == null)
+            {
+                throw new Exception($"Building with ID {id} not found");
+            }
+            BuildingDTO buildingDTO = _mapper.Map<BuildingDTO>(building);
+
+            
+            pathdoc.ApplyTo(buildingDTO);
+
+            building = _mapper.Map(buildingDTO, building);
             return _buildingRepository.UpdateBuilding(building);
         }
 
