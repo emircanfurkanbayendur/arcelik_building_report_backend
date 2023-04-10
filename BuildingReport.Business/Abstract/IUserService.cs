@@ -2,6 +2,7 @@
 using BuildingReport.DTO.Request;
 using BuildingReport.DTO.Response;
 using BuildingReport.Entities;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -21,6 +22,8 @@ namespace BuildingReport.Business.Abstract
         UserResponse CreateUser(UserRequest request);
 
         UserResponse UpdateUser(UpdateUserRequest userdto);
+
+        User UpdateUserPatch(int id, JsonPatchDocument<UpdateUserRequest> pathdoc);
         string GenerateVerificationToken();
         void SendMail(string to, string subject, string html, string from = null);
         void SendVerificationEmail(User user);

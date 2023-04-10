@@ -5,6 +5,7 @@ using BuildingReport.DTO.Request;
 using BuildingReport.DTO.Response;
 using BuildingReport.Entities;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BuildingReport.API.Controllers
@@ -74,7 +75,7 @@ namespace BuildingReport.API.Controllers
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
-           
+
             return Ok(_userService.CreateUser(request));
         }
 
@@ -106,7 +107,19 @@ namespace BuildingReport.API.Controllers
 
             return Ok(response);
         }
+
+
+        [HttpPatch("{id}")]
+        public IActionResult UpdateUserPatch(int id, [FromBody] JsonPatchDocument<UpdateUserRequest> pathdoc)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+            return Ok(_userService.UpdateUserPatch(id, pathdoc));
+        }
+
         [AllowAnonymous]
+
+
         [HttpPut("changeRole/{userId}")]
         public IActionResult UpdateUserRole(long userId)
         {

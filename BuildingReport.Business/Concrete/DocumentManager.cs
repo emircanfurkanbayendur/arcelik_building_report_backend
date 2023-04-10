@@ -97,13 +97,14 @@ namespace BuildingReport.Business.Concrete
 
             patchdoc.ApplyTo(documentDTO);
 
-            document = _mapper.Map(documentDTO, document);
+            document = _mapper.Map<Document>(documentDTO);
 
-            Document document2 = _documentRepository.UpdateDocument(document);
-
-            return document2;
+            return _documentRepository.UpdateDocument(document);
 
         }
+
+
+
 
         //BusinessRules
         public void CheckIfDocumentExistsById(long id)

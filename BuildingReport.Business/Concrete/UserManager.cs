@@ -19,6 +19,8 @@ using System.Threading.Tasks;
 using System.Net;
 using MimeKit;
 using MimeKit.Text;
+using Azure;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -129,6 +131,31 @@ namespace BuildingReport.Business.Concrete
             user.Password = _hashService.HashPassword(userdto.Password);
             user.CreatedAt = o_user.CreatedAt;
             user.RoleId = o_user.RoleId;
+            return _userRepository.UpdateUser(user);
+        }
+
+        public User UpdateUserPatch(int id, JsonPatchDocument<UpdateUserRequest> patchdoc)
+        {
+            User user = _userRepository.GetUserById(id);
+            if(user == null)
+            {
+                throw new Exception($"User with id {id} not found.");
+            }
+
+            var password = user.Password;
+            long roleid = user.RoleId;
+
+            UserDTO userDTO = _mapper.Map<UserDTO>(user);
+
+            patchdoc.ApplyTo(userDTO);
+
+            user = _mapper.Map<User>(userDTO);
+            user.Password=password;
+            user.RoleId =roleid;
+            
+
+            return _userRepository.UpdateUser(user);
+
             User new_user = _userRepository.UpdateUser(user);
             UserResponse response = _mapper.Map<UserResponse>(new_user);
             return response;

@@ -95,6 +95,7 @@ namespace BuildingReport.DataAccess.Concrete
             {
                 documentDbContext.Documents.Update(document);
                 documentDbContext.SaveChanges();
+
                 return GetDocumentById(document.Id);
             }
         }

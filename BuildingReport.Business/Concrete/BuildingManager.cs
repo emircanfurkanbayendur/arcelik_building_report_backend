@@ -119,14 +119,14 @@ namespace BuildingReport.Business.Concrete
             Building building = _buildingRepository.GetBuildingById(id);
             if(building == null)
             {
-                throw new Exception($"Building with ID {id} not found");
+                throw new Exception($"Building with ID {id} not found.");
             }
             UpdateBuildingRequest buildingDTO = _mapper.Map<UpdateBuildingRequest>(building);
 
             
             pathdoc.ApplyTo(buildingDTO);
 
-            building = _mapper.Map(buildingDTO, building);
+            building = _mapper.Map<Building>(buildingDTO);
             return _buildingRepository.UpdateBuilding(building);
         }
 
@@ -153,6 +153,13 @@ namespace BuildingReport.Business.Concrete
             return buildingsDto;
         }
 
+        public List<BuildingNameBuildingNumberDTO> GetBuildingNameBuildingNumbers(string city,string district,string neighbourhood,string street)
+        {
+            List<Building> buildings = _buildingRepository.GetBuildingsByCityDistrictNeighbourhoodStreet(city, district, neighbourhood, street);
+            List<BuildingNameBuildingNumberDTO> buildingsDto = _mapper.Map<List<BuildingNameBuildingNumberDTO>>(buildings);
+
+            return buildingsDto;
+        }
 
         //BusinessRules
         public void CheckIfBuildingExistsByCode(string code)
@@ -170,5 +177,7 @@ namespace BuildingReport.Business.Concrete
                 throw new NotImplementedException("Building cannot be found.");
             }
         }
+
+
     }
 }

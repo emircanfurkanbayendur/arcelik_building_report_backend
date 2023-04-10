@@ -50,6 +50,13 @@ public class BuildingMappingProfile : Profile
             .ForMember(dest => dest.Streets, opt => opt.MapFrom(src => src));
 
         CreateMap<List<Building>, BuildingListDTO>()
+            .ForMember(dest => dest.Buildings, opt => opt.MapFrom(src => src));
+
+
+        CreateMap<Building, BuildingNameBuildingNumberDTO>()
+            .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
+            .ForMember(dest => dest.BuildingNumber, opt => opt.MapFrom(src => src.BuildingNumber));
+
     .ForMember(dest => dest.Buildings, opt => opt.MapFrom(src => src));
 
 
