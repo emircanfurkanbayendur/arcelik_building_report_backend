@@ -1,11 +1,11 @@
 ﻿using AutoMapper;
 using BuildingReport.Business.Abstract;
 using BuildingReport.Business.Concrete;
-using BuildingReport.DTO;
 using BuildingReport.DTO.Request;
 using BuildingReport.DTO.Response;
 using BuildingReport.Entities;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BuildingReport.API.Controllers
@@ -23,6 +23,22 @@ namespace BuildingReport.API.Controllers
             _userService = userService; 
         }
 
+        [AllowAnonymous]
+        [HttpPost("authenticate")]
+        public IActionResult Authenticate([FromBody] LoginRequest loginDto)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            LoginResponse response = _userService.Login(loginDto);
+
+            if (response == null)
+                return Unauthorized();
+
+            return Ok(response);
+        }
+
+        [AllowAnonymous]
         [HttpGet]
         public IActionResult GetUsers()
         {
@@ -59,7 +75,7 @@ namespace BuildingReport.API.Controllers
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
-           
+
             return Ok(_userService.CreateUser(request));
         }
 
@@ -92,13 +108,30 @@ namespace BuildingReport.API.Controllers
 
         [AllowAnonymous]
         [HttpPut]
-        public IActionResult UpdateUser([FromBody] UserDTO userdto)
+        public IActionResult UpdateUser([FromBody] UpdateUserRequest userdto)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            return Ok(_userService.UpdateUser(userdto));
+            var response = _userService.UpdateUser(userdto);
+
+            if (response == null)
+                return Unauthorized();
+
+            return Ok(response);
         }
+
+
+        [HttpPatch("{id}")]
+        public IActionResult UpdateUserPatch(int id, [FromBody] JsonPatchDocument<UpdateUserRequest> pathdoc)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+            return Ok(_userService.UpdateUserPatch(id, pathdoc));
+        }
+
+        [AllowAnonymous]
+
 
         [HttpPut("changeRole/{userId}")]
         public IActionResult UpdateUserRole(long userId)
@@ -106,7 +139,12 @@ namespace BuildingReport.API.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            return Ok(_userService.UpdateUserRole(userId));
+            var response = _userService.UpdateUserRole(userId);
+
+            if (response == null)
+                return Unauthorized();
+
+            return Ok(response);
         }
 
         [AllowAnonymous]
@@ -116,7 +154,10 @@ namespace BuildingReport.API.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            _userService.DeleteUser(id);
+            var response = _userService.DeleteUser(id);
+
+            if (!response)
+                return Unauthorized();
 
             return NoContent();
         }

@@ -87,5 +87,13 @@ namespace BuildingReport.DataAccess.Concrete
             }
         }
 
+        public bool RoleAuthorityExistsById(long roleId, long authorityId)
+        {
+            using (var roleAuthorityDbContext = new ArcelikBuildingReportDbContext())
+            {
+                return roleAuthorityDbContext.RoleAuthorities.Any(r => r.Authority.Id == authorityId && r.Role.Id == roleId);
+            }
+        }
+
     }
 }

@@ -17,5 +17,6 @@ namespace arcelik_building_report_backend.Abstract
 
         bool UserExistsByEmail(string email);
         bool UserExistsById(long id);
+        bool findUserExistsByEmailAndPassword(string email, byte[] _password);
     }
 }

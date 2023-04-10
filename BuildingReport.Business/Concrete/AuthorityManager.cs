@@ -3,9 +3,12 @@ using BuildingReport.Business.Abstract;
 using BuildingReport.DataAccess.Abstract;
 using BuildingReport.DataAccess.Concrete;
 using BuildingReport.DTO;
+using BuildingReport.DTO.Request;
+using BuildingReport.DTO.Response;
 using BuildingReport.Entities;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -23,11 +26,12 @@ namespace BuildingReport.Business.Concrete
             _mapper = mapper;           
         }
 
-        public Authority CreateAuthority(AuthorityDTO authorityDTO)
+        public AuthorityResponse CreateAuthority(AuthorityRequest request )
         {
-            Authority authority = _mapper.Map<Authority>(authorityDTO);
+            Authority authority = _mapper.Map<Authority>(request);
             checkIfAuthorityExistsByName(authority.Name);
-            return _authorityRepository.CreateAuthority(authority);
+            AuthorityResponse response = _mapper.Map<AuthorityResponse>(_authorityRepository.CreateAuthority(authority));
+            return response;
         }
 
         public void DeleteAuthority(long id)
@@ -36,21 +40,24 @@ namespace BuildingReport.Business.Concrete
             _authorityRepository.DeleteAuthority(id);
         }
 
-        public List<Authority> GetAllAuthorities()
+        public List<AuthorityResponse> GetAllAuthorities()
         {
-
-            return _authorityRepository.GetAllAuthorities();
+            List<AuthorityResponse> response = _mapper.Map<List<AuthorityResponse>>(_authorityRepository.GetAllAuthorities());
+            return response;
         }
 
-        public Authority GetAuthorityById(long id)
+        public AuthorityResponse GetAuthorityById(long id)
         {
-            return _authorityRepository.GetAuthorityById(id);
+            AuthorityResponse response = _mapper.Map<AuthorityResponse>(_authorityRepository.GetAuthorityById(id));
+            return response;
         }
 
-        public Authority UpdateAuthority(AuthorityDTO authorityDTO)
+        public AuthorityResponse UpdateAuthority(UpdateAuthorityRequest authorityDTO)
         {
+           
             Authority authority = _mapper.Map<Authority>(authorityDTO);
-            return _authorityRepository.UpdateAuthority(authority);
+            AuthorityResponse response = _mapper.Map<AuthorityResponse>(_authorityRepository.UpdateAuthority(authority));
+            return response;
         }
 
         //BusinessRules

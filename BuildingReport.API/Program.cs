@@ -9,6 +9,7 @@ using System.Text.Json.Serialization;
 using AutoMapper;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Formatters;
+using System.Text.Json;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -106,15 +107,20 @@ builder.Services.AddControllers().AddJsonOptions(x =>
 builder.Services.AddAutoMapper(typeof(AuthorityMappingProfile), typeof(UserMappingProfile), typeof(RoleMappingProfile), typeof(RoleAuthorityMappingProfile),
     typeof(BuildingMappingProfile), typeof(DocumentMappingProfile));
 
-builder.Services.AddControllers()
-    .AddNewtonsoftJson(options =>
-    {
-        options.SerializerSettings.ContractResolver = new Newtonsoft.Json.Serialization.DefaultContractResolver();
-        options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
-        options.SerializerSettings.NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore;
-        options.SerializerSettings.Converters.Add(new JsonPatchConverter());
-    });
 
+
+
+builder.Services.AddControllers()
+    .AddNewtonsoftJson(options => 
+    { 
+        options.SerializerSettings.ContractResolver = new Newtonsoft.Json.Serialization.DefaultContractResolver 
+        { 
+            NamingStrategy = new Newtonsoft.Json.Serialization.CamelCaseNamingStrategy() 
+        }; 
+        options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore; 
+        options.SerializerSettings.NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore; 
+        options.SerializerSettings.Converters.Add(new JsonPatchConverter()); 
+    });
 
 
 var app = builder.Build();

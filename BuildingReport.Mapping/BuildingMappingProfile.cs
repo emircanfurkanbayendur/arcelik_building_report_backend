@@ -1,12 +1,14 @@
 ﻿using AutoMapper;
 using BuildingReport.DTO;
+using BuildingReport.DTO.Request;
+using BuildingReport.DTO.Response;
 using BuildingReport.Entities;
 
 public class BuildingMappingProfile : Profile
 {
     public BuildingMappingProfile()
     {
-        CreateMap<BuildingDTO, Building>()
+        CreateMap<UpdateBuildingRequest, Building>()
             .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
             .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
             .ForMember(dest => dest.City, opt => opt.MapFrom(src => src.City))
@@ -21,7 +23,7 @@ public class BuildingMappingProfile : Profile
             .ForMember(dest => dest.IsActive, opt => opt.MapFrom(src => src.IsActive))
             .ForMember(dest => dest.CreatedByUserId, opt => opt.MapFrom(src => src.CreatedByUserId));
 
-        CreateMap<Building, BuildingDTO>()
+        CreateMap<Building, UpdateBuildingRequest>()
             .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
             .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
             .ForMember(dest => dest.City, opt => opt.MapFrom(src => src.City))
@@ -48,6 +50,69 @@ public class BuildingMappingProfile : Profile
             .ForMember(dest => dest.Streets, opt => opt.MapFrom(src => src));
 
         CreateMap<List<Building>, BuildingListDTO>()
-    .ForMember(dest => dest.Buildings, opt => opt.MapFrom(src => src));
+            .ForMember(dest => dest.Buildings, opt => opt.MapFrom(src => src));
+
+
+        CreateMap<Building, BuildingNameBuildingNumberDTO>()
+            .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
+            .ForMember(dest => dest.BuildingNumber, opt => opt.MapFrom(src => src.BuildingNumber));
+
+
+        CreateMap<BuildingResponse, Building>()
+            .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
+            .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
+            .ForMember(dest => dest.City, opt => opt.MapFrom(src => src.City))
+            .ForMember(dest => dest.District, opt => opt.MapFrom(src => src.District))
+            .ForMember(dest => dest.Neighbourhood, opt => opt.MapFrom(src => src.Neighbourhood))
+            .ForMember(dest => dest.Street, opt => opt.MapFrom(src => src.Street))
+            .ForMember(dest => dest.BuildingNumber, opt => opt.MapFrom(src => src.BuildingNumber))
+            .ForMember(dest => dest.Code, opt => opt.MapFrom(src => src.Code))
+            .ForMember(dest => dest.Latitude, opt => opt.MapFrom(src => src.Latitude))
+            .ForMember(dest => dest.Longitude, opt => opt.MapFrom(src => src.Longitude))
+            .ForMember(dest => dest.RegisteredAt, opt => opt.MapFrom(src => src.RegisteredAt))
+            .ForMember(dest => dest.IsActive, opt => opt.MapFrom(src => src.IsActive))
+            .ForMember(dest => dest.CreatedByUserId, opt => opt.MapFrom(src => src.CreatedByUserId));
+
+        CreateMap<Building, BuildingResponse>()
+            .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
+            .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
+            .ForMember(dest => dest.City, opt => opt.MapFrom(src => src.City))
+            .ForMember(dest => dest.District, opt => opt.MapFrom(src => src.District))
+            .ForMember(dest => dest.Neighbourhood, opt => opt.MapFrom(src => src.Neighbourhood))
+            .ForMember(dest => dest.Street, opt => opt.MapFrom(src => src.Street))
+            .ForMember(dest => dest.BuildingNumber, opt => opt.MapFrom(src => src.BuildingNumber))
+            .ForMember(dest => dest.Code, opt => opt.MapFrom(src => src.Code))
+            .ForMember(dest => dest.Latitude, opt => opt.MapFrom(src => src.Latitude))
+            .ForMember(dest => dest.Longitude, opt => opt.MapFrom(src => src.Longitude))
+            .ForMember(dest => dest.RegisteredAt, opt => opt.MapFrom(src => src.RegisteredAt))
+            .ForMember(dest => dest.IsActive, opt => opt.MapFrom(src => src.IsActive))
+            .ForMember(dest => dest.CreatedByUserId, opt => opt.MapFrom(src => src.CreatedByUserId));
+
+
+        CreateMap<BuildingRequest, Building>()
+            .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
+            .ForMember(dest => dest.City, opt => opt.MapFrom(src => src.City))
+            .ForMember(dest => dest.District, opt => opt.MapFrom(src => src.District))
+            .ForMember(dest => dest.Neighbourhood, opt => opt.MapFrom(src => src.Neighbourhood))
+            .ForMember(dest => dest.Street, opt => opt.MapFrom(src => src.Street))
+            .ForMember(dest => dest.BuildingNumber, opt => opt.MapFrom(src => src.BuildingNumber))
+            .ForMember(dest => dest.Code, opt => opt.MapFrom(src => src.Code))
+            .ForMember(dest => dest.Latitude, opt => opt.MapFrom(src => src.Latitude))
+            .ForMember(dest => dest.Longitude, opt => opt.MapFrom(src => src.Longitude))
+            .ForMember(dest => dest.CreatedByUserId, opt => opt.MapFrom(src => src.CreatedByUserId));
+
+        CreateMap<Building, BuildingRequest>()
+            .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
+            .ForMember(dest => dest.City, opt => opt.MapFrom(src => src.City))
+            .ForMember(dest => dest.District, opt => opt.MapFrom(src => src.District))
+            .ForMember(dest => dest.Neighbourhood, opt => opt.MapFrom(src => src.Neighbourhood))
+            .ForMember(dest => dest.Street, opt => opt.MapFrom(src => src.Street))
+            .ForMember(dest => dest.BuildingNumber, opt => opt.MapFrom(src => src.BuildingNumber))
+            .ForMember(dest => dest.Code, opt => opt.MapFrom(src => src.Code))
+            .ForMember(dest => dest.Latitude, opt => opt.MapFrom(src => src.Latitude))
+            .ForMember(dest => dest.Longitude, opt => opt.MapFrom(src => src.Longitude))
+            .ForMember(dest => dest.CreatedByUserId, opt => opt.MapFrom(src => src.CreatedByUserId));
+
+
     }
 }
