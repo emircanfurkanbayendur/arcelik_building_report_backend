@@ -32,7 +32,7 @@ namespace BuildingReport.Business.Abstract
 
         void SendPasswordResetEmail(string mail, string password);
 
-        void DeleteUser(long id);
+        bool DeleteUser(long id);
         void CheckIfUserExistsByEmail(string email);
         void CheckIfUserExistsById(long id);
         List<UserResponse> GetUsersByRole(long roleId);
