@@ -1,4 +1,6 @@
 ﻿using BuildingReport.DTO;
+using BuildingReport.DTO.Request;
+using BuildingReport.DTO.Response;
 using BuildingReport.Entities;
 using System;
 using System.Collections.Generic;
@@ -10,13 +12,13 @@ namespace BuildingReport.Business.Abstract
 {
     public interface IRoleService
     {
-        List<Role> GetAllRoles();
+        List<RoleResponse> GetAllRoles();
 
-        Role GetRoleById(long id);
+        RoleResponse GetRoleById(long id);
 
-        Role CreateRole(RoleDTO roleDTO);
+        RoleResponse CreateRole(RoleRequest request);
 
-        Role UpdateRole(RoleDTO roleDTO);
+        RoleResponse UpdateRole(UpdateRoleRequest request);
 
         void DeleteRole(long id);
         void CheckIfRoleExistsByName(string name);

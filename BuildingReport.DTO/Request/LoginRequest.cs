@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BuildingReport.DTO
+namespace BuildingReport.DTO.Request
 {
-    public class LoginDto
+    public class LoginRequest
     {
         public string Email { get; set; } = null!;
 

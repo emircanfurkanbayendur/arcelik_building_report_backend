@@ -8,6 +8,7 @@ namespace BuildingReport.DTO.Request
 {
     public class BuildingRequest
     {
+        public long CreatedByUserId { get; set; }
         public string? Name { get; set; }
         public string City { get; set; } = null!;
         public string District { get; set; } = null!;
@@ -22,7 +23,5 @@ namespace BuildingReport.DTO.Request
         public string Latitude { get; set; } = null!;
 
         public string Longitude { get; set; } = null!;
-
-        public long CreatedByUserId { get; set; }
     }
 }

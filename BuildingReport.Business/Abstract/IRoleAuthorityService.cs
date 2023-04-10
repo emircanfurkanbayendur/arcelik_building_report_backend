@@ -1,4 +1,6 @@
 ﻿using BuildingReport.DTO;
+using BuildingReport.DTO.Request;
+using BuildingReport.DTO.Response;
 using BuildingReport.Entities;
 using System;
 using System.Collections.Generic;
@@ -10,16 +12,17 @@ namespace BuildingReport.Business.Abstract
 {
     public interface IRoleAuthorityService
     {
-        List<RoleAuthority> GetAllRoleAuthorities();
+        List<RoleAuthorityResponse> GetAllRoleAuthorities();
 
-        RoleAuthority GetRoleAuthorityById(long id);
+        RoleAuthorityResponse GetRoleAuthorityById(long id);
 
-        RoleAuthority CreateRoleAuthority(RoleAuthorityDTO roleAuthorityDTO);
+        RoleAuthorityResponse CreateRoleAuthority(RoleAuthorityRequest request);
 
-        RoleAuthority UpdateRoleAuthority(RoleAuthorityDTO roleAuthorityDTO);
+        RoleAuthorityResponse UpdateRoleAuthority(UpdateRoleAuthorityRequest request);
 
-        void DeleteRoleAuthority(long id);
+        bool DeleteRoleAuthority(long id);
         void RoleAuthorityExists(string roleName, string authorityName);
+        bool RoleAuthorityExistsById(long roleId, long authorityId);
 
     }
 }

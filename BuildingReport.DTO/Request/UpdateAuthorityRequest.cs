@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BuildingReport.DTO
+namespace BuildingReport.DTO.Request
 {
-    public class RoleDTO
+    public class UpdateAuthorityRequest
     {
         public long Id { get; set; }
 

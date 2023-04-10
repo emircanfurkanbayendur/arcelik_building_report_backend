@@ -4,7 +4,6 @@ using AutoMapper;
 using BuildingReport.Business.Abstract;
 using BuildingReport.DataAccess.Abstract;
 using BuildingReport.DataAccess.Concrete;
-using BuildingReport.DTO;
 using BuildingReport.DTO.Request;
 using BuildingReport.DTO.Response;
 using BuildingReport.Entities;
@@ -20,6 +19,11 @@ using System.Threading.Tasks;
 using System.Net;
 using MimeKit;
 using MimeKit.Text;
+using Azure;
+using Microsoft.AspNetCore.JsonPatch;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 
 namespace BuildingReport.Business.Concrete
 {
@@ -30,21 +34,38 @@ namespace BuildingReport.Business.Concrete
         private IRoleRepository _roleRepository;
         private readonly IMapper _mapper;
         private readonly IHashService _hashService;
+        private readonly IJWTAuthenticationService _jwtAuthenticationService;
+        private readonly IRoleAuthorityService _roleAuthorityService;
+        private String key = "ThisIsSigninKey12345";
+        public static User LoginUser;
 
-
-        public UserManager(IMapper mapper, IHashService hash)
+        public UserManager(IMapper mapper, IHashService hash, IJWTAuthenticationService jwtAuthenticationService, IRoleAuthorityService roleAuthorityService)
         {
             _mapper = mapper;
             _hashService = hash;
             _userRepository = new UserRepository();
             _roleRepository = new RoleRepository();
+            _jwtAuthenticationService = jwtAuthenticationService;
+            _roleAuthorityService = roleAuthorityService;
         }
 
-        public UserManager()
+        public LoginResponse Login(LoginRequest loginDto)
         {
-            _userRepository = new UserRepository();
-            _roleRepository = new RoleRepository();
+            var token = _jwtAuthenticationService.Authenticate(loginDto.Email, loginDto.Password);
+
+            if (token == null)
+                return null;
+
+            byte[] _password = _hashService.HashPassword(loginDto.Password);
+            var user = _userRepository.GetAllUsers().Where(u => u.Email == loginDto.Email && u.Password.SequenceEqual(_password)).FirstOrDefault();      
+            LoginResponse response = _mapper.Map<LoginResponse>(user);
+            response.Token = token;
+            LoginUser = user;
+            return response;
+
         }
+
+
 
         public UserResponse CreateUser(UserRequest request)
         {
@@ -60,39 +81,81 @@ namespace BuildingReport.Business.Concrete
 
             User new_user = _userRepository.CreateUser(user);
             UserResponse response = _mapper.Map<UserResponse>(new_user);
-            SendVerificationEmail(user);
+            //SendVerificationEmail(user);
             return response;
         }
 
-        public void DeleteUser(long id)
+        public bool DeleteUser(long id)
         {
+            if (!_roleAuthorityService.RoleAuthorityExistsById(UserManager.LoginUser.RoleId, 3))
+            {
+                return false;
+            }
             CheckIfUserExistsById(id);
             _userRepository.DeleteUser(id);
+            return true;
         }
 
-        public List<User> GetAllUsers()
+        public List<UserResponse> GetAllUsers()
         {
-            return _userRepository.GetAllUsers();
+            List<User> users = _userRepository.GetAllUsers();
+
+            var responses = _mapper.Map<List<UserResponse>>(users);
+  
+            return responses;
         }
 
-        public User GetUserById(long id)
+        public UserResponse GetUserById(long id)
         {
             CheckIfUserExistsById(id);
-            return _userRepository.GetUserById(id);
+            User new_user = _userRepository.GetUserById(id);
+            UserResponse response = _mapper.Map<UserResponse>(new_user);
+            return response;
         }
 
-        public List<User> GetUsersByRole(long roleId)
+        public List<UserResponse> GetUsersByRole(long roleId)
         {
-            return _userRepository.GetUsersByRole(roleId);
+            List<User> users = _userRepository.GetUsersByRole(roleId);
+            List<UserResponse> response = users.Select(u => _mapper.Map<UserResponse>(u)).ToList();
+            return response;
         }
 
-        public User UpdateUser(UserDTO userdto)
+        public UserResponse UpdateUser(UpdateUserRequest userdto)
         {
-            User o_user = GetUserById(userdto.Id);
+            if (!_roleAuthorityService.RoleAuthorityExistsById(UserManager.LoginUser.RoleId, 4))
+            {
+                return null;
+            }
+            User o_user = _userRepository.GetUserById(userdto.Id);
             User user = _mapper.Map<User>(userdto);
             user.Password = _hashService.HashPassword(userdto.Password);
             user.CreatedAt = o_user.CreatedAt;
             user.RoleId = o_user.RoleId;
+            User new_user = _userRepository.UpdateUser(user);
+            UserResponse response = _mapper.Map<UserResponse>(new_user);
+            return response;
+        }
+
+        public User UpdateUserPatch(int id, JsonPatchDocument<UpdateUserRequest> patchdoc)
+        {
+            User user = _userRepository.GetUserById(id);
+            if(user == null)
+            {
+                throw new Exception($"User with id {id} not found.");
+            }
+
+            var password = user.Password;
+            long roleid = user.RoleId;
+
+            UpdateUserRequest userDTO = _mapper.Map<UpdateUserRequest>(user);
+
+            patchdoc.ApplyTo(userDTO);
+
+            user = _mapper.Map<User>(userDTO);
+            user.Password=password;
+            user.RoleId =roleid;
+            
+
             return _userRepository.UpdateUser(user);
         }
 
@@ -100,9 +163,9 @@ namespace BuildingReport.Business.Concrete
         {
             var token = Convert.ToHexString(RandomNumberGenerator.GetBytes(3));
             
-            //var tokenIsUnique = _userRepository.GetAllUsers().Any(x => x.VerificationToken == token);
-            //if (!tokenIsUnique)
-                //return GenerateVerificationToken();
+            var tokenIsUnique = _userRepository.GetAllUsers().Any(x => x.VerificationToken == token);
+            if (!tokenIsUnique)
+                return GenerateVerificationToken();
 
             return token;
         }
@@ -124,7 +187,7 @@ namespace BuildingReport.Business.Concrete
         public void SendMail(string to, string subject, string html, string from = null)
         {
             MimeMessage mimeMessage = new MimeMessage();
-            MailboxAddress mailboxAddressFrom=new MailboxAddress("Admin","mailgiriniz");
+            MailboxAddress mailboxAddressFrom = new MailboxAddress("Admin", "mail@gmail.com");
             mimeMessage.From.Add(mailboxAddressFrom);
             MailboxAddress mailboxAddressTo = new MailboxAddress("User", to);
             mimeMessage.To.Add(mailboxAddressTo);
@@ -133,7 +196,7 @@ namespace BuildingReport.Business.Concrete
 
             using var smtp = new MailKit.Net.Smtp.SmtpClient();
             smtp.Connect("smtp.gmail.com", 587, false);
-            smtp.Authenticate("mailgiriniz", "şifre");
+            smtp.Authenticate("mail@gmail.com", "sifre");
             smtp.Send(mimeMessage);
             smtp.Disconnect(true);
         }
@@ -149,14 +212,49 @@ namespace BuildingReport.Business.Concrete
             _userRepository.UpdateUser(user);
             return true;
         }
-        public User UpdateUserRole(long id)
+
+        public void ForgotPassword(string mail)
         {
+            var user = _userRepository.GetAllUsers().SingleOrDefault(x => x.Email == mail);
+
+            if (user == null) return;
+
+            var password = Convert.ToHexString(RandomNumberGenerator.GetBytes(4));
+            user.Password = _hashService.HashPassword(password);
+
+            _userRepository.UpdateUser(user);
+
+            SendPasswordResetEmail(user.Email,password);
+        }
+
+        public void SendPasswordResetEmail(string mail, string password)
+        {
+            string message;
+                message = $@"<p>Please use the below token to reset your password with the <code>/accounts/reset-password</code> api route:</p>
+                            <p><code>{password}</code></p>";
+
+            SendMail(
+                to: mail,
+                subject: "Reset Password",
+                html: $@"<h4>Reset Password Email</h4>
+                        {message}"
+            );
+        }
+
+        
+        public UserResponse UpdateUserRole(long id)
+        {
+            if (!_roleAuthorityService.RoleAuthorityExistsById(UserManager.LoginUser.RoleId, 4))
+            {
+                return null;
+            }
             CheckIfUserExistsById(id);
             var roleID = _roleRepository.GetAllRoles().Where(r => r.Name == "admin").FirstOrDefault().Id;
-            var user = GetUserById(id);
+            User user = _userRepository.GetUserById(id);
             user.RoleId = roleID;
             User new_user = _userRepository.UpdateUser(user);
-            return new_user;
+            UserResponse response = _mapper.Map<UserResponse>(new_user);
+            return response;
         }
 
         //BusinessRules

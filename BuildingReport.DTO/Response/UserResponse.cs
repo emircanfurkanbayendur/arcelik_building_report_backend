@@ -21,5 +21,6 @@ namespace BuildingReport.DTO.Response
         public DateTime CreatedAt { get; set; }
 
         public bool? IsActive { get; set; }
+        public long RoleId { get; set; }
     }
 }

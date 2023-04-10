@@ -2,6 +2,7 @@
 using BuildingReport.Business.Abstract;
 using BuildingReport.Business.Concrete;
 using BuildingReport.DTO;
+using BuildingReport.DTO.Request;
 using BuildingReport.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -45,21 +46,31 @@ namespace BuildingReport.API.Controllers
         }
 
         [HttpPost]
-        public IActionResult Post([FromBody] RoleAuthorityDTO roleauthoritydto)
+        public IActionResult Post([FromBody] RoleAuthorityRequest request)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            return Ok(_RoleAuthorityService.CreateRoleAuthority(roleauthoritydto));
+            var response = _RoleAuthorityService.CreateRoleAuthority(request);
+
+            if (response == null)
+                return Unauthorized();
+
+            return Ok(response);
         }
 
         [HttpPut]
-        public IActionResult Put([FromBody] RoleAuthorityDTO roleauthoritydto)
+        public IActionResult Put([FromBody] UpdateRoleAuthorityRequest request)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            return Ok(_RoleAuthorityService.UpdateRoleAuthority(roleauthoritydto));
+            var response = _RoleAuthorityService.UpdateRoleAuthority(request);
+
+            if (response == null)
+                return Unauthorized();
+
+            return Ok(response);
         }
 
         [HttpDelete("{id}")]
@@ -68,7 +79,10 @@ namespace BuildingReport.API.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            _RoleAuthorityService.DeleteRoleAuthority(id);
+            var response = _RoleAuthorityService.DeleteRoleAuthority(id);
+
+            if (!response)
+                return Unauthorized();
 
             return NoContent();
         }

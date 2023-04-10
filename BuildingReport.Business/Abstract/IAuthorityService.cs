@@ -1,4 +1,6 @@
 ﻿using BuildingReport.DTO;
+using BuildingReport.DTO.Request;
+using BuildingReport.DTO.Response;
 using BuildingReport.Entities;
 using System;
 using System.Collections.Generic;
@@ -10,13 +12,13 @@ namespace BuildingReport.Business.Abstract
 {
     public interface IAuthorityService
     {
-        List<Authority> GetAllAuthorities();
+        List<AuthorityResponse> GetAllAuthorities();
 
-        Authority GetAuthorityById(long id);
+        AuthorityResponse GetAuthorityById(long id);
 
-        Authority CreateAuthority(AuthorityDTO authorityDTO);
+        AuthorityResponse CreateAuthority(AuthorityRequest request);
 
-        Authority UpdateAuthority(AuthorityDTO authority);
+        AuthorityResponse UpdateAuthority(UpdateAuthorityRequest request);
 
         void DeleteAuthority(long id);
         void checkIfAuthorityExistsByName(string name);

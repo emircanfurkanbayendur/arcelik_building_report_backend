@@ -10,7 +10,7 @@ namespace BuildingReport.DTO.Response
     {
         public long Id { get; set; }
 
-        public byte[] Report { get; set; } = null!;
+        public byte[]? Report { get; set; } = null!;
 
         public DateTime UploadedAt { get; set; }
 
