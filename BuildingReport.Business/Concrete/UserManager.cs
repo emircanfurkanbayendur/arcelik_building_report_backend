@@ -20,6 +20,8 @@ using System.Threading.Tasks;
 using System.Net;
 using MimeKit;
 using MimeKit.Text;
+using Azure;
+using Microsoft.AspNetCore.JsonPatch;
 
 namespace BuildingReport.Business.Concrete
 {
@@ -94,6 +96,30 @@ namespace BuildingReport.Business.Concrete
             user.CreatedAt = o_user.CreatedAt;
             user.RoleId = o_user.RoleId;
             return _userRepository.UpdateUser(user);
+        }
+
+        public User UpdateUserPatch(int id, JsonPatchDocument<UserDTO> patchdoc)
+        {
+            User user = _userRepository.GetUserById(id);
+            if(user == null)
+            {
+                throw new Exception($"User with id {id} not found.");
+            }
+
+            var password = user.Password;
+            long roleid = user.RoleId;
+
+            UserDTO userDTO = _mapper.Map<UserDTO>(user);
+
+            patchdoc.ApplyTo(userDTO);
+
+            user = _mapper.Map<User>(userDTO);
+            user.Password=password;
+            user.RoleId =roleid;
+            
+
+            return _userRepository.UpdateUser(user);
+
         }
 
         public string GenerateVerificationToken()

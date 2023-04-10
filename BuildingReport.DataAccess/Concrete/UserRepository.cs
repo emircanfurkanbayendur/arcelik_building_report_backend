@@ -56,9 +56,9 @@ namespace arcelik_building_report_backend.Concrete
             using (var userDbContext = new ArcelikBuildingReportDbContext())
             {
                 User user = userDbContext.Users
-                    //.Include(x => x.Role)
-                    //.Include(x => x.Buildings)
-                    //.Include(x => x.Documents)
+                    .Include(x => x.Role)
+                    .Include(x => x.Buildings)
+                    .Include(x => x.Documents)
                     .First(s => s.Id == id);
 
 

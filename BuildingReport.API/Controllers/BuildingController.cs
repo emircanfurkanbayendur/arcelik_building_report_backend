@@ -131,7 +131,17 @@ namespace BuildingReport.API.Controllers
 
             return Ok(_buildingService.GetBuildingsByCityDistrictNeighbourhoodStreet(city, district, neighbourhood, street));
         }
-        
+
+        [AllowAnonymous]
+        [HttpGet("nameBuildingNumberByAdress")]
+        public IActionResult GetBuildingNameBuildingNumber(string city, string district, string neighbourhood, string street)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            return Ok(_buildingService.GetBuildingNameBuildingNumbers(city, district, neighbourhood, street));
+        }
+
 
         [HttpPost]
         public IActionResult Create([FromBody] BuildingDTO buildingdto)
