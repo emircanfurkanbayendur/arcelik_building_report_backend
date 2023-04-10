@@ -1,6 +1,8 @@
 ﻿using arcelik_building_report_backend.Abstract;
 using BuildingReport.DataAcess;
 using BuildingReport.Entities;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace arcelik_building_report_backend.Concrete
@@ -105,6 +107,16 @@ namespace arcelik_building_report_backend.Concrete
             {
                 return userDbContext.Users.Any(b => b.Id == id);
             }
+        }
+
+        public bool findUserExistsByEmailAndPassword(string email, byte[] _password)
+        {
+            
+            if (GetAllUsers().Any(u => u.Email == email && u.Password.SequenceEqual(_password)))
+            {
+                return true;
+            }
+            return false;
         }
     }
 }

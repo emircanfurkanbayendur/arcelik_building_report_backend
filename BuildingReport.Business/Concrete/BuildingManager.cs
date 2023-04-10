@@ -3,11 +3,15 @@ using BuildingReport.Business.Abstract;
 using BuildingReport.DataAccess.Abstract;
 using BuildingReport.DataAccess.Concrete;
 using BuildingReport.DTO;
+using BuildingReport.DTO.Request;
+using BuildingReport.DTO.Response;
 using BuildingReport.Entities;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.JsonPatch;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.Metrics;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -18,80 +22,106 @@ namespace BuildingReport.Business.Concrete
     {
         private IBuildingRepository _buildingRepository;
         private readonly IMapper _mapper;
+        private readonly IRoleAuthorityService _roleAuthorityService;
 
-        public BuildingManager(IMapper mapper)
+        public BuildingManager(IMapper mapper, IRoleAuthorityService roleAuthorityService)
         {
             _buildingRepository = new BuildingRepository();
             _mapper = mapper;
+            _roleAuthorityService = roleAuthorityService;
         }
 
         
-        public Building CreateBuilding(BuildingDTO buildingDTO)
+        public BuildingResponse CreateBuilding(BuildingRequest buildingDTO)
         {
+            if (!_roleAuthorityService.RoleAuthorityExistsById(UserManager.LoginUser.RoleId, 2))
+            {
+                return null;
+            }
+
             Building building = _mapper.Map<Building>(buildingDTO);
+            building.RegisteredAt = DateTime.Now;
+            building.IsActive = true;
             CheckIfBuildingExistsByCode(building.Code);
-            return _buildingRepository.CreateBuilding(building);
+            BuildingResponse response = _mapper.Map<BuildingResponse>(_buildingRepository.CreateBuilding(building));
+            return response;
         }
 
-        public void DeleteBuilding(long id)
+        public bool DeleteBuilding(long id)
         {
+            if (!_roleAuthorityService.RoleAuthorityExistsById(UserManager.LoginUser.RoleId, 3))
+            {
+                return false;
+            }
             _buildingRepository.DeleteBuilding(id);
+            return true;
         }
 
-        public List<Building> GetAllBuildings()
+        public List<BuildingResponse> GetAllBuildings()
         {
-            return _buildingRepository.GetAllBuildings();
+            List<BuildingResponse> response = _mapper.Map<List<BuildingResponse>>(_buildingRepository.GetAllBuildings());
+            return response;
         }
 
-        public List<Building> GetBuildingByCity(string city)
+        public List<BuildingResponse> GetBuildingByCity(string city)
         {
-            return _buildingRepository.GetBuildingByCity(city);
+            List<BuildingResponse> response = _mapper.Map<List<BuildingResponse>>(_buildingRepository.GetBuildingByCity(city));
+            return response;
         }
-        public List<Building> GetBuildingByDistrict(string district)
+        public List<BuildingResponse> GetBuildingByDistrict(string district)
         {
-            return _buildingRepository.GetBuildingByDistrict(district);
+            List<BuildingResponse> response = _mapper.Map<List<BuildingResponse>>(_buildingRepository.GetBuildingByDistrict(district));
+            return response;
         }
-        public List<Building> GetBuildingByNeighbourhood(string neighbourhood)
+        public List<BuildingResponse> GetBuildingByNeighbourhood(string neighbourhood)
         {
-            return _buildingRepository.GetBuildingByNeighbourhood(neighbourhood);
-        }
-
-        public List<Building> GetBuildingByStreet(string street)
-        {
-            return _buildingRepository.GetBuildingByStreet(street);
+            List<BuildingResponse> response = _mapper.Map<List<BuildingResponse>>(_buildingRepository.GetBuildingByNeighbourhood(neighbourhood));
+            return response;
         }
 
-        public Building GetBuildingByCode(string code)
+        public List<BuildingResponse> GetBuildingByStreet(string street)
         {
-            CheckIfBuildingExistsByCode(code);
-            return _buildingRepository.GetBuildingByCode(code);
+            List<BuildingResponse> response = _mapper.Map<List<BuildingResponse>>(_buildingRepository.GetBuildingByStreet(street));
+            return response;
         }
 
-        public Building GetBuildingById(long id)
+        public BuildingResponse GetBuildingByCode(string code)
         {
-            //CheckIfBuildingExistsById(id);
-            return _buildingRepository.GetBuildingById(id);
+            BuildingResponse response = _mapper.Map<BuildingResponse>(_buildingRepository.GetBuildingByCode(code));
+            return response;
         }
 
-        public List<Building> GetBuildingsByUserId(long userId)
+        public BuildingResponse GetBuildingById(long id)
         {
-            return _buildingRepository.GetBuildingsByUserId(userId);
+            BuildingResponse response = _mapper.Map<BuildingResponse>(_buildingRepository.GetBuildingById(id));
+            return response;
         }
 
-        public Building UpdateBuilding(BuildingDTO buildingDTO)
+        public List<BuildingResponse> GetBuildingsByUserId(long userId)
         {
+            List<BuildingResponse> response = _mapper.Map<List<BuildingResponse>>(_buildingRepository.GetBuildingsByUserId(userId));
+            return response;
+        }
+
+        public BuildingResponse UpdateBuilding(UpdateBuildingRequest buildingDTO)
+        {
+            if (!_roleAuthorityService.RoleAuthorityExistsById(UserManager.LoginUser.RoleId, 4))
+            {
+                return null;
+            }
             Building building = _mapper.Map<Building>(buildingDTO);
-            return _buildingRepository.UpdateBuilding(building);
+            BuildingResponse response = _mapper.Map<BuildingResponse>(_buildingRepository.UpdateBuilding(building));
+            return response;
         }
 
-        public Building UpdateBuildingPatch(int id, JsonPatchDocument<BuildingDTO> pathdoc)
+        public Building UpdateBuildingPatch(int id, JsonPatchDocument<UpdateBuildingRequest> pathdoc)
         {
             Building building = _buildingRepository.GetBuildingById(id);
             if(building == null)
             {
                 throw new Exception($"Building with ID {id} not found");
             }
-            BuildingDTO buildingDTO = _mapper.Map<BuildingDTO>(building);
+            UpdateBuildingRequest buildingDTO = _mapper.Map<UpdateBuildingRequest>(building);
 
             
             pathdoc.ApplyTo(buildingDTO);

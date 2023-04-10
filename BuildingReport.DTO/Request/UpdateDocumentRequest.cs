@@ -5,13 +5,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BuildingReport.DTO
+namespace BuildingReport.DTO.Request
 {
-    public class DocumentDTO
+    public class UpdateDocumentRequest
     {
         public long Id { get; set; }
 
-        public byte[] Report { get; set; } = null!;
+        public byte[]? Report { get; set; } = null!;
 
         public DateTime UploadedAt { get; set; }
 

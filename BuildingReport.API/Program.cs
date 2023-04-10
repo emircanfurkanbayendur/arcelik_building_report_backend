@@ -107,14 +107,16 @@ builder.Services.AddAutoMapper(typeof(AuthorityMappingProfile), typeof(UserMappi
     typeof(BuildingMappingProfile), typeof(DocumentMappingProfile));
 
 builder.Services.AddControllers()
-    .AddNewtonsoftJson(options =>
-    {
-        options.SerializerSettings.ContractResolver = new Newtonsoft.Json.Serialization.DefaultContractResolver();
-        options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
-        options.SerializerSettings.NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore;
-        options.SerializerSettings.Converters.Add(new JsonPatchConverter());
+    .AddNewtonsoftJson(options => 
+    { 
+        options.SerializerSettings.ContractResolver = new Newtonsoft.Json.Serialization.DefaultContractResolver 
+        { 
+            NamingStrategy = new Newtonsoft.Json.Serialization.CamelCaseNamingStrategy() 
+        }; 
+        options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore; 
+        options.SerializerSettings.NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore; 
+        options.SerializerSettings.Converters.Add(new JsonPatchConverter()); 
     });
-
 
 
 var app = builder.Build();

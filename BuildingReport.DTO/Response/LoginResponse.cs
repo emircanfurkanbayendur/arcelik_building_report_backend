@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BuildingReport.DTO
+namespace BuildingReport.DTO.Response
 {
-    public class ReturnDto
+    public class LoginResponse
     {
         public long Id { get; set; }
 

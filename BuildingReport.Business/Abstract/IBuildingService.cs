@@ -1,4 +1,6 @@
 ﻿using BuildingReport.DTO;
+using BuildingReport.DTO.Request;
+using BuildingReport.DTO.Response;
 using BuildingReport.Entities;
 using Microsoft.AspNetCore.JsonPatch;
 using System;
@@ -11,22 +13,21 @@ namespace BuildingReport.Business.Abstract
 {
     public interface IBuildingService
     {
-        List<Building> GetAllBuildings();
-        List<Building> GetBuildingsByUserId(long userId);
-        List<Building> GetBuildingByCity(string city);
-        List<Building> GetBuildingByDistrict(string district);
-        List<Building> GetBuildingByNeighbourhood(string neighbourhood);
-        List<Building> GetBuildingByStreet(string street);
+        List<BuildingResponse> GetAllBuildings();
+        List<BuildingResponse> GetBuildingsByUserId(long userId);
+        List<BuildingResponse> GetBuildingByCity(string city);
+        List<BuildingResponse> GetBuildingByDistrict(string district);
+        List<BuildingResponse> GetBuildingByNeighbourhood(string neighbourhood);
+        List<BuildingResponse> GetBuildingByStreet(string street);
         BuildingListDTO GetBuildingsByCityDistrictNeighbourhoodStreet(string city, string district, string neighbourhood, string street);
         BuildingStreetsDTO GetStreetsByCityDistrictNeighbourhood(string city,string district,string neighbourhood);
         BuildingCountDTO GetBuildingCounts();
-        Building GetBuildingByCode(string code);
-        Building GetBuildingById(long id);
-        Building CreateBuilding(BuildingDTO buildingDTO);
-
-        Building UpdateBuilding(BuildingDTO buildingDTO);
-        Building UpdateBuildingPatch(int id, JsonPatchDocument<BuildingDTO> pathdoc);
-        void DeleteBuilding(long id);
+        BuildingResponse GetBuildingByCode(string code);
+        BuildingResponse GetBuildingById(long id);
+        BuildingResponse CreateBuilding(BuildingRequest buildingDTO);
+        BuildingResponse UpdateBuilding(UpdateBuildingRequest buildingDTO);
+        Building UpdateBuildingPatch(int id, JsonPatchDocument<UpdateBuildingRequest> pathdoc);
+        bool DeleteBuilding(long id);
         void CheckIfBuildingExistsByCode(string code);
         void CheckIfBuildingExistsById(long id);
     }

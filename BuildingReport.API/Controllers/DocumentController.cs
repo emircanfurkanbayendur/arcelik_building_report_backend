@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using BuildingReport.Business.Abstract;
 using BuildingReport.Business.Concrete;
-using BuildingReport.DTO;
+using BuildingReport.DTO.Request;
 using BuildingReport.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -63,25 +63,35 @@ namespace BuildingReport.API.Controllers
         }
 
         [HttpPost]
-        public IActionResult Create([FromBody] DocumentDTO documentdto)
+        public IActionResult Create([FromBody] DocumentRequest request)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            return Ok(_documentService.CreateDocument(documentdto));
+            var response = _documentService.CreateDocument(request);
+
+            if (response == null)
+                return Unauthorized();
+
+            return Ok(response);
         }
 
         [HttpPut]
-        public IActionResult Update([FromBody] DocumentDTO documentdto)
+        public IActionResult Update([FromBody] UpdateDocumentRequest request)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            return Ok(_documentService.UpdateDocument(documentdto));
+            var response = _documentService.UpdateDocument(request);
+
+            if (response == null)
+                return Unauthorized();
+
+            return Ok(response);
         }
 
         [HttpPatch("{id}")]
-        public IActionResult UpdatePatch(int id, [FromBody] JsonPatchDocument<DocumentDTO> pathdoc)
+        public IActionResult UpdatePatch(int id, [FromBody] JsonPatchDocument<UpdateDocumentRequest> pathdoc)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
@@ -94,7 +104,10 @@ namespace BuildingReport.API.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            _documentService.DeleteDocument(id);
+            var response = _documentService.DeleteDocument(id);
+
+            if (!response)
+                return Unauthorized();
 
             return NoContent();
         }

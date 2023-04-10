@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using AutoMapper;
+using BuildingReport.DTO.Request;
 
 namespace BuildingReport.API.Controllers
 {
@@ -39,21 +40,21 @@ namespace BuildingReport.API.Controllers
         }
 
         [HttpPost]
-        public IActionResult Create([FromBody] AuthorityDTO authorityDTO)
+        public IActionResult Create([FromBody] AuthorityRequest request)
         {          
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            return Ok(_authorityService.CreateAuthority(authorityDTO));
+            return Ok(_authorityService.CreateAuthority(request));
         }
 
         [HttpPut]
-        public IActionResult Update([FromBody] AuthorityDTO authorityDTO)
+        public IActionResult Update([FromBody] UpdateAuthorityRequest request)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            return Ok(_authorityService.UpdateAuthority(authorityDTO));
+            return Ok(_authorityService.UpdateAuthority(request));
         }
 
         [HttpDelete("{id}")]

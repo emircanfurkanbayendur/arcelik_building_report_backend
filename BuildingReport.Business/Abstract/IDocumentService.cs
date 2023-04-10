@@ -1,4 +1,5 @@
-﻿using BuildingReport.DTO;
+﻿using BuildingReport.DTO.Request;
+using BuildingReport.DTO.Response;
 using BuildingReport.Entities;
 using Microsoft.AspNetCore.JsonPatch;
 using System;
@@ -11,14 +12,14 @@ namespace BuildingReport.Business.Abstract
 {
     public interface IDocumentService
     {
-        List<Document> GetAllDocuments();
-        List<Document> GetDocumentsByBuildingId(long buildingId);
-        List<Document> GetDocumentsByUserId(long userId);
-        Document GetDocumentById(long id);
-        Document CreateDocument(DocumentDTO documentDTO);
-        Document UpdateDocument(DocumentDTO documentDTO);
-        Document UpdateDocumentPatch(int id, JsonPatchDocument<DocumentDTO> pathdoc);
-        void DeleteDocument(long id);
+        List<DocumentResponse> GetAllDocuments();
+        List<DocumentResponse> GetDocumentsByBuildingId(long buildingId);
+        List<DocumentResponse> GetDocumentsByUserId(long userId);
+        DocumentResponse GetDocumentById(long id);
+        DocumentResponse CreateDocument(DocumentRequest request);
+        DocumentResponse UpdateDocument(UpdateDocumentRequest request);
+        Document UpdateDocumentPatch(int id, JsonPatchDocument<UpdateDocumentRequest> pathdoc);
+        bool DeleteDocument(long id);
         void CheckIfDocumentExistsById(long id);
     }
 }

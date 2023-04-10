@@ -6,7 +6,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using AutoMapper;
-
+using BuildingReport.DTO.Request;
+using Azure;
 
 namespace BuildingReport.API.Controllers
 {
@@ -44,21 +45,25 @@ namespace BuildingReport.API.Controllers
 
         [AllowAnonymous]
         [HttpPost]
-        public IActionResult CreateRole([FromBody] RoleDTO roleDTO)
+        public IActionResult CreateRole([FromBody] RoleRequest request)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            return Ok(_roleService.CreateRole(roleDTO));
+            var response = _roleService.CreateRole(request);
+
+            return Ok(response);
         }
 
         [HttpPut]
-        public IActionResult Put([FromBody] RoleDTO roleDTO)
+        public IActionResult Put([FromBody] UpdateRoleRequest request)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            return Ok(_roleService.UpdateRole(roleDTO));
+            var response = _roleService.UpdateRole(request);
+
+            return Ok(response);
         }
 
         [HttpDelete("{id}")]

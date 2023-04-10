@@ -2,7 +2,8 @@
 using BuildingReport.Business.Abstract;
 using BuildingReport.DataAccess.Abstract;
 using BuildingReport.DataAccess.Concrete;
-using BuildingReport.DTO;
+using BuildingReport.DTO.Request;
+using BuildingReport.DTO.Response;
 using BuildingReport.Entities;
 using Microsoft.AspNetCore.JsonPatch;
 using System;
@@ -17,51 +18,74 @@ namespace BuildingReport.Business.Concrete
     {
         private IDocumentRepository _documentRepository;
         private readonly IMapper _mapper;
-        public DocumentManager(IMapper mapper)
+        private readonly IRoleAuthorityService _roleAuthorityService;
+        public DocumentManager(IMapper mapper, IRoleAuthorityService roleAuthorityService)
         {
             _documentRepository = new DocumentRepository();
             _mapper = mapper;
+            _roleAuthorityService = roleAuthorityService;
         }
-        public Document CreateDocument(DocumentDTO documentDTO)
+        public DocumentResponse CreateDocument(DocumentRequest request)
         {
-            Document document = _mapper.Map<Document>(documentDTO);
-            return _documentRepository.CreateDocument(document);
+            if (!_roleAuthorityService.RoleAuthorityExistsById(UserManager.LoginUser.RoleId, 2))
+            {
+                return null;
+            }
+            Document document = _mapper.Map<Document>(request);
+            document.UploadedAt = DateTime.Now;
+            document.IsActive = true;
+            DocumentResponse response = _mapper.Map<DocumentResponse>(_documentRepository.CreateDocument(document));
+            return response;
         }
 
-        public void DeleteDocument(long id)
+        public bool DeleteDocument(long id)
         {
+            if (!_roleAuthorityService.RoleAuthorityExistsById(UserManager.LoginUser.RoleId, 3))
+            {
+                return false;
+            }
             CheckIfDocumentExistsById(id);
             _documentRepository.DeleteDocument(id);
+            return true;
         }
 
-        public List<Document> GetAllDocuments()
+        public List<DocumentResponse> GetAllDocuments()
         {
-            return _documentRepository.GetAllDocuments();
+            List<DocumentResponse> response = _mapper.Map<List<DocumentResponse>>(_documentRepository.GetAllDocuments());
+            return response;
         }
 
-        public Document GetDocumentById(long id)
+        public DocumentResponse GetDocumentById(long id)
         {
             CheckIfDocumentExistsById(id);
-            return _documentRepository.GetDocumentById(id);
+            DocumentResponse response = _mapper.Map<DocumentResponse>(_documentRepository.GetDocumentById(id));
+            return response;
         }
 
-        public List<Document> GetDocumentsByBuildingId(long buildingId)
+        public List<DocumentResponse> GetDocumentsByBuildingId(long buildingId)
         {
-            return _documentRepository.GetDocumentsByBuildingId(buildingId);
+            List<DocumentResponse> response = _mapper.Map<List<DocumentResponse>>(_documentRepository.GetDocumentsByBuildingId(buildingId));
+            return response;
         }
 
-        public List<Document> GetDocumentsByUserId(long userId)
+        public List<DocumentResponse> GetDocumentsByUserId(long userId)
         {
-            return _documentRepository.GetDocumentsByUserId(userId);
+            List<DocumentResponse> response = _mapper.Map<List<DocumentResponse>>(_documentRepository.GetDocumentsByUserId(userId));
+            return response;
         }
 
-        public Document UpdateDocument(DocumentDTO documentDTO)
+        public DocumentResponse UpdateDocument(UpdateDocumentRequest documentDTO)
         {
+            if (!_roleAuthorityService.RoleAuthorityExistsById(UserManager.LoginUser.RoleId, 4))
+            {
+                return null;
+            }
             Document document = _mapper.Map<Document>(documentDTO);
-            return _documentRepository.UpdateDocument(document);
+            DocumentResponse response = _mapper.Map<DocumentResponse>(_documentRepository.UpdateDocument(document));
+            return response;
         }
 
-        public Document UpdateDocumentPatch(int id,JsonPatchDocument<DocumentDTO> patchdoc)
+        public Document UpdateDocumentPatch(int id,JsonPatchDocument<UpdateDocumentRequest> patchdoc)
         {
             Document document = _documentRepository.GetDocumentById(id);
             if(document == null)
@@ -69,7 +93,7 @@ namespace BuildingReport.Business.Concrete
                 throw new Exception($"Document with ID {id} not found");
             }
 
-            DocumentDTO documentDTO = _mapper.Map<DocumentDTO>(document);
+            UpdateDocumentRequest documentDTO = _mapper.Map<UpdateDocumentRequest>(document);
 
             patchdoc.ApplyTo(documentDTO);
 

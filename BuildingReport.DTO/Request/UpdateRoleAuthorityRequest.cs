@@ -4,13 +4,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BuildingReport.DTO
+namespace BuildingReport.DTO.Request
 {
-    public class AuthorityDTO
+    public class UpdateRoleAuthorityRequest
     {
         public long Id { get; set; }
+        public long RoleId { get; set; }
 
-        public string Name { get; set; } = null!;
+        public long AuthorityId { get; set; }
+
 
     }
 }
