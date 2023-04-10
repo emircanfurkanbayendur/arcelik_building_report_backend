@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BuildingReport.Entities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -29,5 +30,6 @@ namespace BuildingReport.DTO.Response
         public bool? IsActive { get; set; }
 
         public long CreatedByUserId { get; set; }
+        public virtual ICollection<Document> Documents { get; } = new List<Document>();
     }
 }

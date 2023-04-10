@@ -163,9 +163,6 @@ namespace BuildingReport.Business.Concrete
         {
             var token = Convert.ToHexString(RandomNumberGenerator.GetBytes(3));
             
-            var tokenIsUnique = _userRepository.GetAllUsers().Any(x => x.VerificationToken == token);
-            if (!tokenIsUnique)
-                return GenerateVerificationToken();
 
             return token;
         }
