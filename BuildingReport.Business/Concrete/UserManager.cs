@@ -100,9 +100,9 @@ namespace BuildingReport.Business.Concrete
         {
             var token = Convert.ToHexString(RandomNumberGenerator.GetBytes(3));
             
-            //var tokenIsUnique = _userRepository.GetAllUsers().Any(x => x.VerificationToken == token);
-            //if (!tokenIsUnique)
-                //return GenerateVerificationToken();
+            var tokenIsUnique = _userRepository.GetAllUsers().Any(x => x.VerificationToken == token);
+            if (!tokenIsUnique)
+                return GenerateVerificationToken();
 
             return token;
         }
@@ -124,7 +124,7 @@ namespace BuildingReport.Business.Concrete
         public void SendMail(string to, string subject, string html, string from = null)
         {
             MimeMessage mimeMessage = new MimeMessage();
-            MailboxAddress mailboxAddressFrom=new MailboxAddress("Admin","mailgiriniz");
+            MailboxAddress mailboxAddressFrom = new MailboxAddress("Admin", "mail@gmail.com");
             mimeMessage.From.Add(mailboxAddressFrom);
             MailboxAddress mailboxAddressTo = new MailboxAddress("User", to);
             mimeMessage.To.Add(mailboxAddressTo);
@@ -133,7 +133,7 @@ namespace BuildingReport.Business.Concrete
 
             using var smtp = new MailKit.Net.Smtp.SmtpClient();
             smtp.Connect("smtp.gmail.com", 587, false);
-            smtp.Authenticate("mailgiriniz", "şifre");
+            smtp.Authenticate("mail@gmail.com", "sifre");
             smtp.Send(mimeMessage);
             smtp.Disconnect(true);
         }
@@ -149,6 +149,35 @@ namespace BuildingReport.Business.Concrete
             _userRepository.UpdateUser(user);
             return true;
         }
+
+        public void ForgotPassword(string mail)
+        {
+            var user = _userRepository.GetAllUsers().SingleOrDefault(x => x.Email == mail);
+
+            if (user == null) return;
+
+            var password = Convert.ToHexString(RandomNumberGenerator.GetBytes(4));
+            user.Password = _hashService.HashPassword(password);
+
+            _userRepository.UpdateUser(user);
+
+            SendPasswordResetEmail(user.Email,password);
+        }
+
+        public void SendPasswordResetEmail(string mail, string password)
+        {
+            string message;
+                message = $@"<p>Please use the below token to reset your password with the <code>/accounts/reset-password</code> api route:</p>
+                            <p><code>{password}</code></p>";
+
+            SendMail(
+                to: mail,
+                subject: "Reset Password",
+                html: $@"<h4>Reset Password Email</h4>
+                        {message}"
+            );
+        }
+
         public User UpdateUserRole(long id)
         {
             CheckIfUserExistsById(id);

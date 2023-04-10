@@ -78,6 +78,19 @@ namespace BuildingReport.API.Controllers
         }
 
         [AllowAnonymous]
+        [HttpPost("ForgotPassword")]
+        public IActionResult ForgotPassword(string mail)
+        {
+
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            _userService.ForgotPassword(mail);
+
+             return Ok ();
+        }
+
+        [AllowAnonymous]
         [HttpPut]
         public IActionResult UpdateUser([FromBody] UserDTO userdto)
         {

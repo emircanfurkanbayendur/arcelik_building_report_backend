@@ -25,7 +25,10 @@ namespace BuildingReport.Business.Abstract
         void SendMail(string to, string subject, string html, string from = null);
         void SendVerificationEmail(User user);
         bool VerifyToken(string token);
-        
+        void ForgotPassword(string mail);
+
+        void SendPasswordResetEmail(string mail, string password);
+
         void DeleteUser(long id);
         void CheckIfUserExistsByEmail(string email);
         void CheckIfUserExistsById(long id);
