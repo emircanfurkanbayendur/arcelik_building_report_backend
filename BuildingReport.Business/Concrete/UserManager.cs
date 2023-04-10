@@ -131,7 +131,9 @@ namespace BuildingReport.Business.Concrete
             user.Password = _hashService.HashPassword(userdto.Password);
             user.CreatedAt = o_user.CreatedAt;
             user.RoleId = o_user.RoleId;
-            return _userRepository.UpdateUser(user);
+            User new_user = _userRepository.UpdateUser(user);
+            UserResponse response = _mapper.Map<UserResponse>(new_user);
+            return response;
         }
 
         public User UpdateUserPatch(int id, JsonPatchDocument<UpdateUserRequest> patchdoc)
@@ -145,7 +147,7 @@ namespace BuildingReport.Business.Concrete
             var password = user.Password;
             long roleid = user.RoleId;
 
-            UserDTO userDTO = _mapper.Map<UserDTO>(user);
+            UpdateUserRequest userDTO = _mapper.Map<UpdateUserRequest>(user);
 
             patchdoc.ApplyTo(userDTO);
 
@@ -155,10 +157,6 @@ namespace BuildingReport.Business.Concrete
             
 
             return _userRepository.UpdateUser(user);
-
-            User new_user = _userRepository.UpdateUser(user);
-            UserResponse response = _mapper.Map<UserResponse>(new_user);
-            return response;
         }
 
         public string GenerateVerificationToken()
