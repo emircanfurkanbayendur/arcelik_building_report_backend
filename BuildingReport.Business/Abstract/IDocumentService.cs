@@ -18,7 +18,7 @@ namespace BuildingReport.Business.Abstract
         DocumentResponse GetDocumentById(long id);
         DocumentResponse CreateDocument(DocumentRequest request);
         DocumentResponse UpdateDocument(UpdateDocumentRequest request);
-        Document UpdateDocumentPatch(int id, JsonPatchDocument<UpdateDocumentRequest> pathdoc);
+        Document UpdateDocumentPatch(int id, JsonPatchDocument<PatchDocumentRequest> pathdoc);
         bool DeleteDocument(long id);
         void CheckIfDocumentExistsById(long id);
     }

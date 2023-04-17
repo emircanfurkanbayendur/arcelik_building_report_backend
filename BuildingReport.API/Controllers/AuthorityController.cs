@@ -21,6 +21,7 @@ namespace BuildingReport.API.Controllers
             _authorityService = authorityService;
         }
 
+
         [HttpGet]
         public IActionResult GetAuthorities()
         {

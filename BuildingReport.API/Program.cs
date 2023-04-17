@@ -10,6 +10,14 @@ using AutoMapper;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Formatters;
 using System.Text.Json;
+using BuildingReport.Business.Extensions;
+using Microsoft.Extensions.Logging;
+using BuildingReport.Business.Logging.Abstract;
+using BuildingReport.Business.Logging.Concrete;
+using BuildingReport.Business.CustomExceptionMiddleware;
+using Microsoft.AspNetCore.Diagnostics;
+using System.Net;
+using Microsoft.AspNetCore.Builder;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -97,17 +105,26 @@ builder.Services.AddControllers(
 options => options.SuppressImplicitRequiredAttributeForNonNullableReferenceTypes = true);
 
 
+builder.Services.AddSingleton<ILoggerManager, LoggerManager>();
 
+builder.Services.AddLogging(loggingBuilder =>
+{
+    loggingBuilder.ClearProviders();
+    loggingBuilder.AddConsole();
+});
 
+var loggerFactory = LoggerFactory.Create(builder =>
+{
+    builder.AddConsole();
+});
 
+var logger = new LoggerManager(loggerFactory.CreateLogger<LoggerManager>());
 
 builder.Services.AddControllers().AddJsonOptions(x =>
                 x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
 
 builder.Services.AddAutoMapper(typeof(AuthorityMappingProfile), typeof(UserMappingProfile), typeof(RoleMappingProfile), typeof(RoleAuthorityMappingProfile),
     typeof(BuildingMappingProfile), typeof(DocumentMappingProfile));
-
-
 
 
 builder.Services.AddControllers()
@@ -123,7 +140,12 @@ builder.Services.AddControllers()
     });
 
 
+
+
 var app = builder.Build();
+
+app.UseMiddleware<ExceptionMiddleware>();
+
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -131,6 +153,12 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+
+//app.ConfigureExceptionHandler(logger);
+//app.ConfigureCustomExceptionMiddleware();
+
+
 
 app.UseHttpsRedirection();
 app.UseAuthentication();

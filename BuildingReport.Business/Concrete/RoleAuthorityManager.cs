@@ -1,5 +1,8 @@
 ﻿using AutoMapper;
 using BuildingReport.Business.Abstract;
+using BuildingReport.Business.CustomExceptionMiddleware.IdExceptions;
+using BuildingReport.Business.CustomExceptionMiddleware.RoleExceptions;
+using BuildingReport.Business.CustomExceptions.RoleExceptions;
 using BuildingReport.DataAccess.Abstract;
 using BuildingReport.DataAccess.Concrete;
 using BuildingReport.DTO;
@@ -37,8 +40,11 @@ namespace BuildingReport.Business.Concrete
             {
                 return null;
             }
+
+            _ = request ?? throw new ArgumentNullException(nameof(request), "cannot be null.");
+
             RoleAuthority roleAuthority = _mapper.Map<RoleAuthority>(request);
-            RoleAuthorityExists(_roleService.GetRoleById(request.RoleId).Name, _authorityService.GetAuthorityById(request.AuthorityId).Name);
+            CheckIfRoleAuthorityExistsByName(_roleService.GetRoleById(request.RoleId).Name, _authorityService.GetAuthorityById(request.AuthorityId).Name);
             RoleAuthorityResponse response = _mapper.Map<RoleAuthorityResponse>(_roleAuthorityRepository.CreateRoleAuthority(roleAuthority));
             return response;
         }
@@ -49,6 +55,11 @@ namespace BuildingReport.Business.Concrete
             {
                 return false;
             }
+
+            ValidateId(id);
+            CheckIfRoleAuthorityExistsById(id);
+
+
             _roleAuthorityRepository.DeleteRoleAuthority(id);
             return true;
         }
@@ -62,6 +73,8 @@ namespace BuildingReport.Business.Concrete
 
         public RoleAuthorityResponse GetRoleAuthorityById(long id)
         {
+            ValidateId(id);
+
             RoleAuthorityResponse response = _mapper.Map<RoleAuthorityResponse>(_roleAuthorityRepository.GetRoleAuthorityById(id));
             return response;
         }
@@ -72,16 +85,34 @@ namespace BuildingReport.Business.Concrete
             {
                 return null;
             }
+
+            _ = roleAuthorityDTO ?? throw new ArgumentNullException(nameof(roleAuthorityDTO), "cannot be null.");
+            CheckIfRoleAuthorityExistsById(roleAuthorityDTO.Id);
+
             var roleAuthority = _mapper.Map<RoleAuthority>(roleAuthorityDTO);
             RoleAuthorityResponse response = _mapper.Map<RoleAuthorityResponse>(_roleAuthorityRepository.UpdateRoleAuthority(roleAuthority));
             return response;
         }
-        public void RoleAuthorityExists(string roleName, string authorityName)
+
+
+        //BusinessRules
+        public void CheckIfRoleAuthorityExistsByName(string roleName, string authorityName)
         {
-            if (_roleAuthorityRepository.RoleAuthorityExists(roleName, authorityName))
+            if (_roleAuthorityRepository.CheckIfRoleAuthorityExistsByName(roleName, authorityName))
             {
-                throw new NotImplementedException("RoleAuthority already exists.");
+                throw new RoleAuthorityAlreadyExistsException("RoleAuthority already exists.");
             }
+
+
+        }
+
+        public void CheckIfRoleAuthorityExistsById(long id)
+        {
+            if (!_roleAuthorityRepository.CheckIfRoleAuthorityExistsById(id))
+            {
+                throw new RoleAuthorityNotFoundException("RoleAuthority Not Found.");
+            }
+
         }
 
         public bool RoleAuthorityExistsById(long roleId, long authorityId)
@@ -92,5 +123,15 @@ namespace BuildingReport.Business.Concrete
             }
             return false;
         }
+
+        private void ValidateId(long id)
+        {
+            if (id <= 0 || id > long.MaxValue)
+            {
+                throw new IdOutOfRangeException(nameof(id), id);
+            }
+        }
+
+
     }
 }

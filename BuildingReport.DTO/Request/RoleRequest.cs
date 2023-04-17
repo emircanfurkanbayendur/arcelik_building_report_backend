@@ -1,12 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
 
-namespace BuildingReport.DTO.Request {
+namespace BuildingReport.DTO.Request
+{
     public class RoleRequest
     {
+        [Required]
+        [MaxLength(50)]
+
+        [RegularExpression("^[a-zA-Z0-9_ çÇğĞıİöÖşŞüÜ]*$", ErrorMessage = "Name can only contain letters, numbers, underscores, spaces, and dashes.")]
         public string Name { get; set; } = null!;
     }
 }

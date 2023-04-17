@@ -27,7 +27,7 @@ namespace BuildingReport.Business.Abstract
         BuildingResponse GetBuildingById(long id);
         BuildingResponse CreateBuilding(BuildingRequest buildingDTO);
         BuildingResponse UpdateBuilding(UpdateBuildingRequest buildingDTO);
-        Building UpdateBuildingPatch(int id, JsonPatchDocument<UpdateBuildingRequest> pathdoc);
+        Building UpdateBuildingPatch(int id, JsonPatchDocument<PatchBuildingRequest> pathdoc);
         bool DeleteBuilding(long id);
         void CheckIfBuildingExistsByCode(string code);
         void CheckIfBuildingExistsById(long id);

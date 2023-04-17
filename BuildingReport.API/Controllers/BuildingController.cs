@@ -174,7 +174,7 @@ namespace BuildingReport.API.Controllers
         }
 
         [HttpPatch("{id}")]
-        public IActionResult UpdatePatch(int id,[FromBody] JsonPatchDocument<UpdateBuildingRequest> patchdoc)
+        public IActionResult UpdatePatch(int id,[FromBody] JsonPatchDocument<PatchBuildingRequest> patchdoc)
         {
             if (patchdoc == null)
                 return BadRequest(ModelState);

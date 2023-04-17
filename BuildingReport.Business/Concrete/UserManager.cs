@@ -24,6 +24,9 @@ using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using BuildingReport.Business.CustomExceptionMiddleware.UserExceptions;
+using System.ComponentModel.DataAnnotations;
+using BuildingReport.Business.CustomExceptionMiddleware.IdExceptions;
 
 namespace BuildingReport.Business.Concrete
 {
@@ -34,12 +37,13 @@ namespace BuildingReport.Business.Concrete
         private IRoleRepository _roleRepository;
         private readonly IMapper _mapper;
         private readonly IHashService _hashService;
+        private readonly IRoleService _roleService;
         private readonly IJWTAuthenticationService _jwtAuthenticationService;
         private readonly IRoleAuthorityService _roleAuthorityService;
         private String key = "ThisIsSigninKey12345";
         public static User LoginUser;
 
-        public UserManager(IMapper mapper, IHashService hash, IJWTAuthenticationService jwtAuthenticationService, IRoleAuthorityService roleAuthorityService)
+        public UserManager(IMapper mapper, IHashService hash, IJWTAuthenticationService jwtAuthenticationService, IRoleAuthorityService roleAuthorityService, IRoleService roleService)
         {
             _mapper = mapper;
             _hashService = hash;
@@ -47,14 +51,19 @@ namespace BuildingReport.Business.Concrete
             _roleRepository = new RoleRepository();
             _jwtAuthenticationService = jwtAuthenticationService;
             _roleAuthorityService = roleAuthorityService;
+            _roleService = roleService;
         }
 
         public LoginResponse Login(LoginRequest loginDto)
         {
-            var token = _jwtAuthenticationService.Authenticate(loginDto.Email, loginDto.Password);
+            _ = loginDto ?? throw new ArgumentNullException(nameof(loginDto)," cannot be null.");
+
+
+            var token = _jwtAuthenticationService.Authenticate (loginDto.Email, loginDto.Password);
 
             if (token == null)
-                return null;
+                throw new UnauthorizedAccessException("Invalid email or password.");
+               
 
             byte[] _password = _hashService.HashPassword(loginDto.Password);
             var user = _userRepository.GetAllUsers().Where(u => u.Email == loginDto.Email && u.Password.SequenceEqual(_password)).FirstOrDefault();      
@@ -69,7 +78,10 @@ namespace BuildingReport.Business.Concrete
 
         public UserResponse CreateUser(UserRequest request)
         {
+            _ = request ?? throw new ArgumentNullException(nameof(request), " cannot be null.");
+
             CheckIfUserExistsByEmail(request.Email);
+
             var roleID = _roleRepository.GetAllRoles().Where(r => r.Name == "guest").FirstOrDefault().Id;
 
             User user = _mapper.Map<User>(request);
@@ -91,6 +103,9 @@ namespace BuildingReport.Business.Concrete
             {
                 return false;
             }
+
+            ValidateId(id);
+
             CheckIfUserExistsById(id);
             _userRepository.DeleteUser(id);
             return true;
@@ -107,7 +122,10 @@ namespace BuildingReport.Business.Concrete
 
         public UserResponse GetUserById(long id)
         {
+            ValidateId(id);
+
             CheckIfUserExistsById(id);
+
             User new_user = _userRepository.GetUserById(id);
             UserResponse response = _mapper.Map<UserResponse>(new_user);
             return response;
@@ -115,6 +133,10 @@ namespace BuildingReport.Business.Concrete
 
         public List<UserResponse> GetUsersByRole(long roleId)
         {
+            ValidateId(roleId);
+            
+            _roleService.CheckIfRoleExistsById(roleId);
+
             List<User> users = _userRepository.GetUsersByRole(roleId);
             List<UserResponse> response = users.Select(u => _mapper.Map<UserResponse>(u)).ToList();
             return response;
@@ -122,10 +144,15 @@ namespace BuildingReport.Business.Concrete
 
         public UserResponse UpdateUser(UpdateUserRequest userdto)
         {
-            if (!_roleAuthorityService.RoleAuthorityExistsById(UserManager.LoginUser.RoleId, 4))
-            {
-                return null;
-            }
+            //if (!_roleAuthorityService.RoleAuthorityExistsById(UserManager.LoginUser.RoleId, 4))
+            //{
+            //    return null;
+            //}
+
+            _ = userdto ?? throw new ArgumentNullException(nameof(userdto), " cannot be null.");
+            
+            CheckIfUserExistsById(userdto.Id);
+
             User o_user = _userRepository.GetUserById(userdto.Id);
             User user = _mapper.Map<User>(userdto);
             user.Password = _hashService.HashPassword(userdto.Password);
@@ -136,18 +163,19 @@ namespace BuildingReport.Business.Concrete
             return response;
         }
 
-        public User UpdateUserPatch(int id, JsonPatchDocument<UpdateUserRequest> patchdoc)
+        public User UpdateUserPatch(int id, JsonPatchDocument<PatchUserRequest> patchdoc)
         {
+            ValidateId(id);
+            
+            CheckIfUserExistsById(id);
             User user = _userRepository.GetUserById(id);
-            if(user == null)
-            {
-                throw new Exception($"User with id {id} not found.");
-            }
+            
+
 
             var password = user.Password;
             long roleid = user.RoleId;
 
-            UpdateUserRequest userDTO = _mapper.Map<UpdateUserRequest>(user);
+            PatchUserRequest userDTO = _mapper.Map<PatchUserRequest>(user);
 
             patchdoc.ApplyTo(userDTO);
 
@@ -169,6 +197,8 @@ namespace BuildingReport.Business.Concrete
 
         public void SendVerificationEmail(User user)
         {
+            _ = user ?? throw new ArgumentNullException(nameof(user), " cannot be null.");
+
             string message = $@"<p>Please use the below token to verify your email address with the <code>/user/verifyToken</code> api route:</p>
                             <p><code>{user.VerificationToken}</code></p>";
             SendMail(
@@ -212,6 +242,11 @@ namespace BuildingReport.Business.Concrete
 
         public void ForgotPassword(string mail)
         {
+            if (!new EmailAddressAttribute().IsValid(mail))
+            {
+                throw new ArgumentException("Invalid email format.", nameof(mail));
+            }
+
             var user = _userRepository.GetAllUsers().SingleOrDefault(x => x.Email == mail);
 
             if (user == null) return;
@@ -241,16 +276,17 @@ namespace BuildingReport.Business.Concrete
         
         public UserResponse UpdateUserRole(long id)
         {
-            if (!_roleAuthorityService.RoleAuthorityExistsById(UserManager.LoginUser.RoleId, 4))
-            {
-                return null;
-            }
+            //if (!_roleAuthorityService.RoleAuthorityExistsById(UserManager.LoginUser.RoleId, 4))
+            //{
+            //    return null;
+            //}
+
             CheckIfUserExistsById(id);
             var roleID = _roleRepository.GetAllRoles().Where(r => r.Name == "admin").FirstOrDefault().Id;
             User user = _userRepository.GetUserById(id);
             user.RoleId = roleID;
-            User new_user = _userRepository.UpdateUser(user);
-            UserResponse response = _mapper.Map<UserResponse>(new_user);
+            user = _userRepository.ChangeRoleToAdmin(user);
+            UserResponse response = _mapper.Map<UserResponse>(user);
             return response;
         }
 
@@ -259,7 +295,7 @@ namespace BuildingReport.Business.Concrete
         {
             if (_userRepository.UserExistsByEmail(email))
             {
-                throw new NotImplementedException("User already exists.");
+                throw new UserAlreadyExistsException("User already exists.");
             }
         }
 
@@ -267,10 +303,18 @@ namespace BuildingReport.Business.Concrete
         {
             if (!_userRepository.UserExistsById(id))
             {
-                throw new NotImplementedException("User cannot found.");
+                throw new UserNotFoundException("User cannot be found.");
             }
         }
 
-        
+        private void ValidateId(long id)
+        {
+            if (id <= 0 || id > long.MaxValue)
+            {
+                throw new IdOutOfRangeException(nameof(id), id);
+            }
+        }
+
+
     }
 }
