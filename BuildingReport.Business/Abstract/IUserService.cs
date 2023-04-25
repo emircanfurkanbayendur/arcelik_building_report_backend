@@ -23,7 +23,7 @@ namespace BuildingReport.Business.Abstract
 
         UserResponse UpdateUser(UpdateUserRequest userdto);
 
-        User UpdateUserPatch(int id, JsonPatchDocument<UpdateUserRequest> pathdoc);
+        User UpdateUserPatch(int id, JsonPatchDocument<PatchUserRequest> pathdoc);
         string GenerateVerificationToken();
         void SendMail(string to, string subject, string html, string from = null);
         void SendVerificationEmail(User user);

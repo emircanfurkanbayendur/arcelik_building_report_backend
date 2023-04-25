@@ -21,7 +21,9 @@ namespace BuildingReport.Business.Abstract
         RoleAuthorityResponse UpdateRoleAuthority(UpdateRoleAuthorityRequest request);
 
         bool DeleteRoleAuthority(long id);
-        void RoleAuthorityExists(string roleName, string authorityName);
+        void CheckIfRoleAuthorityExistsByName(string roleName, string authorityName);
+
+        void CheckIfRoleAuthorityExistsById(long id);
         bool RoleAuthorityExistsById(long roleId, long authorityId);
 
     }

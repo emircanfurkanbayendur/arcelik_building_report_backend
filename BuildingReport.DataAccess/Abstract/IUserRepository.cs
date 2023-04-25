@@ -13,6 +13,8 @@ namespace arcelik_building_report_backend.Abstract
 
         User UpdateUser(User user);
 
+        User ChangeRoleToAdmin(User user);
+
         void DeleteUser(long id);
 
         bool UserExistsByEmail(string email);

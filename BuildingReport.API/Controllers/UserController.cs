@@ -123,7 +123,7 @@ namespace BuildingReport.API.Controllers
 
 
         [HttpPatch("{id}")]
-        public IActionResult UpdateUserPatch(int id, [FromBody] JsonPatchDocument<UpdateUserRequest> pathdoc)
+        public IActionResult UpdateUserPatch(int id, [FromBody] JsonPatchDocument<PatchUserRequest> pathdoc)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);

@@ -93,6 +93,19 @@ namespace arcelik_building_report_backend.Concrete
             }
         }
 
+        public User ChangeRoleToAdmin(User user)
+        {
+            using (var userDbContext = new ArcelikBuildingReportDbContext())
+            {
+                var aa = userDbContext.Roles.Where(a => a.Id == user.RoleId).FirstOrDefault();
+                user.Role = aa;
+                userDbContext.Users.Update(user);
+                userDbContext.SaveChanges();
+                return GetUserById(user.Id);
+
+            }
+        }
+
         public bool UserExistsByEmail(string email)
         {
             using (var userDbContext = new ArcelikBuildingReportDbContext())

@@ -1,17 +1,14 @@
 ﻿using AutoMapper;
 using BuildingReport.Business.Abstract;
+using BuildingReport.Business.CustomExceptionMiddleware.AuthorityExceptions;
+using BuildingReport.Business.CustomExceptionMiddleware.IdExceptions;
+using BuildingReport.Business.CustomExceptions.AuthorityExceptions;
+using BuildingReport.Business.Logging.Abstract;
 using BuildingReport.DataAccess.Abstract;
 using BuildingReport.DataAccess.Concrete;
-using BuildingReport.DTO;
 using BuildingReport.DTO.Request;
 using BuildingReport.DTO.Response;
 using BuildingReport.Entities;
-using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BuildingReport.Business.Concrete
 {
@@ -20,7 +17,8 @@ namespace BuildingReport.Business.Concrete
     {
         private IAuthorityRepository _authorityRepository;
         private readonly IMapper _mapper;
-        public AuthorityManager(IMapper mapper)
+        private int maxLength = 50;
+        public AuthorityManager(IMapper mapper,ILoggerManager logger)
         {
             _authorityRepository = new AuthorityRepository();
             _mapper = mapper;           
@@ -28,14 +26,20 @@ namespace BuildingReport.Business.Concrete
 
         public AuthorityResponse CreateAuthority(AuthorityRequest request )
         {
+
+            _ = request ?? throw new ArgumentNullException(nameof(request), " cannot be null.");
+            //if(name.Length > maxLength) { throw new ArgumentOutOfRangeException("Name length exceeds the limit:" + maxLength); }
+
             Authority authority = _mapper.Map<Authority>(request);
             checkIfAuthorityExistsByName(authority.Name);
             AuthorityResponse response = _mapper.Map<AuthorityResponse>(_authorityRepository.CreateAuthority(authority));
             return response;
         }
-
+        
         public void DeleteAuthority(long id)
         {
+            ValidateId(id);
+
             checkIfAuthorityExistsById(id);
             _authorityRepository.DeleteAuthority(id);
         }
@@ -48,13 +52,17 @@ namespace BuildingReport.Business.Concrete
 
         public AuthorityResponse GetAuthorityById(long id)
         {
-            AuthorityResponse response = _mapper.Map<AuthorityResponse>(_authorityRepository.GetAuthorityById(id));
+
+            ValidateId(id);
+            checkIfAuthorityExistsById(id);
+            Authority authority = _authorityRepository.GetAuthorityById(id);
+            AuthorityResponse response = _mapper.Map<AuthorityResponse>(authority);
             return response;
         }
 
         public AuthorityResponse UpdateAuthority(UpdateAuthorityRequest authorityDTO)
         {
-           
+            checkIfAuthorityExistsById(authorityDTO.Id);
             Authority authority = _mapper.Map<Authority>(authorityDTO);
             AuthorityResponse response = _mapper.Map<AuthorityResponse>(_authorityRepository.UpdateAuthority(authority));
             return response;
@@ -65,14 +73,23 @@ namespace BuildingReport.Business.Concrete
         {
             if (_authorityRepository.AuthorityExistsByName(name))
             {
-                throw new NotImplementedException("Authority already exists.");
-            }        
+                throw new AuthorityAlreadyExistsException("Authority already exists.");
+            }
         }
+
         public void checkIfAuthorityExistsById(long id)
         {
             if (!_authorityRepository.AuthorityExistsById(id))
             {
-                throw new NotImplementedException("Authority cannot find.");
+                throw new AuthorityNotFoundException("Authority cannot be found.");
+            }
+        }
+
+        private void ValidateId(long id)
+        {
+            if (id <= 0 || id > long.MaxValue)
+            {
+                throw new IdOutOfRangeException(nameof(id), id);
             }
         }
     }

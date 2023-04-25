@@ -19,7 +19,10 @@ namespace BuildingReport.DataAccess.Abstract
 
         void DeleteRoleAuthority(long id);
 
-        bool RoleAuthorityExists(string roleName, string authorityName);
+        bool CheckIfRoleAuthorityExistsByName(string roleName, string authorityName);
+
+        bool CheckIfRoleAuthorityExistsById(long id);
+        
         bool RoleAuthorityExistsById(long roleId, long authorityId);
 
 

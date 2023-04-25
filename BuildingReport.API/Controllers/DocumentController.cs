@@ -91,7 +91,7 @@ namespace BuildingReport.API.Controllers
         }
 
         [HttpPatch("{id}")]
-        public IActionResult UpdatePatch(int id, [FromBody] JsonPatchDocument<UpdateDocumentRequest> pathdoc)
+        public IActionResult UpdatePatch(int id, [FromBody] JsonPatchDocument<PatchDocumentRequest> pathdoc)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);

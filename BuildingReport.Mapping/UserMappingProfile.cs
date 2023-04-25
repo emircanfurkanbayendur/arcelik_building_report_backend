@@ -22,6 +22,11 @@ public class UserMappingProfile : Profile
         CreateMap<User, UpdateUserRequest>()
             .ForMember(dest => dest.Password, opt => opt.Ignore());
 
+        CreateMap<PatchUserRequest, User>()
+        .ForMember(dest => dest.Password, opt => opt.Ignore());
+        CreateMap<User, PatchUserRequest>()
+            .ForMember(dest => dest.Password, opt => opt.Ignore());
+
 
         CreateMap<UserRequest, User>()
                 .ForMember(dest => dest.Password, opt => opt.Ignore());
