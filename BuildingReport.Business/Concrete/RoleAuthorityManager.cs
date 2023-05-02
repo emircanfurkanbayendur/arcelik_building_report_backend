@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using arcelik_building_report_backend.Abstract;
+using AutoMapper;
 using BuildingReport.Business.Abstract;
 using BuildingReport.Business.CustomExceptionMiddleware.IdExceptions;
 using BuildingReport.Business.CustomExceptionMiddleware.RoleExceptions;
@@ -9,6 +10,7 @@ using BuildingReport.DTO;
 using BuildingReport.DTO.Request;
 using BuildingReport.DTO.Response;
 using BuildingReport.Entities;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -24,19 +26,24 @@ namespace BuildingReport.Business.Concrete
         private IRoleService _roleService;
         private IAuthorityService _authorityService;
         private readonly IMapper _mapper;
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        private IUserRepository _userRepository;
 
-        public RoleAuthorityManager(IMapper mapper, IRoleService roleService, IAuthorityService authorityService)
+        public RoleAuthorityManager(IMapper mapper, IRoleService roleService, IAuthorityService authorityService, IHttpContextAccessor httpContextAccessor)
         {
             _roleAuthorityRepository = new RoleAuthorityRepository();
             _mapper = mapper;
             _authorityService = authorityService;
             _roleService = roleService;
-            
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public RoleAuthorityResponse CreateRoleAuthority(RoleAuthorityRequest request)
         {
-            if (!_roleAuthorityRepository.RoleAuthorityExistsById(UserManager.LoginUser.RoleId, 2))
+            var userIdString = _httpContextAccessor.HttpContext.Session.GetString("UserId");
+
+            var user = _userRepository.GetAllUsers().Where(u => u.Id == long.Parse(userIdString)).FirstOrDefault();
+            if (!_roleAuthorityRepository.RoleAuthorityExistsById(user.RoleId, 2))
             {
                 return null;
             }
@@ -51,7 +58,10 @@ namespace BuildingReport.Business.Concrete
 
         public bool DeleteRoleAuthority(long id)
         {
-            if (!_roleAuthorityRepository.RoleAuthorityExistsById(UserManager.LoginUser.RoleId, 3))
+            var userIdString = _httpContextAccessor.HttpContext.Session.GetString("UserId");
+
+            var user = _userRepository.GetAllUsers().Where(u => u.Id == long.Parse(userIdString)).FirstOrDefault();
+            if (!_roleAuthorityRepository.RoleAuthorityExistsById(user.RoleId, 3))
             {
                 return false;
             }
@@ -81,7 +91,11 @@ namespace BuildingReport.Business.Concrete
 
         public RoleAuthorityResponse UpdateRoleAuthority(UpdateRoleAuthorityRequest roleAuthorityDTO)
         {
-            if (!_roleAuthorityRepository.RoleAuthorityExistsById(UserManager.LoginUser.RoleId, 4))
+            var userIdString = _httpContextAccessor.HttpContext.Session.GetString("UserId");
+
+            var user = _userRepository.GetAllUsers().Where(u => u.Id == long.Parse(userIdString)).FirstOrDefault();
+
+            if (!_roleAuthorityRepository.RoleAuthorityExistsById(user.RoleId, 4))
             {
                 return null;
             }

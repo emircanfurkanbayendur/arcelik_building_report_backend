@@ -27,6 +27,8 @@ using System.Security.Claims;
 using BuildingReport.Business.CustomExceptionMiddleware.UserExceptions;
 using System.ComponentModel.DataAnnotations;
 using BuildingReport.Business.CustomExceptionMiddleware.IdExceptions;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 
 namespace BuildingReport.Business.Concrete
 {
@@ -42,8 +44,9 @@ namespace BuildingReport.Business.Concrete
         private readonly IRoleAuthorityService _roleAuthorityService;
         private String key = "ThisIsSigninKey12345";
         public static User LoginUser;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public UserManager(IMapper mapper, IHashService hash, IJWTAuthenticationService jwtAuthenticationService, IRoleAuthorityService roleAuthorityService, IRoleService roleService)
+        public UserManager(IMapper mapper, IHashService hash, IJWTAuthenticationService jwtAuthenticationService, IRoleAuthorityService roleAuthorityService, IRoleService roleService, IHttpContextAccessor httpContextAccessor)
         {
             _mapper = mapper;
             _hashService = hash;
@@ -52,6 +55,7 @@ namespace BuildingReport.Business.Concrete
             _jwtAuthenticationService = jwtAuthenticationService;
             _roleAuthorityService = roleAuthorityService;
             _roleService = roleService;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public LoginResponse Login(LoginRequest loginDto)
@@ -70,10 +74,10 @@ namespace BuildingReport.Business.Concrete
             LoginResponse response = _mapper.Map<LoginResponse>(user);
             response.Token = token;
             LoginUser = user;
+            _httpContextAccessor.HttpContext.Session.SetString("UserId", LoginUser.Id.ToString());
             return response;
 
         }
-
 
 
         public UserResponse CreateUser(UserRequest request)
@@ -99,10 +103,17 @@ namespace BuildingReport.Business.Concrete
 
         public bool DeleteUser(long id)
         {
-            if (!_roleAuthorityService.RoleAuthorityExistsById(UserManager.LoginUser.RoleId, 3))
+
+            var userIdString = _httpContextAccessor.HttpContext.Session.GetString("UserId");
+
+            var user = _userRepository.GetAllUsers().Where(u => u.Id == long.Parse(userIdString)).FirstOrDefault();
+
+            
+            if (!_roleAuthorityService.RoleAuthorityExistsById(user.RoleId, 3))
             {
                 return false;
             }
+       
 
             ValidateId(id);
 
@@ -144,7 +155,12 @@ namespace BuildingReport.Business.Concrete
 
         public UserResponse UpdateUser(UpdateUserRequest userdto)
         {
-            //if (!_roleAuthorityService.RoleAuthorityExistsById(UserManager.LoginUser.RoleId, 4))
+            var userIdString = _httpContextAccessor.HttpContext.Session.GetString("UserId");
+
+            var nuser = _userRepository.GetAllUsers().Where(u => u.Id == long.Parse(userIdString)).FirstOrDefault();
+
+
+            //if (!_roleAuthorityService.RoleAuthorityExistsById(nuser.RoleId, 4))
             //{
             //    return null;
             //}
@@ -276,7 +292,11 @@ namespace BuildingReport.Business.Concrete
         
         public UserResponse UpdateUserRole(long id)
         {
-            //if (!_roleAuthorityService.RoleAuthorityExistsById(UserManager.LoginUser.RoleId, 4))
+            var userIdString = _httpContextAccessor.HttpContext.Session.GetString("UserId");
+
+            var nuser = _userRepository.GetAllUsers().Where(u => u.Id == long.Parse(userIdString)).FirstOrDefault();
+
+            //if (!_roleAuthorityService.RoleAuthorityExistsById(nuser.RoleId, 4))
             //{
             //    return null;
             //}
