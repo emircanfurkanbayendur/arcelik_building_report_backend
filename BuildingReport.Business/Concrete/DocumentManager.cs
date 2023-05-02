@@ -7,6 +7,7 @@ using BuildingReport.DataAccess.Concrete;
 using BuildingReport.DTO.Request;
 using BuildingReport.DTO.Response;
 using BuildingReport.Entities;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
 using System;
 using System.Collections.Generic;
@@ -23,17 +24,23 @@ namespace BuildingReport.Business.Concrete
         private readonly IRoleAuthorityService _roleAuthorityService;
         private readonly IBuildingService _buildingService;
         private readonly IUserService _userService;
-        public DocumentManager(IMapper mapper, IRoleAuthorityService roleAuthorityService, IBuildingService buildingService, IUserService userService)
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        public DocumentManager(IMapper mapper, IRoleAuthorityService roleAuthorityService, IBuildingService buildingService, IUserService userService, IHttpContextAccessor httpContextAccessor)
         {
             _documentRepository = new DocumentRepository();
             _mapper = mapper;
             _roleAuthorityService = roleAuthorityService;
             _buildingService = buildingService;
             _userService = userService;
+            _httpContextAccessor = httpContextAccessor;
         }
         public DocumentResponse CreateDocument(DocumentRequest request)
         {
-            if (!_roleAuthorityService.RoleAuthorityExistsById(UserManager.LoginUser.RoleId, 2))
+            var userIdString = _httpContextAccessor.HttpContext.Session.GetString("UserId");
+
+            var user = _userService.GetAllUsers().Where(u => u.Id == long.Parse(userIdString)).FirstOrDefault();
+
+            if (!_roleAuthorityService.RoleAuthorityExistsById(user.RoleId, 2))
             {
                 return null;
             }
@@ -53,7 +60,11 @@ namespace BuildingReport.Business.Concrete
 
         public bool DeleteDocument(long id)
         {
-            if (!_roleAuthorityService.RoleAuthorityExistsById(UserManager.LoginUser.RoleId, 3))
+            var userIdString = _httpContextAccessor.HttpContext.Session.GetString("UserId");
+
+            var user = _userService.GetAllUsers().Where(u => u.Id == long.Parse(userIdString)).FirstOrDefault();
+
+            if (!_roleAuthorityService.RoleAuthorityExistsById(user.RoleId, 3))
             {
                 return false;
             }
@@ -97,7 +108,10 @@ namespace BuildingReport.Business.Concrete
 
         public DocumentResponse UpdateDocument(UpdateDocumentRequest documentDTO)
         {
-            if (!_roleAuthorityService.RoleAuthorityExistsById(UserManager.LoginUser.RoleId, 4))
+            var userIdString = _httpContextAccessor.HttpContext.Session.GetString("UserId");
+
+            var user = _userService.GetAllUsers().Where(u => u.Id == long.Parse(userIdString)).FirstOrDefault();
+            if (!_roleAuthorityService.RoleAuthorityExistsById(user.RoleId, 4))
             {
                 return null;
             }

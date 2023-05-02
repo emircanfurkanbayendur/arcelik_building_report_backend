@@ -8,6 +8,7 @@ using BuildingReport.DTO;
 using BuildingReport.DTO.Request;
 using BuildingReport.DTO.Response;
 using BuildingReport.Entities;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.JsonPatch;
 using System;
@@ -27,21 +28,27 @@ namespace BuildingReport.Business.Concrete
         private readonly IMapper _mapper;
         private readonly IRoleAuthorityService _roleAuthorityService;
         private readonly IUserService _userService;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
 
-        public BuildingManager(IMapper mapper, IRoleAuthorityService roleAuthorityService,IUserService userService)
+        public BuildingManager(IMapper mapper, IRoleAuthorityService roleAuthorityService,IUserService userService, IHttpContextAccessor httpContextAccessor)
         {
             _buildingRepository = new BuildingRepository();
             _mapper = mapper;
             _roleAuthorityService = roleAuthorityService;
             _userService = userService;
+            _httpContextAccessor = httpContextAccessor;
 
         }
 
         
         public BuildingResponse CreateBuilding(BuildingRequest buildingDTO)
         {
-            if (!_roleAuthorityService.RoleAuthorityExistsById(UserManager.LoginUser.RoleId, 2))
+            var userIdString = _httpContextAccessor.HttpContext.Session.GetString("UserId");
+
+            var user = _userService.GetAllUsers().Where(u => u.Id == long.Parse(userIdString)).FirstOrDefault();
+
+            if (!_roleAuthorityService.RoleAuthorityExistsById(user.RoleId, 2))
             {
                 return null;
             }
@@ -60,7 +67,11 @@ namespace BuildingReport.Business.Concrete
 
         public bool DeleteBuilding(long id)
         {
-            if (!_roleAuthorityService.RoleAuthorityExistsById(UserManager.LoginUser.RoleId, 3))
+            var userIdString = _httpContextAccessor.HttpContext.Session.GetString("UserId");
+
+            var user = _userService.GetAllUsers().Where(u => u.Id == long.Parse(userIdString)).FirstOrDefault();
+
+            if (!_roleAuthorityService.RoleAuthorityExistsById(user.RoleId, 3))
             {
                 return false;
             }
@@ -176,7 +187,10 @@ namespace BuildingReport.Business.Concrete
 
         public BuildingResponse UpdateBuilding(UpdateBuildingRequest buildingDTO)
         {
-            if (!_roleAuthorityService.RoleAuthorityExistsById(UserManager.LoginUser.RoleId, 4))
+            var userIdString = _httpContextAccessor.HttpContext.Session.GetString("UserId");
+
+            var user = _userService.GetAllUsers().Where(u => u.Id == long.Parse(userIdString)).FirstOrDefault();
+            if (!_roleAuthorityService.RoleAuthorityExistsById(user.RoleId, 4))
             {
                 return null;
             }

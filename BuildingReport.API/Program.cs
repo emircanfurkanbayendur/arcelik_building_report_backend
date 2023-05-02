@@ -18,6 +18,11 @@ using BuildingReport.Business.CustomExceptionMiddleware;
 using Microsoft.AspNetCore.Diagnostics;
 using System.Net;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Hosting;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -88,6 +93,8 @@ builder.Services.AddSwaggerGen(c =>
 
 });
 
+
+
 //Registering DbContext
 builder.Services.AddDbContext<ArcelikBuildingReportDbContext>();
 var myAllowSpesificOrigins = "_myAllowSpesificOrigins";
@@ -141,6 +148,15 @@ builder.Services.AddControllers()
 
 
 
+builder.Services.AddDistributedMemoryCache();
+
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromHours(5); // Session süresi 5 saat olarak ayarlandý.
+});
+
+builder.Services.AddHttpContextAccessor();
+
 
 var app = builder.Build();
 
@@ -168,5 +184,7 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.UseCors(myAllowSpesificOrigins);
+
+app.UseSession();
 
 app.Run();
