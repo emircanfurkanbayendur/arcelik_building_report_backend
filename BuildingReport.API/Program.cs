@@ -24,9 +24,25 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Hosting;
 
+
+
 var builder = WebApplication.CreateBuilder(args);
 
+
+var configuration = new ConfigurationBuilder()
+    .SetBasePath(builder.Environment.ContentRootPath)
+    .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+    .Build();
+
+
 // Add services to the container.
+
+
+builder.Services.AddStackExchangeRedisCache(options =>
+{
+    options.Configuration = configuration.GetConnectionString("CacheConnection");
+
+});
 
 builder.Services.AddControllers();
 
@@ -36,7 +52,8 @@ builder.Services.AddScoped<IRoleService, RoleManager>()
                 .AddScoped<IUserService, UserManager>()
                 .AddScoped<IBuildingService, BuildingManager>()
                 .AddScoped<IDocumentService, DocumentManager>()
-                .AddScoped<IHashService, HashManager>();
+                .AddScoped<IHashService, HashManager>()
+                .AddScoped<IJWTTokenService, JWTTokenManager>();
 
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -59,7 +76,9 @@ builder.Services.AddAuthentication(x =>
     };
 });
 
-builder.Services.AddSingleton<IJWTAuthenticationService>(new JWTAuthenticationManager(key));
+builder.Services.AddSingleton<IJWTAuthenticationService>(provider => new JWTAuthenticationManager(key));
+
+
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
@@ -156,6 +175,10 @@ builder.Services.AddSession(options =>
 });
 
 builder.Services.AddHttpContextAccessor();
+builder.Services.AddDistributedRedisCache(option =>
+{
+    option.Configuration = builder.Configuration["CacheConnection"];
+});
 
 
 var app = builder.Build();

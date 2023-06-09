@@ -13,6 +13,8 @@ namespace BuildingReport.DataAccess.Abstract
 
         RoleAuthority GetRoleAuthorityById(long id);
 
+        List<RoleAuthority> GetRoleAuthoritiesByRoleId(long roleid);
+
         RoleAuthority CreateRoleAuthority(RoleAuthority roleAuthority);
 
         RoleAuthority UpdateRoleAuthority(RoleAuthority roleAuthority);

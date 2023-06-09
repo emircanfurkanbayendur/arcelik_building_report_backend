@@ -45,8 +45,9 @@ namespace BuildingReport.Business.Concrete
         private String key = "ThisIsSigninKey12345";
         public static User LoginUser;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IJWTTokenService _jwtTokenService;
 
-        public UserManager(IMapper mapper, IHashService hash, IJWTAuthenticationService jwtAuthenticationService, IRoleAuthorityService roleAuthorityService, IRoleService roleService, IHttpContextAccessor httpContextAccessor)
+        public UserManager(IMapper mapper, IHashService hash, IJWTAuthenticationService jwtAuthenticationService, IRoleAuthorityService roleAuthorityService, IRoleService roleService, IHttpContextAccessor httpContextAccessor, IJWTTokenService jwtTokenService)
         {
             _mapper = mapper;
             _hashService = hash;
@@ -56,6 +57,7 @@ namespace BuildingReport.Business.Concrete
             _roleAuthorityService = roleAuthorityService;
             _roleService = roleService;
             _httpContextAccessor = httpContextAccessor;
+            _jwtTokenService = jwtTokenService;
         }
 
         public LoginResponse Login(LoginRequest loginDto)
@@ -103,20 +105,26 @@ namespace BuildingReport.Business.Concrete
 
         public bool DeleteUser(long id)
         {
+            //tokeni çektik
+            string token = _httpContextAccessor.HttpContext.Request.Headers["Authorization"].ToString().Substring(7);
 
-            var userIdString = _httpContextAccessor.HttpContext.Session.GetString("UserId");
+            // Tokeni çözüyoruz
+            ClaimsPrincipal principal = _jwtTokenService.GetPrincipalFromToken(token);
 
-            var user = _userRepository.GetAllUsers().Where(u => u.Id == long.Parse(userIdString)).FirstOrDefault();
 
-            
-            if (!_roleAuthorityService.RoleAuthorityExistsById(user.RoleId, 3))
+            List<string> authorities = principal.Claims
+                .Where(c => c.Type == "authority")
+                .Select(c => c.Value)
+                .ToList();
+
+
+            if (!authorities.Contains("Delete"))
             {
                 return false;
             }
-       
+
 
             ValidateId(id);
-
             CheckIfUserExistsById(id);
             _userRepository.DeleteUser(id);
             return true;

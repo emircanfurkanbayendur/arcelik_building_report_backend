@@ -104,5 +104,19 @@ namespace BuildingReport.DataAccess.Concrete
             }
         }
 
+        public List<RoleAuthority> GetRoleAuthoritiesByRoleId(long roleId)
+        {
+            using (var roleAuthorityDbContext = new ArcelikBuildingReportDbContext())
+            {
+                var roleAuthorities = roleAuthorityDbContext.RoleAuthorities
+                    .Include(ra => ra.Authority)
+                    .Include(ra => ra.Role)
+                    .Where(ra => ra.RoleId == roleId)
+                    .ToList();
+
+                return roleAuthorities;
+            }
+        }
+
     }
 }

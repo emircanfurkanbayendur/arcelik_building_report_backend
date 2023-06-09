@@ -17,6 +17,8 @@ namespace BuildingReport.DataAccess.Abstract
 
         Authority UpdateAuthority(Authority authority);
 
+        List<Authority> GetAuthoritiesByEmail(string email);
+
         void DeleteAuthority(long id);
         bool AuthorityExistsByName(string name);
         bool AuthorityExistsById(long id);

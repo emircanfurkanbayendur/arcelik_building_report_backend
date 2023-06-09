@@ -131,5 +131,19 @@ namespace arcelik_building_report_backend.Concrete
             }
             return false;
         }
+
+        public User GetUserByEmail(string email)
+        {
+            using (var userDbContext = new ArcelikBuildingReportDbContext())
+            {
+                User user = userDbContext.Users
+                    .Include(x => x.Role)
+                    .First(s => s.Email == email);
+
+                return user;
+            }
+
+            
+        }
     }
 }

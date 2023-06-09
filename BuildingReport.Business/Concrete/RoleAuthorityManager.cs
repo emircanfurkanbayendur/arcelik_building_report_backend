@@ -58,13 +58,13 @@ namespace BuildingReport.Business.Concrete
 
         public bool DeleteRoleAuthority(long id)
         {
-            var userIdString = _httpContextAccessor.HttpContext.Session.GetString("UserId");
+            // var userIdString = _httpContextAccessor.HttpContext.Session.GetString("UserId");
 
-            var user = _userRepository.GetAllUsers().Where(u => u.Id == long.Parse(userIdString)).FirstOrDefault();
-            if (!_roleAuthorityRepository.RoleAuthorityExistsById(user.RoleId, 3))
-            {
-                return false;
-            }
+           // var user = _userRepository.GetAllUsers().Where(u => u.Id == long.Parse(userIdString)).FirstOrDefault();
+            //if (!_roleAuthorityRepository.RoleAuthorityExistsById(user.RoleId, 3))
+            //{
+            //    return false;
+            //}
 
             ValidateId(id);
             CheckIfRoleAuthorityExistsById(id);

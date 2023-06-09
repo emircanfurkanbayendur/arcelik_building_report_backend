@@ -1,4 +1,5 @@
-﻿using BuildingReport.DataAccess.Abstract;
+﻿using arcelik_building_report_backend.Concrete;
+using BuildingReport.DataAccess.Abstract;
 using BuildingReport.DataAcess;
 using BuildingReport.Entities;
 using System;
@@ -11,6 +12,9 @@ namespace BuildingReport.DataAccess.Concrete
 {
     public class AuthorityRepository : IAuthorityRepository
     {
+        UserRepository _userRepository = new UserRepository();
+        RoleRepository _roleRepository = new RoleRepository();
+        RoleAuthorityRepository _roleAuthorityRepository = new RoleAuthorityRepository();
         public bool AuthorityExistsByName(string name)
         {
             using (var authorityDbContext = new ArcelikBuildingReportDbContext())
@@ -71,6 +75,29 @@ namespace BuildingReport.DataAccess.Concrete
                 authorityDbContext.SaveChanges();
                 return authority;
             }
+        }
+
+        public List<Authority> GetAuthoritiesByEmail(string email)
+        {
+            User user = _userRepository.GetUserByEmail(email);
+
+            if(user == null)
+            {
+                return new List<Authority>();
+            }
+
+
+            List<RoleAuthority> roleauthority = _roleAuthorityRepository.GetRoleAuthoritiesByRoleId(user.RoleId);
+
+            List<Authority> authorities = new List<Authority>();
+
+            foreach(var authority in roleauthority)
+            {
+                authorities.Add(authority.Authority);
+            }
+
+            return authorities;
+
         }
     }
 }

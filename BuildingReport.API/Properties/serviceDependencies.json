@@ -2,6 +2,14 @@
   "dependencies": {
     "apis1": {
       "type": "apis"
+    },
+    "secrets1": {
+      "type": "secrets"
+    },
+    "redis1": {
+      "type": "redis",
+      "connectionId": "CacheConnection",
+      "dynamicId": null
     }
   }
 }
