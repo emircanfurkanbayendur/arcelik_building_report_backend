@@ -53,7 +53,8 @@ builder.Services.AddScoped<IRoleService, RoleManager>()
                 .AddScoped<IBuildingService, BuildingManager>()
                 .AddScoped<IDocumentService, DocumentManager>()
                 .AddScoped<IHashService, HashManager>()
-                .AddScoped<IJWTTokenService, JWTTokenManager>();
+                .AddScoped<IJWTTokenService, JWTTokenManager>()
+                .AddScoped<ICacheAuthorityService, CacheAuthorityManager>();
 
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -171,7 +172,7 @@ builder.Services.AddDistributedMemoryCache();
 
 builder.Services.AddSession(options =>
 {
-    options.IdleTimeout = TimeSpan.FromHours(5); // Session süresi 5 saat olarak ayarlandý.
+    options.IdleTimeout = TimeSpan.FromHours(1); // Session süresi 5 saat olarak ayarlandý.
 });
 
 builder.Services.AddHttpContextAccessor();

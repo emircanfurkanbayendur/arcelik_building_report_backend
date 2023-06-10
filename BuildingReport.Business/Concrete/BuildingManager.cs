@@ -11,6 +11,7 @@ using BuildingReport.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.JsonPatch;
+using StackExchange.Redis;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.Metrics;
@@ -29,29 +30,36 @@ namespace BuildingReport.Business.Concrete
         private readonly IRoleAuthorityService _roleAuthorityService;
         private readonly IUserService _userService;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly ICacheAuthorityService _cacheAuthorityService;
 
-
-        public BuildingManager(IMapper mapper, IRoleAuthorityService roleAuthorityService,IUserService userService, IHttpContextAccessor httpContextAccessor)
+        public BuildingManager(IMapper mapper, IRoleAuthorityService roleAuthorityService,IUserService userService, IHttpContextAccessor httpContextAccessor,ICacheAuthorityService cacheAuthorityService)
         {
             _buildingRepository = new BuildingRepository();
             _mapper = mapper;
             _roleAuthorityService = roleAuthorityService;
             _userService = userService;
             _httpContextAccessor = httpContextAccessor;
+            _cacheAuthorityService = cacheAuthorityService;
 
         }
 
         
         public BuildingResponse CreateBuilding(BuildingRequest buildingDTO)
         {
-            var userIdString = _httpContextAccessor.HttpContext.Session.GetString("UserId");
 
-            var user = _userService.GetAllUsers().Where(u => u.Id == long.Parse(userIdString)).FirstOrDefault();
+            // Tokeni headerdan çekiyoruz
+            string token = _httpContextAccessor.HttpContext.Request.Headers["Authorization"].ToString().Substring(7);
 
-            if (!_roleAuthorityService.RoleAuthorityExistsById(user.RoleId, 2))
+
+            //Redis cache'de token keyi ile authorityleri kontrol ediyoruz
+            List<RedisValue> authorityValues = _cacheAuthorityService.CheckCacheAuthority(token);
+
+            // "Create" authority'si var mı kontrol ediyoruz
+            if (!authorityValues.Contains("Create"))
             {
-                return null;
+                throw new UnauthorizedAccessException();
             }
+
 
 
             _ = buildingDTO ?? throw new ArgumentNullException(nameof(buildingDTO), " cannot be null");
@@ -67,14 +75,21 @@ namespace BuildingReport.Business.Concrete
 
         public bool DeleteBuilding(long id)
         {
-            var userIdString = _httpContextAccessor.HttpContext.Session.GetString("UserId");
 
-            var user = _userService.GetAllUsers().Where(u => u.Id == long.Parse(userIdString)).FirstOrDefault();
 
-            if (!_roleAuthorityService.RoleAuthorityExistsById(user.RoleId, 3))
+            // Tokeni headerdan çekiyoruz
+            string token = _httpContextAccessor.HttpContext.Request.Headers["Authorization"].ToString().Substring(7);
+
+
+            //Redis cache'de token keyi ile authorityleri kontrol ediyoruz
+            List<RedisValue> authorityValues = _cacheAuthorityService.CheckCacheAuthority(token);
+
+            // "Delete" authority'si var mı kontrol ediyoruz
+            if (!authorityValues.Contains("Delete"))
             {
-                return false;
+                throw new UnauthorizedAccessException();
             }
+
 
 
             ValidateId(id);
@@ -187,13 +202,20 @@ namespace BuildingReport.Business.Concrete
 
         public BuildingResponse UpdateBuilding(UpdateBuildingRequest buildingDTO)
         {
-            var userIdString = _httpContextAccessor.HttpContext.Session.GetString("UserId");
 
-            var user = _userService.GetAllUsers().Where(u => u.Id == long.Parse(userIdString)).FirstOrDefault();
-            if (!_roleAuthorityService.RoleAuthorityExistsById(user.RoleId, 4))
+            // Tokeni headerdan çekiyoruz
+            string token = _httpContextAccessor.HttpContext.Request.Headers["Authorization"].ToString().Substring(7);
+
+
+            //Redis cache'de token keyi ile authorityleri kontrol ediyoruz
+            List<RedisValue> authorityValues = _cacheAuthorityService.CheckCacheAuthority(token);
+
+            // "Update" authority'si var mı kontrol ediyoruz
+            if (!authorityValues.Contains("Update"))
             {
-                return null;
+                throw new UnauthorizedAccessException();
             }
+
 
 
             _ = buildingDTO ?? throw new ArgumentNullException(nameof(buildingDTO), " cannot be null.");
@@ -209,6 +231,21 @@ namespace BuildingReport.Business.Concrete
 
         public Building UpdateBuildingPatch(int id, JsonPatchDocument<PatchBuildingRequest> pathdoc)
         {
+
+            // Tokeni headerdan çekiyoruz
+            string token = _httpContextAccessor.HttpContext.Request.Headers["Authorization"].ToString().Substring(7);
+
+
+            //Redis cache'de token keyi ile authorityleri kontrol ediyoruz
+            List<RedisValue> authorityValues = _cacheAuthorityService.CheckCacheAuthority(token);
+
+            // "Update" authority'si var mı kontrol ediyoruz
+            if (!authorityValues.Contains("Update"))
+            {
+                throw new UnauthorizedAccessException();
+            }
+
+
             ValidateId(id);
 
             CheckIfBuildingExistsById(id);

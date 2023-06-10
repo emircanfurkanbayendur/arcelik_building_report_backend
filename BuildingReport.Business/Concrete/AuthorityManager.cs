@@ -9,6 +9,9 @@ using BuildingReport.DataAccess.Concrete;
 using BuildingReport.DTO.Request;
 using BuildingReport.DTO.Response;
 using BuildingReport.Entities;
+using Microsoft.AspNetCore.Http;
+using StackExchange.Redis;
+using System.Linq;
 
 namespace BuildingReport.Business.Concrete
 {
@@ -18,14 +21,31 @@ namespace BuildingReport.Business.Concrete
         private IAuthorityRepository _authorityRepository;
         private readonly IMapper _mapper;
         private int maxLength = 50;
-        public AuthorityManager(IMapper mapper,ILoggerManager logger)
+        private readonly ICacheAuthorityService _cacheAuthorityService;
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        public AuthorityManager(IMapper mapper,ILoggerManager logger, ICacheAuthorityService cacheAuthorityService,IHttpContextAccessor httpContextAccessor)
         {
             _authorityRepository = new AuthorityRepository();
             _mapper = mapper;           
+            _cacheAuthorityService = cacheAuthorityService;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public AuthorityResponse CreateAuthority(AuthorityRequest request )
         {
+
+            // Tokeni headerdan çekiyoruz
+            string token = _httpContextAccessor.HttpContext.Request.Headers["Authorization"].ToString().Substring(7);
+
+
+            //Redis cache'de token keyi ile authorityleri kontrol ediyoruz
+            List<RedisValue> authorityValues = _cacheAuthorityService.CheckCacheAuthority(token);
+
+            // "Create" authority'si var mı kontrol ediyoruz
+            if (!authorityValues.Contains("Create"))
+            {
+                throw new UnauthorizedAccessException();
+            }
 
             _ = request ?? throw new ArgumentNullException(nameof(request), " cannot be null.");
             //if(name.Length > maxLength) { throw new ArgumentOutOfRangeException("Name length exceeds the limit:" + maxLength); }
@@ -38,6 +58,19 @@ namespace BuildingReport.Business.Concrete
         
         public void DeleteAuthority(long id)
         {
+            // Tokeni headerdan çekiyoruz
+            string token = _httpContextAccessor.HttpContext.Request.Headers["Authorization"].ToString().Substring(7);
+
+
+            //Redis cache'de token keyi ile authorityleri kontrol ediyoruz
+            List<RedisValue> authorityValues = _cacheAuthorityService.CheckCacheAuthority(token);
+
+            // "Delete" authority'si var mı kontrol ediyoruz
+            if (!authorityValues.Contains("Delete"))
+            {
+                throw new UnauthorizedAccessException();
+            }
+
             ValidateId(id);
 
             checkIfAuthorityExistsById(id);
@@ -62,6 +95,20 @@ namespace BuildingReport.Business.Concrete
 
         public AuthorityResponse UpdateAuthority(UpdateAuthorityRequest authorityDTO)
         {
+
+            // Tokeni headerdan çekiyoruz
+            string token = _httpContextAccessor.HttpContext.Request.Headers["Authorization"].ToString().Substring(7);
+
+
+            //Redis cache'de token keyi ile authorityleri kontrol ediyoruz
+            List<RedisValue> authorityValues = _cacheAuthorityService.CheckCacheAuthority(token);
+
+            // "Update" authority'si var mı kontrol ediyoruz
+            if (!authorityValues.Contains("Update"))
+            {
+                throw new UnauthorizedAccessException();
+            }
+
             checkIfAuthorityExistsById(authorityDTO.Id);
             Authority authority = _mapper.Map<Authority>(authorityDTO);
             AuthorityResponse response = _mapper.Map<AuthorityResponse>(_authorityRepository.UpdateAuthority(authority));

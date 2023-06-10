@@ -7,28 +7,16 @@ using BuildingReport.DataAccess.Concrete;
 using BuildingReport.DTO.Request;
 using BuildingReport.DTO.Response;
 using BuildingReport.Entities;
-using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Security.Cryptography;
-using System.Security.Policy;
-using System.Text;
-using System.Threading.Tasks;
-
-using System.Net;
 using MimeKit;
 using MimeKit.Text;
-using Azure;
 using Microsoft.AspNetCore.JsonPatch;
-using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
 using BuildingReport.Business.CustomExceptionMiddleware.UserExceptions;
 using System.ComponentModel.DataAnnotations;
 using BuildingReport.Business.CustomExceptionMiddleware.IdExceptions;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Configuration;
+using StackExchange.Redis;
 
 namespace BuildingReport.Business.Concrete
 {
@@ -46,8 +34,15 @@ namespace BuildingReport.Business.Concrete
         public static User LoginUser;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IJWTTokenService _jwtTokenService;
+        private readonly ICacheAuthorityService _cacheAuthorityService;
+        
 
-        public UserManager(IMapper mapper, IHashService hash, IJWTAuthenticationService jwtAuthenticationService, IRoleAuthorityService roleAuthorityService, IRoleService roleService, IHttpContextAccessor httpContextAccessor, IJWTTokenService jwtTokenService)
+        IConfigurationRoot configuration = new ConfigurationBuilder()
+        .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
+        .AddJsonFile("appsettings.json")
+        .Build();
+
+        public UserManager(IMapper mapper, IHashService hash, IJWTAuthenticationService jwtAuthenticationService, IRoleAuthorityService roleAuthorityService, IRoleService roleService, IHttpContextAccessor httpContextAccessor, IJWTTokenService jwtTokenService, ICacheAuthorityService cacheAuthorityService)
         {
             _mapper = mapper;
             _hashService = hash;
@@ -58,6 +53,7 @@ namespace BuildingReport.Business.Concrete
             _roleService = roleService;
             _httpContextAccessor = httpContextAccessor;
             _jwtTokenService = jwtTokenService;
+            _cacheAuthorityService = cacheAuthorityService;
         }
 
         public LoginResponse Login(LoginRequest loginDto)
@@ -76,7 +72,6 @@ namespace BuildingReport.Business.Concrete
             LoginResponse response = _mapper.Map<LoginResponse>(user);
             response.Token = token;
             LoginUser = user;
-            _httpContextAccessor.HttpContext.Session.SetString("UserId", LoginUser.Id.ToString());
             return response;
 
         }
@@ -105,30 +100,25 @@ namespace BuildingReport.Business.Concrete
 
         public bool DeleteUser(long id)
         {
-            //tokeni çektik
+            // Tokeni headerdan çekiyoruz
             string token = _httpContextAccessor.HttpContext.Request.Headers["Authorization"].ToString().Substring(7);
 
-            // Tokeni çözüyoruz
-            ClaimsPrincipal principal = _jwtTokenService.GetPrincipalFromToken(token);
 
+            //Redis cache'de token keyi ile authorityleri kontrol ediyoruz
+            List<RedisValue> authorityValues= _cacheAuthorityService.CheckCacheAuthority(token);
 
-            List<string> authorities = principal.Claims
-                .Where(c => c.Type == "authority")
-                .Select(c => c.Value)
-                .ToList();
-
-
-            if (!authorities.Contains("Delete"))
+            // "Delete" authority'si var mı kontrol ediyoruz
+            if (!authorityValues.Contains("Delete"))
             {
-                return false;
+                throw new UnauthorizedAccessException();
             }
-
 
             ValidateId(id);
             CheckIfUserExistsById(id);
             _userRepository.DeleteUser(id);
             return true;
         }
+
 
         public List<UserResponse> GetAllUsers()
         {
@@ -163,15 +153,16 @@ namespace BuildingReport.Business.Concrete
 
         public UserResponse UpdateUser(UpdateUserRequest userdto)
         {
-            var userIdString = _httpContextAccessor.HttpContext.Session.GetString("UserId");
+            // Tokeni headerdan çekiyoruz
+            string token = _httpContextAccessor.HttpContext.Request.Headers["Authorization"].ToString().Substring(7);
 
-            var nuser = _userRepository.GetAllUsers().Where(u => u.Id == long.Parse(userIdString)).FirstOrDefault();
+            List<RedisValue> authorityValues = _cacheAuthorityService.CheckCacheAuthority(token);
 
-
-            //if (!_roleAuthorityService.RoleAuthorityExistsById(nuser.RoleId, 4))
-            //{
-            //    return null;
-            //}
+            // "Update" authority'si var mı kontrol ediyoruz
+            if (!authorityValues.Contains("Update"))
+            {
+               throw new UnauthorizedAccessException();
+            }
 
             _ = userdto ?? throw new ArgumentNullException(nameof(userdto), " cannot be null.");
             
@@ -189,6 +180,19 @@ namespace BuildingReport.Business.Concrete
 
         public User UpdateUserPatch(int id, JsonPatchDocument<PatchUserRequest> patchdoc)
         {
+            // Tokeni headerdan çekiyoruz
+            string token = _httpContextAccessor.HttpContext.Request.Headers["Authorization"].ToString().Substring(7);
+
+            List<RedisValue> authorityValues = _cacheAuthorityService.CheckCacheAuthority(token);
+
+            // "Update" authority'si var mı kontrol ediyoruz
+            if (!authorityValues.Contains("Update"))
+            {
+                throw new UnauthorizedAccessException();
+            }
+
+
+
             ValidateId(id);
             
             CheckIfUserExistsById(id);
@@ -300,14 +304,16 @@ namespace BuildingReport.Business.Concrete
         
         public UserResponse UpdateUserRole(long id)
         {
-            var userIdString = _httpContextAccessor.HttpContext.Session.GetString("UserId");
+            // Tokeni headerdan çekiyoruz
+            string token = _httpContextAccessor.HttpContext.Request.Headers["Authorization"].ToString().Substring(7);
 
-            var nuser = _userRepository.GetAllUsers().Where(u => u.Id == long.Parse(userIdString)).FirstOrDefault();
+            List<RedisValue> authorityValues = _cacheAuthorityService.CheckCacheAuthority(token);
 
-            //if (!_roleAuthorityService.RoleAuthorityExistsById(nuser.RoleId, 4))
-            //{
-            //    return null;
-            //}
+            // "Update" authority'si var mı kontrol ediyoruz
+            if (!authorityValues.Contains("Update"))
+            {
+                throw new UnauthorizedAccessException();
+            }
 
             CheckIfUserExistsById(id);
             var roleID = _roleRepository.GetAllRoles().Where(r => r.Name == "admin").FirstOrDefault().Id;
@@ -342,6 +348,7 @@ namespace BuildingReport.Business.Concrete
                 throw new IdOutOfRangeException(nameof(id), id);
             }
         }
+
 
 
     }

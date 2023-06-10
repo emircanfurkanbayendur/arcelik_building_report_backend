@@ -80,7 +80,7 @@ namespace BuildingReport.Business.Concrete
             db.StringSet(cacheTokenKey, tokenString);
 
 
-            //Redis'e authorityleri kaydediyoruz key token
+            //Redis'e authorityleri kaydediyoruz key -> token
             var authorityKey = "authority:" + tokenString;
             var authorityValues = authorities.Select(authority => (RedisValue)authority.Name).ToArray();
             db.ListRightPush(authorityKey, authorityValues);
@@ -92,19 +92,15 @@ namespace BuildingReport.Business.Concrete
 
 
 
-            // Redis'ten tokeni ve authorityleri çekiyoruz
+            //var tk = db.StringGet(cacheTokenKey);
+            //var at = db.ListRange(authorityKey);
 
-            var tk = db.StringGet(cacheTokenKey);
-            var at = db.ListRange(authorityKey);
+            //Console.WriteLine("Token: " + tk);
 
-            // Tokeni konsola yazdırma
-            Console.WriteLine("Token: " + tk);
-
-            // Authorityleri konsola yazdırma
-            foreach (var authorityValue in at)
-            {
-                Console.WriteLine("Authority: " + authorityValue);
-            }
+            //foreach (var authorityValue in at)
+            //{
+            //    Console.WriteLine("Authority: " + authorityValue);
+            //}
 
 
 
